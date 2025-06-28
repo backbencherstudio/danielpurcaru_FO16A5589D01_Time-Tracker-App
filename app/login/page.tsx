@@ -3,6 +3,7 @@ import Image from "next/image";
 import RegisterPage from "./components/registerpage/RegisterPage";
 import RecoveryPage from "./components/recoveryPage/RecoveryPage";
 import OTPPage from "./components/otp/OTPPage";
+import CreateNewPasswordPage from "./components/createnewpasswordpage/CreateNewPasswordPage";
 
 
 export default function Login() {
@@ -16,7 +17,8 @@ export default function Login() {
           {/* <LoginPage /> */}
           {/* <RegisterPage /> */}
           {/* <RecoveryPage /> */}
-          <OTPPage/>
+          {/* <OTPPage/> */}
+          <CreateNewPasswordPage/>
        </div>
     </div>
   );
