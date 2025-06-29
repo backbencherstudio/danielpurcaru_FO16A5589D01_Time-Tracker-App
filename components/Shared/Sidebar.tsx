@@ -41,7 +41,7 @@ export default function Sidebar() {
 
 
     return (
-        <div className="sm:px-4 px-2 h-full bg-white sticky top-[87px]">
+        <div className="sm:px-4 px-2 h-full bg-white sticky top-[90px]">
             <div className="space-y-3">
                 <Link href="/" className={`flex ${menu.dashboard ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} items-center gap-[10px] px-[12px] py-2 rounded-lg cursor-pointer`} onClick={() => handleMenu("dashboard")}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
