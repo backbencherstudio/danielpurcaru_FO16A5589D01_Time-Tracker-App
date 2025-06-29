@@ -31,9 +31,6 @@ export default function DonutChart({ typeOfEmp, title }) {
             {
                 breakpoint: 480,
                 options: {
-                    chart: {
-                        width: 50,
-                    },
                     legend: {
                         position: "bottom",
                         show: false
@@ -77,11 +74,11 @@ export default function DonutChart({ typeOfEmp, title }) {
 
 
     return (
-        <div className="bg-white rounded-lg w-[200px] relative">
-            <Chart options={options} series={series} type="donut" height="200px" width={"100%"} />
+        <div className="bg-white rounded-lg w-full relative">
+            <Chart options={options} series={series} type="donut" width={"100%"} />
             <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-                <h3 className="text-[#4A4C56] text-base">{title}</h3>
-                <h4 className={`text-[#1D1F2C] text-[28px]  font-bold ${roboto.className}`}>{ totalValue }</h4>
+                <h3 className="text-[#4A4C56] text-xs sm:text-base">{title}</h3>
+                <h4 className={`text-[#1D1F2C] text-sm sm:text-[28px] text-center font-bold ${roboto.className}`}>{ totalValue }</h4>
             </div>
         </div>
     )

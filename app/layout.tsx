@@ -24,11 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={urbanist.className}>
       <body className="bg-white flex justify-center">
-        <div className="h-screen w-screen bg-white max-w-[1440px]">
+        <div className="h-screen w-screen bg-white max-w-[1440px] overflow-hidden">
           <Navbar />
           <div className="w-full flex bg-white">
             <Sidebar />
-            <div className="bg-[#F8FAFB] h-full w-full px-5 py-6 mt-[90px]">
+            <div className="bg-[#F8FAFB] h-full w-full px-5 py-6 mt-[90px] overflow-y-scroll" style={{ height: "calc(100vh - 90px)"}}>
               {children}
             </div>
           </div>
