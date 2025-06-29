@@ -3,6 +3,11 @@ import DonutChart from "@/components/Dashboard/DonutChart";
 import { Roboto } from 'next/font/google';
 import BarChart from "@/components/Dashboard/BarChart";
 import EmployeeTable from "@/components/Shared/EmployeeTable";
+import ronald from "@/public/images/Employee/ronald.png";
+import sanvannah from "@/public/images/Employee/sanvannah.png";
+import guy from "@/public/images/Employee/guy.png";
+import Jerome from "@/public/images/Employee/Jerome.png";
+import theresa from "@/public/images/Employee/theresa.png";
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -17,6 +22,13 @@ export default function Home() {
     ["Labor Cost", 3540],
     ["Active Project", 10]
   ]
+      const empData = [
+        [1, ronald, "Ronald Richards", "Baker", 10, 160],
+        [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
+        [3, guy, "Guy Hawkins", "Electrician", 14, 168],
+        [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
+        [5, theresa, "Theresa Webb", "Electrician", 10, 142],
+    ];
   const typeOfEmp = [[500, 700, 900], ["Baker", "Handyman", "Electrician"],["#F59E0B", "#3B82F6", "#14B8A6"]]
 
 
@@ -35,15 +47,15 @@ export default function Home() {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {cardData?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
       </div>
-      <div className="w-full flex gap-4 h-[415px]">
-        <div className="w-fit bg-white rounded-lg">
-          <div className="px-[56px] py-6 bg-white w-fit rounded-lg">
+      <div className="w-full flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-fit bg-white flex flex-col items-center justify-center rounded-lg">
+          <div className="md:px-[56px] py-6 bg-white w-fit rounded-lg">
             <DonutChart typeOfEmp={typeOfEmp} title="Total Emp." />
           </div>
-          <div className="px-6 space-y-[6px]">
+          <div className="px-6 space-y-[6px] w-full">
             <div className={`flex justify-between py-[6px] border-b border-[#D4D4D4] ${roboto.className}`}>
               <span className="text-[#737373] text-[14px] font-medium">Status</span>
               <span className="text-[#737373] text-[14px] font-medium">%</span>
@@ -68,7 +80,7 @@ export default function Home() {
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <button className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</button>
         </div>
-        <EmployeeTable />
+        <EmployeeTable empData={empData} start={0} end={5}/>
       </div>
     </div>
   );
