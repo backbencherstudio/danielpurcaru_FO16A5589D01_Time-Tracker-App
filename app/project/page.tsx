@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 import down from '@/public/icons/file-download.svg'
 import swap from '@/public/icons/arrow-swap.svg'
-import { Plus } from 'lucide-react';
+import { Eye, Plus, Trash2 } from 'lucide-react';
+import AddNewProjectForm from '@/components/allforms/AddNewProjectForm';
 
 // Sample Data for Table Rows
 const initialData = [
@@ -28,6 +29,8 @@ export default function Page() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [isExpired, setIsExpired] = useState(false);
+    const [isModal, setIsModal] = useState(false);
+
     const totalItems = data.length;
 
     // Handle Pagination
@@ -51,17 +54,17 @@ export default function Page() {
     const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
-        <div className="w-full bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl inline-flex flex-col justify-start items-start gap-6">
+        <div className="   bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl   flex flex-col justify-start items-start gap-6">
             {/* Header Section */}
-            <div className="w-full  h-14 inline-flex justify-start items-center gap-5">
+            <div className="w-full flex justify-start flex-col sm:flex-row items-start gap-5">
 
-                <div className="flex-1   inline-flex flex-col justify-start items-start gap-2">
+                <div className="flex-1    flex flex-col justify-start items-start gap-2">
                     <span className="  text-neutral-800 text-2xl font-semibold font-['Urbanist'] leading-9">Project</span>
                     <span className="  text-zinc-500 text-base font-normal font-['Urbanist'] leading-relaxed">Manage your Project</span>
                 </div>
 
                 {/* download and add new button */}
-                <div className="h-14 flex flex-col sm:flex-row justify-start items-start gap-5">
+                <div className="  flex   justify-start items-start gap-5">
                     <button
                         data-size="Large"
                         data-type="Additional Button"
@@ -73,6 +76,7 @@ export default function Page() {
                         <div className="  justify-start text-sky-300 text-base font-medium font-['Urbanist'] leading-relaxed">Download</div>
                     </button>
                     <button
+                        onClick={() => setIsModal(true)}
                         data-size="Large"
                         data-type="Additional Button"
                         className="w-fit sm:w-44 p-4 bg-sky-300 hover:bg-sky-300/70 outline-1 outline-sky-300 rounded-xl flex justify-center items-center gap-1"
@@ -93,9 +97,9 @@ export default function Page() {
                 <div className="flex-1 justify-center text-slate-400 text-sm font-normal font-['Urbanist'] leading-snug">Search Project</div>
             </div> */}
 
-             {/* Table Section */}
-            <div className=" w-full overflow-x-auto  self-stretch text-nowrap rounded-tl-[10px] rounded-tr-[10px] flex flex-col justify-start items-start overflow-hidden">
-                <div className="w-fit min-w-fit inline-flex justify-start items-center bg-slate-50">
+            {/* Table Section */}
+            <div className=" w-  overflow-x-auto  self-stretch text-nowrap rounded-tl-[10px] rounded-tr-[10px] flex flex-col justify-start items-start overflow-hidden">
+                <div className="w-full min-w-fit inline-flex justify-start items-center bg-slate-50">
                     <div className="w-16 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
                         <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Inter'] leading-tight">SL</div>
                         <Image src={swap} alt={''} className=' w-fit ' />
@@ -131,7 +135,7 @@ export default function Page() {
 
                 {/* Table Rows */}
                 {currentItems.map((row, index) => (
-                    <div key={index} className="w-fit min-w-fit inline-flex justify-start items-center bg-white">
+                    <div key={index} className="w-full min-w-fit inline-flex justify-start items-center bg-white">
                         <div className="w-16 pl-4 py-4 flex justify-start items-center">{row.id}</div>
                         <div className="w-36 pl-4 py-4 flex justify-start items-center">{row.name}</div>
                         <div className="w-28 pl-4 py-4 flex justify-start items-center">{row.assignee}</div>
@@ -140,11 +144,12 @@ export default function Page() {
                         <div className="w-36 pl-14 py-4 flex justify-start items-center">{row.price}</div>
                         <div className="w-40 pl-14 py-4 flex justify-start items-center">{row.status}</div>
                         <div className="w-36 p-4 flex justify-start items-center gap-3">
-                            <button className="bg-sky-300 rounded-lg p-2 text-white">Edit</button>
-                            <button className="bg-red-500 rounded-lg p-2 text-white">Delete</button>
+                            <button className="bg-sky-300 rounded-lg p-2 text-white"><Eye /></button>
+                            <button className="bg-red-500 rounded-lg p-2 text-white"><Trash2 /></button>
                         </div>
                     </div>
                 ))}
+
 
                 {/* Pagination */}
                 <div className="flex justify-between items-center mt-4">
@@ -169,14 +174,14 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-
+            {isModal && <AddNewProjectForm open={isModal} setIsOpen={setIsModal} />}
 
             {/* Button to simulate updating table */}
-            <div className="mt-4">
+            {/* <div className="mt-4">
                 <button onClick={handleUpdateTable} className="bg-blue-500 p-4 rounded-xl text-white">
                     Add New Project
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 }
