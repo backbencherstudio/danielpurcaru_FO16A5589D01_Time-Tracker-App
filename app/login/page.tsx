@@ -13,13 +13,13 @@ export default function Login() {
         <div className="w-full h- p-5 hidden md:block">
           <Image src={"/login/loginImage.jpg"} alt={"profile"} width={1900} height={1900} className="w-full h-full object-cover rounded-[20px]" />
         </div>
-         
-          {/* <LoginPage /> */}
-          {/* <RegisterPage /> */}
-          {/* <RecoveryPage /> */}
-          {/* <OTPPage/> */}
-          <CreateNewPasswordPage/>
-       </div>
+
+        <LoginPage />
+        {/* <RegisterPage /> */}
+        {/* <RecoveryPage /> */}
+        {/* <OTPPage/> */}
+        {/* <CreateNewPasswordPage/> */}
+      </div>
     </div>
   );
 }

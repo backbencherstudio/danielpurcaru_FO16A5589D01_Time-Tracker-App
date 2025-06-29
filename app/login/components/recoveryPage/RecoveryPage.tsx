@@ -19,7 +19,7 @@ const RecoveryPage = () => {
                     <input id='email' type="text" placeholder='Enter your Email' className="px-5 py-4  outline-1 outline-offset-[-1px] outline-gray-200 rounded-xl" />
                 </div>
 
-                <button className='w-full p-4 bg-sky-300 rounded-xl inline-flex justify-center items-center'><span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Submit</span></button>
+                <button className='w-full p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl inline-flex justify-center items-center'><span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Submit</span></button>
             </div>
 
         </div>

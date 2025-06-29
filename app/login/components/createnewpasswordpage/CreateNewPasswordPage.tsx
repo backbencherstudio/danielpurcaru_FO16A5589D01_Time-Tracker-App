@@ -42,7 +42,7 @@ const CreateNewPasswordPage = () => {
                                 id="password"
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter your password"
-                                className="px-5 py-4 w-full "
+                                className="px-5 py-4 w-full outline-0   "
                             />
                             <button
                                 type="button"
@@ -65,7 +65,7 @@ const CreateNewPasswordPage = () => {
                                 id="password"
                                 type={showPassword2 ? "text" : "password"}
                                 placeholder="Enter your password"
-                                className="px-5 py-4 w-full "
+                                className="px-5 py-4 w-full  outline-0 "
                             />
                             <button
                                 type="button"
@@ -78,7 +78,7 @@ const CreateNewPasswordPage = () => {
                     </div>
                      
                 </div>
-                <button className='w-full p-4 bg-sky-300 rounded-xl inline-flex justify-center items-center'><span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Verify</span></button>
+                <button className='w-full p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl inline-flex justify-center items-center'><span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Verify</span></button>
             </div>
             <span className="text-zinc-500 text-base font-normal font-['Urbanist'] leading-relaxed">Don't have an account yet? <Link href={''} className="text-neutral-800 text-base font-semibold font-['Urbanist'] leading-relaxed">Sign up now</Link></span>
 

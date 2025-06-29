@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 const OTPPage = () => {
     // Initial time is 2 minutes and 30 seconds (150 seconds)
-    const [timeLeft, setTimeLeft] = useState(150);
+    const [timeLeft, setTimeLeft] = useState(3);
     const [isExpired, setIsExpired] = useState(false);
 
     const [otp, setOtp] = useState(['', '', '', '']); // Array for OTP digits
@@ -62,9 +62,8 @@ const OTPPage = () => {
     const handleResend = () => {
         // Reset timer and states for a new OTP request
         setIsExpired(false);
-        setTimeLeft(150);  // Reset to 2:30
-        setOtp(['', '', '', '']); // Reset OTP input
-    };
+        setTimeLeft(5);  // Reset to 2:30
+     };
 
     // Check if the OTP is fully filled
     const isOtpComplete = otp.every((digit) => digit !== '');
@@ -99,7 +98,7 @@ const OTPPage = () => {
                 <button
                     disabled={!isOtpComplete || isExpired} // Disable if OTP is incomplete or expired
                     className={`w-full p-4 rounded-xl inline-flex justify-center items-center ${
-                        !isOtpComplete || isExpired ? 'bg-red-300 cursor-not-allowed' : 'bg-sky-300'
+                        !isOtpComplete   ? 'bg-red-300 cursor-not-allowed' : 'bg-sky-300 hover:bg-sky-300/70'
                     }`}
                 >
                     <span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Verify</span>
