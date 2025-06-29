@@ -37,7 +37,7 @@ export default function page() {
     const [pageStart,setPageStart] = useState(0);
     const [pageLeft, setPageLeft] = useState([]);
     const [pageRight, setPageRight] = useState([]);
-    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 600 ? 3 : 2);
+    const [isLargeScreen, setIsLargeScreen] = useState(2);
 
     const handlePageChange = async (pageNumber) => {
         if (pageNumber != currentPage) {
