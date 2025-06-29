@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={urbanist.className}>
       <body className="bg-white flex justify-center">
-        <div className="h-screen w-screen overflow-hidden bg-white max-w-[1440px]">
+        <div className="h-screen w-screen bg-white max-w-[1440px]">
           <Navbar />
           <div className="w-full flex bg-white">
             <Sidebar />

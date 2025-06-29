@@ -9,7 +9,7 @@ export default function Navbar() {
     };
 
     return (
-        <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white">
+        <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed">
             <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
                 Company Name
             </h3>
