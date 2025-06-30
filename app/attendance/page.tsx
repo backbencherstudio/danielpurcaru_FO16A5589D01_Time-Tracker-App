@@ -42,13 +42,34 @@ export default function Page() {
                     if (daysArray[index] && daysArray[index].weekdayName === 'Sun') {
                         return "";
                     }
-                    return workHour;
+                    return "8";
                 });
                 return [employee[0], updatedWorkHours]; // Return employee with updated work hours
             });
         });
 
     }, [selectedMonth]); // This effect runs when selectedMonth changes
+
+
+    const handleWorkHour = (emp, day, value) => {
+        setEmpWorkingHour(prev => {
+            return prev.map(employee => {
+                if (employee[0] === emp) {
+                    const newempWorkHour = employee[1].map((hr, index) => {
+                        if (index === day) {
+                            return parseInt(value) + 1;
+                        } else {
+                            return hr;
+                        }
+                    });
+                    return [employee[0], newempWorkHour];
+                } else {
+                    return employee;
+                }
+            });
+        });
+    };
+
 
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">
@@ -111,7 +132,7 @@ export default function Page() {
                                 <div className="flex w-full">
                                     {
                                         emp[1].map((workHour, index) => (
-                                            <div key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">{workHour}</div>
+                                            <div key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]" onClick={() => handleWorkHour(emp[0], index, workHour)}>{workHour ? `${workHour}hr` : ""}</div>
                                         ))
                                     }
                                 </div>
