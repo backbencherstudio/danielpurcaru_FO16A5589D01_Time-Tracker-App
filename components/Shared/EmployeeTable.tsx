@@ -1,7 +1,12 @@
 'use client'
 import Image from "next/image";
+import { useState } from "react";
+import AddEmployeeDialog from "./AddEmployeeDialog";
+import EditEmployeeDialog from "./EditEmployeeDialog";
 
 export default function EmployeeTable({empData,start,end}) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
     return (
         <div className="space-y-6 bg-white">
             {/* Search and Filter Section */}
@@ -84,7 +89,7 @@ export default function EmployeeTable({empData,start,end}) {
                                 <td className="text-center p-4">{emp[5]}</td>
                                 <td className="text-center p-4">${emp[5] * emp[4]}</td>
                                 <td className="flex items-center justify-center p-4">
-                                    <div className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer">
+                                    <div onClick={() => setIsModalOpen(true)} className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="22" viewBox="0 0 21 22" fill="none">
                                             <path
                                                 d="M9.62561 2.25H7.87561C3.50061 2.25 1.75061 4 1.75061 8.375V13.625C1.75061 18 3.50061 19.75 7.87561 19.75H13.1256C17.5006 19.75 19.2506 18 19.2506 13.625V11.875"
@@ -118,6 +123,8 @@ export default function EmployeeTable({empData,start,end}) {
                 </table>
             </div>
             <div className="bg-gray-300 top-0 left-0 right-0 bottom-0 fixed z-[99] hidden"></div>
+                        {isModalOpen  && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen}/>}
+
         </div>
     );
 }

@@ -94,7 +94,7 @@ const OTPPage = () => {
                         />
                     ))}
                 </div>
-
+<Link href="/createnewpassword">
                 <button
                     disabled={!isOtpComplete || isExpired} // Disable if OTP is incomplete or expired
                     className={`w-full p-4 rounded-xl inline-flex justify-center items-center ${
@@ -103,7 +103,7 @@ const OTPPage = () => {
                 >
                     <span className="justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Verify</span>
                 </button>
-
+</Link>
                 <div className="resend-code">
                     {isExpired ? (
                         <Link
