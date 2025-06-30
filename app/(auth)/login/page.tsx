@@ -1,10 +1,7 @@
-import LoginPage from "../loginPage/LoginPage";
-import Image from "next/image";
-import RegisterPage from "../registerpage/RegisterPage";
-import RecoveryPage from "../recoveryPage/RecoveryPage";
-import OTPPage from "../otp/OTPPage";
-import CreateNewPasswordPage from "../createnewpasswordpage/CreateNewPasswordPage";
+import LoginPage from "../loginPage/page";
 
+ 
+  
 
 export default function Login() {
   return (

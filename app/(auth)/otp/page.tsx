@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 const OTPPage = () => {
     // Initial time is 2 minutes and 30 seconds (150 seconds)
-    const [timeLeft, setTimeLeft] = useState(3);
+    const [timeLeft, setTimeLeft] = useState(150);
     const [isExpired, setIsExpired] = useState(false);
 
     const [otp, setOtp] = useState(['', '', '', '']); // Array for OTP digits
