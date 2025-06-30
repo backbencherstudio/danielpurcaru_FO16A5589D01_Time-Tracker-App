@@ -57,7 +57,7 @@ export default function Page() {
                 if (employee[0] === emp) {
                     const newempWorkHour = employee[1].map((hr, index) => {
                         if (index === day) {
-                            return value;
+                            return parseInt(value) + 1;
                         } else {
                             return hr;
                         }
@@ -132,7 +132,7 @@ export default function Page() {
                                 <div className="flex w-full">
                                     {
                                         emp[1].map((workHour, index) => (
-                                            <div key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]" onClick={() => handleWorkHour(emp[0], index, 10)}>{workHour ? `${workHour}hr` : ""}</div>
+                                            <div key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]" onClick={() => handleWorkHour(emp[0], index, workHour)}>{workHour ? `${workHour}hr` : ""}</div>
                                         ))
                                     }
                                 </div>
