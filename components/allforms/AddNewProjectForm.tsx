@@ -41,7 +41,7 @@ export default function AddNewProjectForm({ open, setIsOpen }) {
                                         {...field}
                                         type="text"
                                         id="projectname"
-                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-gray-200"
+                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
                                     />
                                 )}
                             />
@@ -60,7 +60,7 @@ export default function AddNewProjectForm({ open, setIsOpen }) {
                                     <select
                                         {...field}
                                         id="assignee"
-                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-gray-200"
+                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
                                     >
                                         <option value="">Select an Option</option>
                                         <option value="high">High</option>
@@ -129,7 +129,7 @@ export default function AddNewProjectForm({ open, setIsOpen }) {
                                         {...field}
 
                                         id="priority"
-                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-gray-200"
+                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
                                     >
                                         <option value="">Select an Option</option>
                                         <option value="high">High</option>
@@ -152,7 +152,7 @@ export default function AddNewProjectForm({ open, setIsOpen }) {
                                     <select
                                         {...field}
                                         id="address"
-                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-gray-200"
+                                        className="h-14 px-4 py-4 bg-stone-50 rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
                                     >
                                         <option value="">Select an Option</option>
                                         <option value="Vietnum">Vietnum</option>
