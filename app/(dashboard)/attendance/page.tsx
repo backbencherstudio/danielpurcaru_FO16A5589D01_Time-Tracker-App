@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 export default function Page() {
     const [days, setDays] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-    const [empWorkingHour, setEmpWorkingHour] = useState([
-        ["Williamson", ["8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8"]],
-        ["Jones", ["8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8", "8"]],
+    const [empWorkingHour, setEmpWorkingHour] = useState<any>([
+        ["Williamson", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
+        ["Jones", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
     ]);
 
     const handleMonthChange = (month) => {
@@ -142,5 +142,5 @@ export default function Page() {
                 </div>
             </div>
         </div>
-    );
+    ); 
 }

@@ -1,7 +1,4 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { AppConfig } from "@/config/app.config";
-import { Urbanist } from 'next/font/google';
+
 import Navbar from "@/components/Shared/Navbar";
 import Sidebar from "@/components/Shared/Sidebar";
 

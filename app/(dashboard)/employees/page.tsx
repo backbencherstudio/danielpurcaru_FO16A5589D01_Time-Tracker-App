@@ -89,7 +89,7 @@ export default function page() {
             <EmployeeTable empData={empData} start={pageStart} end={8}/>
             <div className="bg-white rounded-lg">
                 {empData.length > 0 && (
-                    <div className="flex justify-center items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg">
+                    <div className="flex justify-start items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg">
                         <div className="flex items-center rounded-lg sm:px-4">
                             <button
                                 onClick={() => handlePageChange(currentPage - 1)}
@@ -147,6 +147,7 @@ export default function page() {
                                 <MdKeyboardArrowRight className="text-xl" />
                             </button>
                         </div>
+                        
                     </div>
                 )}
             </div>

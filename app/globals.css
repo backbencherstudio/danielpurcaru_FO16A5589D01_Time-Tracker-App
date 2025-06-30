@@ -150,3 +150,67 @@ input[type="checkbox"]:hover {
     @apply bg-background text-foreground;
     }
 }
+
+
+/* calender  */
+.calendar-container {
+    background-color: #f4f5f7;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.calendar-header {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.fc-daygrid-day-number {
+    position: relative;
+    z-index: 1;
+}
+
+.fc-daygrid-day-top {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.fc-daygrid-day:hover {
+    background-color: #e0f7fa; /* Hover effect on calendar cells */
+}
+
+.fc-daygrid-day.fc-day-today {
+    background-color: #b3e5fc; /* Highlight today's date */
+    color: #000;
+}
+
+/* Custom styling for selected or clicked cells */
+.fc-daygrid-day[data-date='2025-06-10'] {
+    background-color: #d1c4e9;
+    color: #4a148c;
+}
+
+.fc-event {
+    background-color: #4caf50; /* For "Off Day" */
+    border-radius: 10px;
+}
+
+.fc-event-Holiday {
+    background-color: #03a9f4; /* For "Holiday" */
+}
+
+.fc-button {
+    background-color: #03a9f4;
+    color: white;
+    border-radius: 10px;
+}
+
+.fc-button:hover {
+    background-color: #0288d1;
+}
+.fc-col-header-cell{
+        height: 56px ;
+        justify-content: center;
+        background: #F6F8FA;
+
+}

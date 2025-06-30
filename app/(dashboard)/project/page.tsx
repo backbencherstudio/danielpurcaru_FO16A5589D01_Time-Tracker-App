@@ -1,13 +1,28 @@
 'use client'
-import Image from 'next/image';
-import { useState } from 'react';
-import down from '@/public/icons/file-download.svg'
-import swap from '@/public/icons/arrow-swap.svg'
-import { Eye, Plus, Trash2 } from 'lucide-react';
-import AddNewProjectForm from '@/components/allforms/AddNewProjectForm';
 
-// Sample Data for Table Rows
+import { useState } from 'react';
+import AddNewProjectForm from '@/components/allforms/AddNewProjectForm';
+import swap from '@/public/icons/arrow-swap.svg';
+import down from '@/public/icons/file-download.svg';
+import { Eye, Plus, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+
 const initialData = [
+    { id: 1, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
+    { id: 2, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
+    { id: 3, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
+    { id: 4, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    { id: 15, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
+    { id: 25, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
+    { id: 53, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
+    { id: 54, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    { id: 51, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
+    { id: 52, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
+    { id: 35, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
+    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    // Add more rows as needed
     { id: 1, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
     { id: 2, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
     { id: 3, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
@@ -28,78 +43,48 @@ export default function Page() {
     const [data, setData] = useState(initialData);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
-    const [isExpired, setIsExpired] = useState(false);
-    const [isModal, setIsModal] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const totalItems = data.length;
-
-    // Handle Pagination
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    const paginate = (pageNumber) => {
+    const paginate = (pageNumber: number) => {
+        if (pageNumber > 0 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
+
+    const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
 
-    const handleUpdateTable = () => {
-        // Simulate an update by adding new data (you can customize this logic)
-        setData([
-            ...data,
-            { id: 5, name: 'Project 5', assignee: 'Charlie King', dueDate: '01/06/2025', priority: 'Normal', price: '$15,000', status: 'In Progress' }
-        ]);
-    };
-
-    // Get Current Page Data
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
-        <div className="   bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl   flex flex-col justify-start items-start gap-6">
+        <div className="bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl flex flex-col gap-6">
             {/* Header Section */}
-            <div className="w-full flex justify-start flex-col sm:flex-row items-start gap-5">
-
-                <div className="flex-1    flex flex-col justify-start items-start gap-2">
-                    <span className="  text-neutral-800 text-2xl font-semibold font-['Urbanist'] leading-9">Project</span>
-                    <span className="  text-zinc-500 text-base font-normal font-['Urbanist'] leading-relaxed">Manage your Project</span>
+            <div className="w-full flex justify-between items-start gap-5">
+                <div className="flex flex-col justify-start gap-2">
+                    <span className="text-neutral-800 text-2xl font-semibold">Project</span>
+                    <span className="text-zinc-500 text-base">Manage your Projects</span>
                 </div>
-
-                {/* download and add new button */}
-                <div className="  flex   justify-start items-start gap-5">
-                    <button
-                        data-size="Large"
-                        data-type="Additional Button"
-                        className="w-fit sm:w-44 p-4   rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100 outline-sky-300 gap-1"
-                    >
-                        <div className="w-5 h-5 relative overflow-hidden">
-                            <Image className="w-3 h-4 absolute left-[3.54px] top-[1.88px] scale-150" src={down} alt="Download Icon" />
-                        </div>
-                        <div className="  justify-start text-sky-300 text-base font-medium font-['Urbanist'] leading-relaxed">Download</div>
+                {/* Buttons for Download and Add New */}
+                <div className="flex gap-5">
+                    <button className="w-fit sm:w-44 p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
+                        <Image className="w-3 h-4" src={down} alt="Download" />
+                        <span className="text-sky-300">Download</span>
                     </button>
-                    <button
-                        onClick={() => setIsModal(true)}
-                        data-size="Large"
-                        data-type="Additional Button"
-                        className="w-fit sm:w-44 p-4 bg-sky-300 hover:bg-sky-300/70 outline-1 outline-sky-300 rounded-xl flex justify-center items-center gap-1"
-                    >
-                        <div className="w-5 h-5 relative overflow-hidden">
-                            <Plus className="w-3 h-4 absolute left-[3.54px] top-[1.88px] scale-150 text-white stroke-3  " />
-                        </div>
-                        <div className="  justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Add New</div>
+                    <button onClick={() => setIsModalOpen(true)} className="w-fit sm:w-44 p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl flex justify-center items-center gap-1">
+                        <Plus className="text-white" />
+                        <span className="text-white">Add New</span>
                     </button>
                 </div>
-
             </div>
-            {/* searchbar */}
-            {/* <div className="w-96 px-5 py-3 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray-200 inline-flex justify-start items-start gap-2.5">
-                <div className="w-5 h-5 relative">
-                    <div className="w-4 h-4 left-[1.69px] top-[1.69px] absolute bg-neutral-800" />
-                </div>
-                <div className="flex-1 justify-center text-slate-400 text-sm font-normal font-['Urbanist'] leading-snug">Search Project</div>
-            </div> */}
 
             {/* Table Section */}
-            <div className=" w-  overflow-x-auto  self-stretch text-nowrap rounded-tl-[10px] rounded-tr-[10px] flex flex-col justify-start items-start overflow-hidden">
-                <div className="w-full min-w-fit inline-flex justify-start items-center bg-slate-50">
+            <div className="overflow-x-auto w-full rounded-tl-[10px] rounded-tr-[10px]">
+                <div className="w-full min-w-fit bg-slate-50 flex">
+                    <div className="w-full min-w-fit inline-flex justify-start items-center bg-slate-50">
                     <div className="w-16 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
                         <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Inter'] leading-tight">SL</div>
                         <Image src={swap} alt={''} className=' w-fit ' />
@@ -132,11 +117,10 @@ export default function Page() {
                         <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Action</div>
                     </div>
                 </div>
-
-                {/* Table Rows */}
-                {currentItems.map((row, index) => (
-                    <div key={index} className="w-full min-w-fit inline-flex justify-start items-center bg-white">
-                        <div className="w-16 pl-4 py-4 flex justify-start items-center">{row.id}</div>
+                </div>
+                {currentItems.map((row) => (
+                    <div key={row.id} className="w-full min-w-fit bg-white flex">
+                         <div className="w-16 pl-4 py-4 flex justify-start items-center">{row.id}</div>
                         <div className="w-36 pl-4 py-4 flex justify-start items-center">{row.name}</div>
                         <div className="w-28 pl-4 py-4 flex justify-start items-center">{row.assignee}</div>
                         <div className="w-36 pl-10 py-4 flex justify-start items-center">{row.dueDate}</div>
@@ -149,39 +133,35 @@ export default function Page() {
                         </div>
                     </div>
                 ))}
+            </div>
 
+            {/* Pagination Section */}
+            <div className="w-full flex justify-between items-center mt-4">
+                <div className="flex items-center gap-2">
+                    <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="text-xs sm:text-base border py-2 rounded-lg">
+                        <MdKeyboardArrowLeft />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button key={index} onClick={() => handlePageChange(index + 1)} className={`w-[40px] h-[40px] m-1 rounded-xl ${currentPage === index + 1 ? 'bg-[#F8FAFB] text-[#1D1F2C]' : 'text-[#1D1F2C] hover:bg-gray-100'}`}>
+                            {index + 1}
+                        </button>
+                    ))}
+                    <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="text-xs sm:text-base border py-2 rounded-lg">
+                        <MdKeyboardArrowRight />
+                    </button>
+                </div>
 
-                {/* Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                    <div>
-                        <button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="bg-gray-300 p-2 rounded-md"
-                        >
-                            Prev
-                        </button>
-                        <button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="bg-gray-300 p-2 rounded-md"
-                        >
-                            Next
-                        </button>
-                    </div>
-                    <div className="text-sm">
-                        Showing {indexOfFirstItem + 1} to {indexOfLastItem} of {totalItems} entries
-                    </div>
+                <div className="flex items-center gap-2">
+                    <span>Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries</span>
+                    <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="border-1 rounded-sm pl-2 py-1">
+                        {[5, 6, 7, 8, 9, 10].map((number) => (
+                            <option key={number} value={number}>{number}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
-            {isModal && <AddNewProjectForm open={isModal} setIsOpen={setIsModal} />}
 
-            {/* Button to simulate updating table */}
-            {/* <div className="mt-4">
-                <button onClick={handleUpdateTable} className="bg-blue-500 p-4 rounded-xl text-white">
-                    Add New Project
-                </button>
-            </div> */}
+            {isModalOpen && <AddNewProjectForm open={isModalOpen} setIsOpen={setIsModalOpen} />}
         </div>
     );
 }
