@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 export default function Page() {
     const [days, setDays] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-    const [empWorkingHour, setEmpWorkingHour] = useState([
+    const [empWorkingHour, setEmpWorkingHour] = useState<any>([
         ["Williamson", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
         ["Jones", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
     ]);
@@ -121,5 +121,5 @@ export default function Page() {
                 </div>
             </div>
         </div>
-    );
+    ); 
 }
