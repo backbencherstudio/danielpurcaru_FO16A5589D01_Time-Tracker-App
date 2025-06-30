@@ -1,13 +1,16 @@
 'use client'
-import ronald from "@/public/images/Employee/ronald.png";
-import sanvannah from "@/public/images/Employee/sanvannah.png";
+import AddEmployeeDialog from "@/components/Shared/AddEmployeeDialog";
+import EmployeeTable from "@/components/Shared/EmployeeTable";
+import down from '@/public/icons/file-download.svg';
 import guy from "@/public/images/Employee/guy.png";
 import Jerome from "@/public/images/Employee/Jerome.png";
+import ronald from "@/public/images/Employee/ronald.png";
+import sanvannah from "@/public/images/Employee/sanvannah.png";
 import theresa from "@/public/images/Employee/theresa.png";
-import { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-
-import EmployeeTable from "@/components/Shared/EmployeeTable";
 
 export default function page() {
     const empData = [
@@ -38,7 +41,7 @@ export default function page() {
     const [pageLeft, setPageLeft] = useState([]);
     const [pageRight, setPageRight] = useState([]);
     const [isLargeScreen, setIsLargeScreen] = useState(2);
-
+const [isModalOpen, setIsModalOpen] = useState(false);
     const handlePageChange = async (pageNumber) => {
         if (pageNumber != currentPage) {
             // setPageLoading(true);
@@ -85,7 +88,24 @@ export default function page() {
     }, [currentPage, isLargeScreen]);
 
     return (
-        <div className="bg-white rounded-lg">
+        <div className="bg-white rounded-lg p-5">
+             <div className="w-full flex justify-between items-start gap-5 mb-5">
+                <div className="flex flex-col justify-start gap-2">
+                    <span className="text-neutral-800 text-2xl font-semibold">Employees</span>
+                    <span className="text-zinc-500 text-base">Manage your Employee</span>
+                </div>
+                {/* Buttons for Download and Add New */}
+                <div className="flex gap-5">
+                    <button className="w-fit sm:w-44 p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
+                        <Image className="w-3 h-4" src={down} alt="Download" />
+                        <span className="text-sky-300">Download</span>
+                    </button>
+                    <button onClick={() => setIsModalOpen(true)} className="w-fit   p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl flex justify-center items-center gap-1">
+                        <Plus className="text-white" />
+                        <span className="text-white text-nowrap">Add New Employee</span>
+                    </button>
+                </div>
+            </div>
             <EmployeeTable empData={empData} start={pageStart} end={8}/>
             <div className="bg-white rounded-lg">
                 {empData.length > 0 && (
@@ -151,6 +171,8 @@ export default function page() {
                     </div>
                 )}
             </div>
+
+            {isModalOpen  && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen}/>}
         </div>
     );
 }
