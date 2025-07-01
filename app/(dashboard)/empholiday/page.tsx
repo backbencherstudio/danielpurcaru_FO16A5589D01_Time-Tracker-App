@@ -168,15 +168,17 @@ export default function page() {
                         <div>
                             <label htmlFor="startDate" className="text-[#1D1F2C] text-base font-medium">Start Date</label>
                             <div className="bg-[#F7F8F9] py-[18px] px-4 rounded-lg border border-[#E9E9EA] text-[#1D1F2C] text-base relative flex">
+                                
                                 <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}  // Handle date change
-                                    dateFormat="MMMM d, yyyy"  // Format for displaying the date
-                                    className="w-full outline-none flex-1"  // Styling the date picker
-                                    placeholderText="Select a date"
-                                    minDate={new Date()}  // Disable past dates
-                                    id="startDate"
-                                />
+    selected={startDate}
+    onChange={(date: Date) => setStartDate(date)}  // Handle date change
+    dateFormat="MMMM d, yyyy"  // Format for displaying the date
+    className="w-full"
+    placeholderText="Select a date"
+    minDate={new Date()} // Ensure the selected date is not in the past
+    id="startDate"
+/>
+
                                 <label htmlFor="startDate" className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                         <path d="M3 7.5C3 5.29086 4.79086 3.5 7 3.5H17C19.2091 3.5 21 5.29086 21 7.5V18C21 20.2091 19.2091 22 17 22H7C4.79086 22 3 20.2091 3 18V7.5Z" stroke="#1D1F2C" stroke-width="1.5" />
