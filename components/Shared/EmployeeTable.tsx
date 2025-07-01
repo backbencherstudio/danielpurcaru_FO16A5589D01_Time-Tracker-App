@@ -1,12 +1,18 @@
 'use client'
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { useState, useEffect } from "react";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import AddEmployeeDialog from "./AddEmployeeDialog";
 import EditEmployeeDialog from "./EditEmployeeDialog";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-export default function EmployeeTable({ empData }) {
+interface EmployeeTableProps {
+    empData: (string | number | StaticImageData)[][];
+    start: number;
+    end: number;
+}
+
+export default function EmployeeTable({ empData, start, end }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -16,7 +22,7 @@ export default function EmployeeTable({ empData }) {
     // Extract unique job titles from empData
     const jobTitles = Array.from(new Set(empData.map(emp => emp[3])));
 
-    const handleJobTitleFilter = (jobTitle) => {
+    const handleJobTitleFilter = (jobTitle: string) => {
         setSelectedJobTitle(jobTitle);
         if (jobTitle === "All Job Titles") {
             setFilteredEmpData(empData);  // Show all employees if "All Job Titles" is selected
@@ -48,6 +54,9 @@ export default function EmployeeTable({ empData }) {
         setEntriesPerPage(Number(e.target.value));
         setCurrentPage(1); // Reset to first page when entries per page change
     };
+
+
+    console.log("In" ,currentEntries)
 
     return (
         <div className="space-y-6 bg-white">
@@ -85,7 +94,7 @@ export default function EmployeeTable({ empData }) {
                     >
                         <option>All Job Titles</option>
                         {jobTitles.map((title, index) => (
-                            <option key={index}>{title}</option>
+                            <option key={index}>{`${title}`}</option>
                         ))}
                     </select>
                 </div>
@@ -109,86 +118,26 @@ export default function EmployeeTable({ empData }) {
                                     </svg>
                                 </div>
                             </th>
-                            <th className="py-4 text-start px-4">
-                                <div className="flex items-center justify-between">
-                                    <span>Name</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th className="py-4 text-start px-4">
-                                <div className="flex items-center justify-between">
-                                    <span>Role</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th className="py-4 text-center px-4">
-                                <div className="flex items-center justify-between">
-                                    <span>Hours Rate</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th className="py-4 text-center px-4">
-                                <div className="flex items-center justify-between">
-                                    <span>Recorded Hours</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th className="py-4 text-center px-4">
-                                <div className="flex items-center justify-between">
-                                    <span>Earning</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            </th>
+                            <th className="py-4 text-start px-4">Name</th>
+                            <th className="py-4 text-start px-4">Role</th>
+                            <th className="py-4 text-center px-4">Hourly Rate</th>
+                            <th className="py-4 text-center px-4">Recorded Hours</th>
+                            <th className="py-4 text-center px-4">Earnings</th>
                             <th className="py-4 px-4">Action</th>
                         </tr>
                     </thead>
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {currentEntries.map((emp) => (
-                            <tr key={emp[0]} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="p-4">{emp[0]}</td>
+                        {currentEntries.map((emp,index) => (
+                            <tr key={index} className="border-t-[0.2px] border-[#F6F8FA]">
+                                <td className="p-4">{index}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp[1]} alt="Emp image" className="w-[24px] h-[24px] rounded-full" />
-                                    <h3>{emp[2]}</h3>
+                                    <Image src={emp[1]["src"]} alt="Emp image" className="w-[24px] h-[24px] rounded-full" width={24} height={24}/>
+                                    <h3>{`${emp[2]}`}</h3>
                                 </td>
-                                <td className="p-4">{emp[3]}</td>
-                                <td className="text-center p-4">${emp[4]}</td>
-                                <td className="text-center p-4">{emp[5]}</td>
-                                <td className="text-center p-4">${emp[5] * emp[4]}</td>
+                                <td className="p-4">{`${emp[3]}`}</td>
+                                <td className="text-center p-4">${`${emp[4]}`}</td>
+                                <td className="text-center p-4">{`${emp[5]}`}</td>
+                                <td className="text-center p-4">${parseInt(`${emp[5]}`) * parseInt(`${emp[4]}`)}</td>
                                 <td className="flex items-center justify-center p-4">
                                     <div onClick={() => setIsModalOpen(true)} className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="22" viewBox="0 0 21 22" fill="none">
@@ -223,54 +172,6 @@ export default function EmployeeTable({ empData }) {
                     </tbody>
                 </table>
             </div>
-
-            {/* Pagination */}
-            <div className="flex items-center justify-between p-4">
-                {/* Pagination Controls */}
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 bg-[#F7F8F9] rounded-lg"
-                    >
-                        <MdKeyboardArrowLeft className="text-xl" />
-                    </button>
-                    {pageNumbers.map((number) => (
-                        <button
-                            key={number}
-                            onClick={() => handlePageChange(number)}
-                            className={`px-4 py-2 rounded-lg ${currentPage === number ? "bg-[#82C8E5] text-white" : "bg-[#F7F8F9]"}`}
-                        >
-                            {number}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 bg-[#F7F8F9] rounded-lg"
-                    >
-                        <MdKeyboardArrowRight className="text-xl" />
-                    </button>
-                </div>
-
-                {/* Show Entries Dropdown */}
-                <div className="flex items-center gap-2">
-                    <span className="text-[#777980]">Showing {firstIndex+1} to {lastIndex} of {empData.length} entries</span>
-                    <select
-                        value={entriesPerPage}
-                        onChange={handleEntriesPerPageChange}
-                        className="px-2 py-1 border rounded-lg"
-                    >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                    </select>
-                    {/* <span>entries</span> */}
-                </div>
-            </div>
-
-            {/* Modal */}
-            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
         </div>
     );
 }
