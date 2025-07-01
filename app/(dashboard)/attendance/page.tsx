@@ -1,15 +1,23 @@
 'use client'
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 export default function Page() {
     const [days, setDays] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+    const [WorkHourEditor, setWorkHourEditor] = useState(false);
+    const [updateWorkHour, setUpdateWorkHour] = useState<any>({});
     const [empWorkingHour, setEmpWorkingHour] = useState<any>([
-        ["Williamson", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
-        ["Jones", ["8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr", "8hr"]],
+        ["Williamson", Array(31).fill("8hr")],
+        ["Floyd Miles", Array(31).fill("8hr")],
+        ["Cody Fisher", Array(31).fill("8hr")],
+        ["Annette Black", Array(31).fill("8hr")],
+        ["Jane Cooper", Array(31).fill("8hr")],
+        ["Wade Warren", Array(31).fill("8hr")],
+        ["Jerome Bell", Array(31).fill("8hr")],
+        ["Savannah ", Array(31).fill("8hr")],
     ]);
 
-    const handleMonthChange = (month) => {
+    const handleMonthChange = (month: string) => {
         const monthIndex = new Date(Date.parse(month + " 1, 2025")).getMonth(); // Convert month name to month index
         setSelectedMonth(monthIndex);
     }
@@ -21,7 +29,7 @@ export default function Page() {
         const daysInMonth = new Date(currentYear, selectedMonth + 1, 0).getDate();
 
         // Weekday names
-        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
         const daysArray = [];
         // Generate days with corresponding weekday names
@@ -37,8 +45,8 @@ export default function Page() {
         // Update empWorkingHour: Set Sundays' working hours to empty string
         setEmpWorkingHour(prevEmpWorkingHour => {
             return prevEmpWorkingHour.map(employee => {
-                const updatedWorkHours = employee[1].map((workHour, index) => {
-                    // If the day is Sunday (index 0), set workHour to ""
+                const updatedWorkHours = daysArray.map((workHour, index) => {
+                    // If the day is Sunday, set workHour to ""
                     if (daysArray[index] && daysArray[index].weekdayName === 'Sun') {
                         return "";
                     }
@@ -47,29 +55,37 @@ export default function Page() {
                 return [employee[0], updatedWorkHours]; // Return employee with updated work hours
             });
         });
-
     }, [selectedMonth]); // This effect runs when selectedMonth changes
 
-
-    const handleWorkHour = (emp, day, value) => {
+    const handleWorkHour = (emp: string, day: number, value: string, operator: string) => {
         setEmpWorkingHour(prev => {
             return prev.map(employee => {
                 if (employee[0] === emp) {
                     const newempWorkHour = employee[1].map((hr, index) => {
                         if (index === day) {
-                            return parseInt(value) + 1;
-                        } else {
-                            return hr;
+                            let updatedValue = parseInt(hr) || 0;
+                            updatedValue = operator === "+" ? updatedValue + 1 : updatedValue - 1;
+                            // Update the state for work hour
+                            const updatedWorkHour = updatedValue;
+                            if (emp === updateWorkHour.emp && day === updateWorkHour.index) {
+                                // Update the popup state
+                                setUpdateWorkHour(prevState => ({
+                                    ...prevState,
+                                    workHour: updatedWorkHour,
+                                }));
+                            }
+                            return updatedWorkHour;
                         }
+                        return hr;
                     });
                     return [employee[0], newempWorkHour];
-                } else {
-                    return employee;
                 }
+                return employee;
             });
         });
     };
 
+    console.log(empWorkingHour);
 
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">
@@ -89,7 +105,7 @@ export default function Page() {
                     </div>
                     <div >
                         <select className="py-[18px] border border-[#E8ECF4] justify-center rounded-xl text-base text-[#1D1F2C] outline-none" onChange={(e) => handleMonthChange(e.target.value)}>
-                            <option className="hover:bg-[#ECEFF3] px-3 py-1 rounded-lg cursor-pointer duration-300">January</option>
+                            <option className="hover:bg-[#ECEFF3] rounded-lg cursor-pointer duration-300">January</option>
                             <option>February</option>
                             <option>March</option>
                             <option>April</option>
@@ -105,42 +121,69 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <div className="overflow-x-scroll">
-                <div className="border  w-[1096.26px]">
-                    <div>
-                        <div className="flex items-center w-full justify-between">
-                            <h3 className="w-[82px] flex items-center justify-center text-[8px] bg-[#F6F8FA] py-[11px]">Day</h3>
-                            <div className="flex w-full">
-                                {
-                                    days.map(day => <div key={day.day} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">{day.weekdayName}</div>)
-                                }
-                            </div>
-                        </div>
-                        <div className="flex items-center w-full justify-between">
-                            <h3 className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[11px]">Name/Date</h3>
-                            <div className="flex w-full">
-                                {
-                                    days.map(day => <div key={day.day} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">{day.day}</div>)
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div>
+            <div className="overflow-x-scroll relative rounded-tl-xl rounded-tr-xl border border-[#ECEFF3]">
+                <table className="w-[1096.26px]">
+                    <thead>
+                        <tr className="flex items-center w-full justify-between">
+                            <th className="w-[82px] flex items-center justify-center text-[8px] font-bold bg-[#F6F8FA] text-[#4A4C56] py-[12px]">Day</th>
+                            {
+                                days.map(day => (
+                                    <th key={day.day} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">
+                                        {day.weekdayName}
+                                    </th>
+                                ))
+                            }
+                        </tr>
+                        <tr className="flex items-center w-full justify-between">
+                            <th className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[12px] text-[#4A4C56] font-medium">Name/Date</th>
+                            {
+                                days.map((_, index) => (
+                                    <th key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">
+                                        {index < 9 ? `0${index + 1}` : index + 1}
+                                    </th>
+                                ))
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
                         {empWorkingHour.map(emp => (
-                            <div key={emp[0]} className="flex items-center w-full justify-between">
-                                <h3 className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[11px]">{emp[0]}</h3>
-                                <div className="flex w-full">
-                                    {
-                                        emp[1].map((workHour, index) => (
-                                            <div key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]" onClick={() => handleWorkHour(emp[0], index, workHour)}>{workHour ? `${workHour}hr` : ""}</div>
-                                        ))
-                                    }
-                                </div>
-                            </div>
+                            <tr key={emp[0]} className="flex items-center w-full justify-between">
+                                <td className="w-[82px] flex items-center justify-center text-[8px] py-[12px]">{emp[0]}</td>
+                                {
+                                    emp[1].map((workHour, index) => (
+                                        <td key={index} className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#fff]" onClick={() => { setUpdateWorkHour({ emp: emp[0], index: index, workHour: workHour }), setWorkHourEditor(true) }}>
+                                            {workHour ? `${workHour}hr` : ""}
+                                        </td>
+                                    ))
+                                }
+                            </tr>
                         ))}
+                    </tbody>
+                </table>
+                {WorkHourEditor && <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 p-3 space-y-3 bg-white rounded-lg">
+                    <div className="flex justify-between">
+                        <h3>Edit Hour</h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="none" className="cursor-pointer" onClick={() => setWorkHourEditor(false)}>
+                            <path d="M17.8855 16.0001L24.9428 8.94276C25.4642 8.42276 25.4642 7.5775 24.9428 7.0575C24.4215 6.53617 23.5788 6.53617 23.0575 7.0575L16.0002 14.1148L8.94284 7.0575C8.42151 6.53617 7.57884 6.53617 7.0575 7.0575C6.53617 7.5775 6.53617 8.42276 7.0575 8.94276L14.1148 16.0001L7.0575 23.0575C6.53617 23.5775 6.53617 24.4228 7.0575 24.9428C7.3175 25.2028 7.65884 25.3335 8.00017 25.3335C8.3415 25.3335 8.68284 25.2028 8.94284 24.9428L16.0002 17.8855L23.0575 24.9428C23.3175 25.2028 23.6588 25.3335 24.0002 25.3335C24.3415 25.3335 24.6828 25.2028 24.9428 24.9428C25.4642 24.4228 25.4642 23.5775 24.9428 23.0575L17.8855 16.0001Z" fill="#82C8E5" />
+                        </svg>
                     </div>
-                </div>
+                    <div className="flex gap-2">
+                        <div className="w-[32px] h-[32px] flex items-center justify-center border border-[#E8ECF4] rounded-sm" onClick={() => handleWorkHour(updateWorkHour.emp, updateWorkHour.index, updateWorkHour.workHour, "-")}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="2" viewBox="0 0 14 2" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.75 1C13.75 1.41421 13.4142 1.75 13 1.75L1 1.75C0.585786 1.75 0.25 1.41421 0.25 1C0.25 0.585786 0.585786 0.25 1 0.25L13 0.25C13.4142 0.25 13.75 0.585786 13.75 1Z" fill="#1D1F2C" />
+                            </svg>
+                        </div>
+                        <div className="border border-[#E8ECF4] rounded-sm flex items-center text-[#4A4C56] font-medium justify-center px-4 bg-[#F7F8F9]">
+                            {updateWorkHour.workHour}hr
+                        </div>
+                        <div className="w-[32px] h-[32px] flex items-center justify-center border border-[#E8ECF4] rounded-sm bg-[#82C8E5]" onClick={() => handleWorkHour(updateWorkHour.emp, updateWorkHour.index, updateWorkHour.workHour, "+")}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 1C7.75 0.585786 7.41421 0.25 7 0.25C6.58579 0.25 6.25 0.585786 6.25 1V6.25H1C0.585786 6.25 0.25 6.58579 0.25 7C0.25 7.41421 0.585786 7.75 1 7.75H6.25V13C6.25 13.4142 6.58579 13.75 7 13.75C7.41421 13.75 7.75 13.4142 7.75 13V7.75H13C13.4142 7.75 13.75 7.41421 13.75 7C13.75 6.58579 13.4142 6.25 13 6.25H7.75V1Z" fill="white" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>}
             </div>
         </div>
-    ); 
+    );
 }

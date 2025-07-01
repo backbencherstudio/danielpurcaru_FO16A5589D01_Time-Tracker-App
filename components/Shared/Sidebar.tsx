@@ -1,5 +1,5 @@
 'use client'
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link";
 
 export default function Sidebar() {
@@ -12,7 +12,7 @@ export default function Sidebar() {
         employeeloan: false,
         notification: false,
         profile: false,
-        empHoliday: false,
+        empholiday: false,
     })
 
     const [empHoliday, setEmpHoliday] = useState(false);
@@ -38,23 +38,23 @@ export default function Sidebar() {
         });
     };
 
-    useEffect(()=>{
-        if(window.location.pathname === "/"){
+    useEffect(() => {
+        if (window.location.pathname === "/") {
             console.log(window.location.pathname)
             handleMenu("dashboard")
-        }else{
- console.log(window.location.pathname)
+        } else {
+            console.log(window.location.pathname)
             handleMenu(window.location.pathname.split("/")[1])
         }
-    },[])
+    }, [])
 
 
-    console.log("Menu : ",menu)
+    console.log("Menu : ", menu)
 
 
 
     return (
-        <div className="sm:px-4 px-2 h-full bg-white translate-y-[90px]">
+        <div className="sm:px-4 px-2 bg-white translate-y-[90px] flex flex-col gap-5 justify-between" style={{height: "calc(100vh - 130px)"}}>
             <div className="space-y-3">
                 <Link href="/" className={`flex ${menu.dashboard ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} items-center gap-[10px] px-[12px] py-2 rounded-lg cursor-pointer`} onClick={() => handleMenu("dashboard")}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -81,10 +81,19 @@ export default function Sidebar() {
                             </div>
                         </div>
                     </div>
-                    {empHoliday && <Link href="/empholiday" className={`cursor-pointer px-4 py-2 ${menu.empHoliday ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} rounded-lg`} onClick={() => handleMenu("empHoliday")}>
+                    {empHoliday && <Link href="/empholiday" className={`cursor-pointer px-4 py-2 ${menu.empholiday ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} rounded-lg hidden lg:block`} onClick={() => handleMenu("empholiday")}>
                         Employee Holiday
                     </Link>}
                 </div>
+
+                <Link href="/empholiday" className={`flex ${menu.empholiday ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} items-center lg:gap-[10px] px-[12px] py-2 rounded-lg cursor-pointer w-fit lg:w-full lg:hidden`} onClick={() => handleMenu("empholiday")}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <ellipse cx="8.33333" cy="14.5832" rx="5.83333" ry="2.91667" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                        <circle cx="8.33333" cy="5.83333" r="3.33333" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                        <path d="M12.7152 3.4248C14.4098 3.53563 15.7504 4.94441 15.7504 6.66699C15.7503 8.46175 14.2951 9.91678 12.5004 9.91699C12.1327 9.91699 11.7792 9.85474 11.4496 9.74219C11.9134 9.37188 12.3107 8.92176 12.6185 8.41113C13.5297 8.35012 14.2503 7.59357 14.2504 6.66699C14.2504 5.98092 13.8545 5.38842 13.2797 5.10156C13.1916 4.50127 12.9968 3.93588 12.7152 3.4248Z" fill="currentColor" />
+                        <path d="M12.848 10.9248C14.1698 10.9605 15.3896 11.1954 16.3246 11.585C16.831 11.796 17.2905 12.0667 17.6342 12.4053C17.9803 12.7464 18.2503 13.2015 18.2504 13.75C18.2503 14.2987 17.9804 14.7545 17.6342 15.0957C17.2905 15.4343 16.8311 15.7049 16.3246 15.916C16.0195 16.0431 15.683 16.1511 15.3236 16.2441C15.6516 15.7291 15.8333 15.1699 15.8334 14.584C15.8334 14.5538 15.8304 14.5232 15.8295 14.4932C16.1827 14.3376 16.4308 14.1758 16.5814 14.0273C16.7406 13.8705 16.7503 13.7766 16.7504 13.75C16.7503 13.7232 16.74 13.63 16.5814 13.4736C16.4192 13.3139 16.1454 13.1356 15.7474 12.9697C15.5909 12.9045 15.4194 12.846 15.2367 12.79C14.719 12.0468 13.8892 11.4053 12.848 10.9248Z" fill="currentColor" />
+                    </svg>
+                </Link>
                 <Link href="/project" className={`flex ${menu.project ? "text-white bg-[#82C8E5]" : "bg-white text-[#4A4C56]"} items-center lg:gap-[10px] px-[12px] py-2 rounded-lg cursor-pointer w-fit lg:w-full`} onClick={() => handleMenu("project")}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M18 6.38028V14.6197C18 17.1549 16.21 18 14 18H6C3.79 18 2 17.1549 2 14.6197V6.38028C2 3.6338 3.79 3 6 3C6 3.52394 6.24997 3.99718 6.65997 4.34366C7.06997 4.69014 7.63 4.90141 8.25 4.90141H11.75C12.99 4.90141 14 4.04789 14 3C16.21 3 18 3.6338 18 6.38028Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -138,6 +147,15 @@ export default function Sidebar() {
                     </svg>
                     <span className="text-[16px] text-nowrap hidden lg:block">Profile</span>
                 </Link>
+            </div>
+            <div className="flex items-center gap-2 cursor-pointer">
+                <div className="bg-[#FEECEE] p-3 rounded-full w-fit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M10 11.75C9.95093 12.9846 8.92207 14.0329 7.54373 13.9992C7.22307 13.9913 6.82673 13.8796 6.03408 13.656C4.12641 13.1179 2.47037 12.2135 2.07304 10.1877C2 9.81533 2 9.39627 2 8.5582V7.4418C2 6.60374 2 6.1847 2.07304 5.81231C2.47037 3.78643 4.12641 2.8821 6.03408 2.34402C6.82673 2.12042 7.22307 2.00863 7.54373 2.00079C8.92207 1.96707 9.95093 3.01538 10 4.25" stroke="#EB3D4D" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M13.9998 8.00016H6.6665M13.9998 8.00016C13.9998 7.53336 12.6703 6.66118 12.3332 6.3335M13.9998 8.00016C13.9998 8.46696 12.6703 9.33916 12.3332 9.66683" stroke="#EB3D4D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <h3 className="text-[#1D1F2C] font-medium">Logout</h3>
             </div>
         </div>
     )
