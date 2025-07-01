@@ -87,6 +87,8 @@ const [isModalOpen, setIsModalOpen] = useState(false);
         getPageNumbers();
     }, [currentPage, isLargeScreen]);
 
+    console.log("Emp data : ",empData[0][1])
+
     return (
         <div className="bg-white rounded-lg p-5">
              <div className="w-full flex justify-between items-start gap-5 mb-5">
