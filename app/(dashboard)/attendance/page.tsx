@@ -121,8 +121,8 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <div className="overflow-x-scroll relative">
-                <table className="border  w-[1096.26px]">
+            <div className="overflow-x-scroll relative rounded-tl-xl rounded-tr-xl border border-[#ECEFF3]">
+                <table className="w-[1096.26px]">
                     <thead>
                         <tr className="flex items-center w-full justify-between">
                             <th className="w-[82px] flex items-center justify-center text-[8px] font-bold bg-[#F6F8FA] text-[#4A4C56] py-[12px]">Day</th>
@@ -135,7 +135,7 @@ export default function Page() {
                             }
                         </tr>
                         <tr className="flex items-center w-full justify-between">
-                            <th className="w-[82px] flex items-center justify-center text-[8px] bg-[#F6F8FA] py-[12px] text-[#4A4C56] font-medium">Name/Date</th>
+                            <th className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[12px] text-[#4A4C56] font-medium">Name/Date</th>
                             {
                                 days.map((_, index) => (
                                     <th key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">
@@ -148,10 +148,10 @@ export default function Page() {
                     <tbody>
                         {empWorkingHour.map(emp => (
                             <tr key={emp[0]} className="flex items-center w-full justify-between">
-                                <td className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[12px]">{emp[0]}</td>
+                                <td className="w-[82px] flex items-center justify-center text-[8px] py-[12px]">{emp[0]}</td>
                                 {
                                     emp[1].map((workHour, index) => (
-                                        <td key={index} className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]" onClick={() => { setUpdateWorkHour({ emp: emp[0], index: index, workHour: workHour }), setWorkHourEditor(true) }}>
+                                        <td key={index} className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#fff]" onClick={() => { setUpdateWorkHour({ emp: emp[0], index: index, workHour: workHour }), setWorkHourEditor(true) }}>
                                             {workHour ? `${workHour}hr` : ""}
                                         </td>
                                     ))
