@@ -90,10 +90,54 @@ export default function Page() {
                         <tr className="rounded-xl">
                             <th className="py-4 px-4 flex justify-between gap-3">
                                 <span>SL</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                                    <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                    <g opacity="0.4">
+                                        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                    </g>
+                                </svg>
                             </th>
-                            <th className="py-4 text-start px-4">Name</th>
-                            <th className="py-4 text-start px-4">From</th>
-                            <th className="py-4 text-start px-4">To</th>
+                            <th className="py-4 text-start px-4 ">
+                                <div className="flex items-center justify-between">
+                                    <span>Name</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-start px-4">
+                                <div className="flex justify-between items-center">
+                                    <span>From</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-start px-4">
+                                <div className="flex items-center justify-between">
+                                    <span>To</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
                             <th className="py-4 text-center px-4">Total</th>
                         </tr>
                     </thead>
