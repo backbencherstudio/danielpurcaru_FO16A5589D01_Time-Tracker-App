@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from '../ui/dialog';
+import prof from "@/public/images/profileIcon.png"
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
 
@@ -17,8 +18,9 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
 
                     {/* Upload Photo Section */}
                     <div className="flex justify-center items-center space-x-4 border-dashed border-2 border-gray-400 rounded-lg p-4 mb-6">
-                        <Image src="/path/to/uploadIcon.png" alt="Upload" width={24} height={24} />
+                        <Image src={prof} alt="Upload" width={24} height={24} />
                         <p className="text-gray-500 text-sm">Upload photo (Maximum size of 2MB)</p>
+                        
                     </div>
 
                     {/* Employee Form Fields */}
@@ -123,3 +125,4 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
         </div>
     );
 }
+ 

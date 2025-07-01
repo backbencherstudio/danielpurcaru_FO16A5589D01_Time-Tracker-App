@@ -7,36 +7,18 @@ import down from '@/public/icons/file-download.svg';
 import { Eye, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+import Link from 'next/link';
 
 const initialData = [
-    { id: 1, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 2, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 3, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 4, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 15, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 25, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 53, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 54, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 51, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 52, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 35, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    // Add more rows as needed
-    { id: 1, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 2, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 3, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 4, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 15, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 25, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 53, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 54, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 51, name: 'Project 1', assignee: 'John Doe', dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
-    { id: 52, name: 'Project 2', assignee: 'Jane Smith', dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
-    { id: 35, name: 'Project 3', assignee: 'Alice Brown', dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
-    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    { id: 45, name: 'Project 4', assignee: 'Bob White', dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
-    // Add more rows as needed
+    { id: 1, name: 'Project 1', assignees: ['/images/Employee/Jerome.png', '/images/Employee/sanvannah.png', '/images/Employee/ronald.png', '/images/Employee/ronald.png', '/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
+    { id: 2, name: 'Project 2', assignees: ['/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
+    { id: 3, name: 'Project 3', assignees: ['/images/Employee/ronald.png', '/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
+    { id: 4, name: 'Project 4', assignees: ['/images/Employee/ronald.png'], dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    { id: 5, name: 'Project 5', assignees: ['/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'Normal', price: '$10,000', status: 'Complete' },
+    { id: 6, name: 'Project 6', assignees: ['/images/Employee/Jerome.png', '/images/Employee/sanvannah.png', '/images/Employee/ronald.png', '/images/Employee/ronald.png', '/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
+    { id: 7, name: 'Project 7', assignees: ['/images/Employee/ronald.png', '/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'Urgent', price: '$10,000', status: 'In Progress' },
+    { id: 8, name: 'Project 8', assignees: ['/images/Employee/ronald.png'], dueDate: '01/06/2025', priority: 'Low', price: '$10,000', status: 'Complete' },
+    // More projects can be added here
 ];
 
 export default function Page() {
@@ -85,51 +67,74 @@ export default function Page() {
             <div className="overflow-x-auto w-full rounded-tl-[10px] rounded-tr-[10px]">
                 <div className="w-full min-w-fit bg-slate-50 flex">
                     <div className="w-full min-w-fit inline-flex justify-start items-center bg-slate-50">
-                    <div className="w-16 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
-                        <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Inter'] leading-tight">SL</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-36 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
-                        <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Project Name</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-28 pl-4 py-4 bg-slate-50 flex justify-between items-center">
-                        <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Assignee</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-36 pl-10 py-4 bg-slate-50 flex justify-between items-center gap-3">
-                        <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Due Date</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-32 pl-10 py-4 bg-slate-50 flex justify-between items-center">
-                        <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Priority</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-36 pl-14 py-4 bg-slate-50 flex justify-between items-center">
-                        <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Price</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-40 pl-14 py-4 bg-slate-50 flex justify-between items-center">
-                        <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Status</div>
-                        <Image src={swap} alt={''} className=' w-fit ' />
-                    </div>
-                    <div className="w-36 p-4 bg-slate-50 flex justify-center items-center">
-                        <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Action</div>
+                        {/* Column Headers */}
+                        <div className="w-16 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
+                            <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Inter'] leading-tight">SL</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-36 pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3">
+                            <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Project Name</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-34 pl-4 py-4 bg-slate-50 flex justify-between items-center">
+                            <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Assignees</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-36 pl-10 py-4 bg-slate-50 flex justify-between items-center gap-3">
+                            <div className="flex-1 justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Due Date</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-32 pl-10 py-4 bg-slate-50 flex justify-between items-center">
+                            <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Priority</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-36 pl-14 py-4 bg-slate-50 flex justify-between items-center">
+                            <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Price</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-46 pl-18 py-4 bg-slate-50 flex justify-between items-center">
+                            <div className="justify-center flex-1  text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Status</div>
+                            <Image src={swap} alt={''} className=' w-fit ' />
+                        </div>
+                        <div className="w-36 p-4 bg-slate-50 flex justify-center items-center">
+                            <div className="justify-center text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">Action</div>
+                        </div>
                     </div>
                 </div>
-                </div>
+
                 {currentItems.map((row) => (
                     <div key={row.id} className="w-full min-w-fit bg-white flex">
-                         <div className="w-16 pl-4 py-4 flex justify-start items-center">{row.id}</div>
+                        {/* Project Data */}
+                        <div className="w-16 pl-4 py-4 flex justify-start items-center">{row.id}</div>
                         <div className="w-36 pl-4 py-4 flex justify-start items-center">{row.name}</div>
-                        <div className="w-28 pl-4 py-4 flex justify-start items-center">{row.assignee}</div>
+
+                        <div className="w-34 pl-4 py-4 flex justify-start items-center">
+                            {/* Render Assignees as images */}
+                            {row.assignees.slice(0, 3).map((assignee, index) => (
+                                <Image
+                                    key={index}
+                                    className={`w-6 h-6 rounded-full border-2 border-sky-300 ${index === 1 ? "-translate-x-2" : ""} ${index === 2 ? "-translate-x-4.5" : ""}`}
+                                    src={assignee}
+                                    alt={`Assignee ${index + 1}`}
+                                    width={2400}
+                                    height={2400}
+                                />
+                            ))}
+                            {/* Show number of remaining assignees */}
+                            {row.assignees.length > 3 && (
+                                <div className=" bg-gray-100 p-1.5 -translate-x-7.5 rounded-full text-neutral-800 text-sm font-normal font-['Urbanist'] leading-none">{row.assignees.length - 3}+</div>
+                            )}
+                        </div>
+
+
                         <div className="w-36 pl-10 py-4 flex justify-start items-center">{row.dueDate}</div>
                         <div className="w-32 pl-10 py-4 flex justify-start items-center">{row.priority}</div>
                         <div className="w-36 pl-14 py-4 flex justify-start items-center">{row.price}</div>
-                        <div className="w-40 pl-14 py-4 flex justify-start items-center">{row.status}</div>
-                        <div className="w-36 p-4 flex justify-start items-center gap-3">
-                            <button className="bg-sky-300 rounded-lg p-2 text-white"><Eye /></button>
-                            <button className="bg-red-500 rounded-lg p-2 text-white"><Trash2 /></button>
+                        <div className={`w-32 mx-6.5  my-auto h-8 flex justify-center  items-center text-teal-600 ${row.status==='Complete'? 'bg-sky-100' : 'bg-green-50'} rounded-lg text-[10px] font-medium font-['Inter'] leading-none`}>{row.status}</div>
+                         
+                        <div className="w-36 p-2 flex justify-center items-center gap-3">
+                            <Link id='viewproject' className="bg-sky-300 rounded-lg p-2 text-white" href={'/project/projectDetails'}><Eye /></Link>
+                            <button id='deleteproject' className="bg-red-500 rounded-lg p-2 text-white"><Trash2 /></button>
                         </div>
                     </div>
                 ))}

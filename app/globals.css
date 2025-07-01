@@ -190,15 +190,44 @@ input[type="checkbox"]:hover {
     color: #4a148c;
 }
 
+/* Event Types Styling */
 .fc-event {
-    background-color: #4caf50; /* For "Off Day" */
     border-radius: 10px;
+    color: white;
+    padding: 5px;
 }
 
+/* For "Off Day" */
+.fc-event-OffDay {
+    background-color: #af4c6a; 
+    border: 2px solid #8c1c36; /* Darker border */
+}
+
+/* For "Holiday" */
 .fc-event-Holiday {
-    background-color: #03a9f4; /* For "Holiday" */
+    background-color: #1293cf;
+    border: 2px solid #0c6c9c; /* Darker border */
 }
 
+/* For "Exam Day" */
+.fc-event-ExamDay {
+    background-color: #ff9800; 
+    border: 2px solid #f57c00; /* Darker border */
+}
+
+/* For "Seminar" */
+.fc-event-Seminar {
+    background-color: #4caf50; 
+    border: 2px solid #388e3c; /* Darker border */
+}
+
+/* For other events with custom styling */
+.fc-event-custom {
+    background-color: #9e9e9e; 
+    border: 2px solid #757575; /* Darker border */
+}
+
+/* Button Styling */
 .fc-button {
     background-color: #03a9f4;
     color: white;
@@ -206,11 +235,12 @@ input[type="checkbox"]:hover {
 }
 
 .fc-button:hover {
-    background-color: #0288d1;
+    background-color: #af4c6a;
 }
-.fc-col-header-cell{
-        height: 56px ;
-        justify-content: center;
-        background: #F6F8FA;
 
+/* Column Header Styling */
+.fc-col-header-cell {
+    height: 56px;
+    justify-content: center;
+    background: #F6F8FA;
 }

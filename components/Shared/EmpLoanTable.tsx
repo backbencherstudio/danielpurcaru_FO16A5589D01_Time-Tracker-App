@@ -7,7 +7,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
-                                    <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employees</span>
+                                    <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>
 
                 {/* Search Bar */}
                 <div className="flex-1 flex items-center gap-[10px] border border-[#E9EAEC] rounded-xl px-4 py-3 relative">
