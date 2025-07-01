@@ -7,6 +7,7 @@ import down from '@/public/icons/file-download.svg';
 import { Eye, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+import Link from 'next/link';
 
 const initialData = [
     { id: 1, name: 'Project 1', assignees: ['/images/Employee/Jerome.png', '/images/Employee/sanvannah.png', '/images/Employee/ronald.png', '/images/Employee/ronald.png', '/images/Employee/sanvannah.png'], dueDate: '01/06/2025', priority: 'High', price: '$10,000', status: 'In Progress' },
@@ -132,8 +133,8 @@ export default function Page() {
                         <div className={`w-32 mx-6.5  my-auto h-8 flex justify-center  items-center text-teal-600 ${row.status==='Complete'? 'bg-sky-100' : 'bg-green-50'} rounded-lg text-[10px] font-medium font-['Inter'] leading-none`}>{row.status}</div>
                          
                         <div className="w-36 p-2 flex justify-center items-center gap-3">
-                            <button className="bg-sky-300 rounded-lg p-2 text-white"><Eye /></button>
-                            <button className="bg-red-500 rounded-lg p-2 text-white"><Trash2 /></button>
+                            <Link id='viewproject' className="bg-sky-300 rounded-lg p-2 text-white" href={'/project/projectDetails'}><Eye /></Link>
+                            <button id='deleteproject' className="bg-red-500 rounded-lg p-2 text-white"><Trash2 /></button>
                         </div>
                     </div>
                 ))}
