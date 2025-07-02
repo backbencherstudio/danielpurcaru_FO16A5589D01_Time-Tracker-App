@@ -2,6 +2,10 @@
 
 import NotificationBanner from "../notificationBanner/NotificationBanner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import Profilepic from '@/public/images/Employee/ronald.png';
+import Profilepic2 from '@/public/images/Employee/sanvannah.png';
+import Profilepic3 from '@/public/images/profileIcon.png';
+import { time } from "console";
 
 export default function Navbar() {
     const userName = "Jonathan"
@@ -11,6 +15,32 @@ export default function Navbar() {
         console.log(e.target.value);
     };
 
+    const notifications = [
+  {
+    imageSrc: Profilepic3,
+    name: "Kathryn Murphy",
+    message: "Kathryn Murphy has requested a payment of $150",
+    time: "Now",
+  },
+  {
+    imageSrc: Profilepic,
+    name: "Leslie Alexander",
+    message: "Leslie Alexander has requested a payment of $150",
+    time: "1pm",
+  },
+  {
+    imageSrc: Profilepic2,
+    name: "Leslie Murphy",
+    message: "Leslie Murphy has requested a payment of $150",
+    time: "1pm",
+  },
+  {
+    imageSrc: Profilepic3,
+    name: "Kathryn Murphy",
+    message: "Kathryn Murphy has requested a payment of $150",
+    time: "1pm",
+  },
+];
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
             <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
@@ -43,7 +73,9 @@ export default function Navbar() {
                         </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-4 rounded-xl shadow-[5px_5px_50px_0px_rgba(26,32,44,0.06)]">
-                        <NotificationBanner />
+                       
+          <NotificationBanner notifications={notifications}/>
+         
                     </PopoverContent>
                 </Popover>
 

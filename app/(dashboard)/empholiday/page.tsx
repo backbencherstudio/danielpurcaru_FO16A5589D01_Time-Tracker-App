@@ -60,6 +60,7 @@ export default function Page() {
     // Toggle visibility of the Add Holiday form
     const handleAddHolidayOpen = () => {
         setAddHoliday((prev) => !prev);
+
     }
 
     // Handle adding holiday (this is where you should handle the form submission)
@@ -67,6 +68,7 @@ export default function Page() {
         e.preventDefault();
         // Add holiday logic (for now just log the date values)
         console.log("Holiday added from:", startDate, "to:", endDate);
+        
     }
 
     return (
