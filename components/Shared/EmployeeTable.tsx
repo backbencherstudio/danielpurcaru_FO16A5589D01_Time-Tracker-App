@@ -3,7 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import { useState, useEffect } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import EditEmployeeDialog from "./EditEmployeeDialog"
+import EditEmployeeDialog from './EditEmployeeDialog'
 
 interface EmployeeTableProps {
     empData: (string | number | StaticImageData)[][];
@@ -40,7 +40,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
         setSearchQuery(query);
         if (query) {
             const filtered = empData.filter((emp) =>
-                emp[2].toLowerCase().includes(query.toLowerCase()) // Assuming `emp[2]` is the name field
+                `${emp[2]}`.toLowerCase().includes(query.toLowerCase()) // Assuming `emp[2]` is the name field
             );
             setFilteredEmpData(filtered);
         } else {
