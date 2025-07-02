@@ -3,6 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import { useState, useEffect } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import EditEmployeeDialog from "./EditEmployeeDialog"
 
 interface EmployeeTableProps {
     empData: (string | number | StaticImageData)[][];
