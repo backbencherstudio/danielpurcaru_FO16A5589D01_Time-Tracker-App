@@ -1,5 +1,5 @@
 'use client'
-// components/AcademicCalendar.js
+// components/AcademicCalendar.tsx
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction'; // for event interaction
 import FullCalendar from '@fullcalendar/react';
@@ -13,14 +13,15 @@ export default function AcademicCalendar() {
     const [eventTitle, setEventTitle] = useState('');
     const [eventType, setEventType] = useState(''); // Event type
     const [selectedEventId, setSelectedEventId] = useState(null);
+    
+    // Convert 'id' to string to match FullCalendar's requirement for EventInput
     const [events, setEvents] = useState([
-        { id: 1, title: 'Off Day', date: '2025-07-01', className: 'fc-event-OffDay' },
-        { id: 2, title: 'Off Day', date: '2025-07-08', className: 'fc-event-OffDay' },
-        { id: 3, title: 'Holiday', date: '2025-07-19', className: 'fc-event-Holiday' },
-        { id: 4, title: 'Event: Seminar', date: '2025-07-22', className: 'fc-event-Seminar' },
-        { id: 5, title: 'Event2', date: '2025-07-25', className: 'fc-event-ExamDay' },
-        { id: 6, title: 'Holiday', date: '2025-07-29', className: 'fc-event-Holiday' },
-        // Add more events as necessary
+        { id: '1', title: 'Off Day', date: '2025-07-01', className: 'fc-event-OffDay' },
+        { id: '2', title: 'Off Day', date: '2025-07-08', className: 'fc-event-OffDay' },
+        { id: '3', title: 'Holiday', date: '2025-07-19', className: 'fc-event-Holiday' },
+        { id: '4', title: 'Event: Seminar', date: '2025-07-22', className: 'fc-event-Seminar' },
+        { id: '5', title: 'Event2', date: '2025-07-25', className: 'fc-event-ExamDay' },
+        { id: '6', title: 'Holiday', date: '2025-07-29', className: 'fc-event-Holiday' },
     ]);
 
     // Event handlers for calendar date click
@@ -44,7 +45,7 @@ export default function AcademicCalendar() {
     // Save New Event
     const handleSaveEvent = () => {
         // Add new event to the events list
-        const newEvent = { id: Date.now(), title: eventTitle, date: selectedDate, className: eventType };
+        const newEvent = { id: Date.now().toString(), title: eventTitle, date: selectedDate, className: eventType };
         setEvents([...events, newEvent]); // Update the events state with the new event
 
         // Log and reset the dialog
