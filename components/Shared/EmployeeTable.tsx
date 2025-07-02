@@ -39,7 +39,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
         setSearchQuery(query);
         if (query) {
             const filtered = empData.filter((emp) =>
-                emp[2].toLowerCase().includes(query.toLowerCase()) // Assuming `emp[2]` is the name field
+                `${emp[2]}`.toLowerCase().includes(query.toLowerCase()) // Assuming `emp[2]` is the name field
             );
             setFilteredEmpData(filtered);
         } else {
