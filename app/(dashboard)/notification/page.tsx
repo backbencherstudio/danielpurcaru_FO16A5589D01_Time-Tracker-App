@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Profilepic from '@/public/images/Employee/ronald.png';
 import Profilepic2 from '@/public/images/Employee/sanvannah.png';
+import NotificationBanner from "@/components/notificationBanner/NotificationBanner";
 
 const NotificationCard = ({ imageSrc, name, message }) => (
     <div className="w-full p-4 flex flex-col sm:flex-row items-center gap-5 sm:gap-8 rounded-lg outline-1 outline-offset-[-1px] outline-gray-100 bg-white">
@@ -39,6 +40,8 @@ export default function Page() {
                     <div className="justify-start text-neutral-800 text-2xl font-semibold font-['Urbanist'] leading-9">Notification</div>
                     <div className="self-stretch justify-start text-zinc-500 text-base font-normal font-['Urbanist'] leading-relaxed">All Notifications</div>
                 </div>
+        <NotificationBanner/>
+
 
                 {/* Notification Cards */}
                 <NotificationCard
