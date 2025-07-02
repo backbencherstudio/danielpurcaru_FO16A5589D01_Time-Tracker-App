@@ -171,6 +171,8 @@ export default function EmployeeTable({ empData, start, end }: EmployeeTableProp
                         ))}
                     </tbody>
                 </table>
+                            {isModalOpen  && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen}/>}
+                
             </div>
         </div>
     );

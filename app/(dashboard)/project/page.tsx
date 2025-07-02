@@ -143,7 +143,7 @@ export default function Page() {
             {/* Pagination Section */}
             <div className="w-full flex justify-between items-center mt-4">
                 <div className="flex items-center gap-2">
-                    <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="text-xs sm:text-base border py-2 rounded-lg">
+                    <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="text-xs sm:text-base border p-2 rounded-lg">
                         <MdKeyboardArrowLeft />
                     </button>
                     {Array.from({ length: totalPages }, (_, index) => (
@@ -151,7 +151,7 @@ export default function Page() {
                             {index + 1}
                         </button>
                     ))}
-                    <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="text-xs sm:text-base border py-2 rounded-lg">
+                    <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="text-xs sm:text-base border p-2 rounded-lg">
                         <MdKeyboardArrowRight />
                     </button>
                 </div>

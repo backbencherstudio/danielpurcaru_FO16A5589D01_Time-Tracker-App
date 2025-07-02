@@ -25,7 +25,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle }) {
                                 <input
                                     type="text"
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
-                                    placeholder="Enter First Name"
+                                    placeholder="Enter Full Name"
                                 />
                             </div>
 
