@@ -1,34 +1,83 @@
 import React from 'react'
+import profile from '@/public/images/profileIcon.png'
+import Image from 'next/image'
+import Link from 'next/link'
+import { formatDistanceToNow } from 'date-fns'
 
 const NotificationBanner = () => {
+    // Function to generate relative time
+    const getRelativeTime = (date: Date) => {
+        return formatDistanceToNow(date, { addSuffix: true }) // Formats as 'x minutes ago' or 'about x hours ago'
+    }
+
+    const currentTime = new Date(); // Replace this with the actual time when the notification was created
+
     return (
-        <div className="w-96 p-4 bg-white rounded-xl shadow-[5px_5px_50px_0px_rgba(26,32,44,0.06)] inline-flex flex-col justify-center items-start gap-4">
-            <div className="self-stretch inline-flex justify-start items-center gap-2.5">
-                <div className="flex-1 justify-start text-neutral-800 text-base font-bold font-['Urbanist'] leading-relaxed">Notification</div>
-            </div>
-            <div className="self-stretch flex flex-col justify-start items-start">
-                <div className="self-stretch flex flex-col justify-center items-center">
-                    <div className="self-stretch px-4 py-5 inline-flex justify-start items-center gap-3 overflow-hidden">
-                        <img className="w-10 h-10 rounded-full" src="https://placehold.co/40x40" />
-                        <div className="flex-1 inline-flex flex-col justify-center items-start">
-                            <div className="self-stretch inline-flex justify-start items-center gap-2.5">
-                                <div className="flex-1 h-6 justify-center text-neutral-800 text-base font-normal font-['Urbanist'] leading-relaxed">Marvin McKinney</div>
-                                <div className="text-right justify-center text-zinc-500 text-xs font-normal font-['Urbanist'] leading-snug">Now</div>
-                            </div>
-                            <div className="self-stretch inline-flex justify-start items-center gap-2.5">
-                                <div className="flex-1 h-5 justify-center text-zinc-500 text-xs font-normal font-['Urbanist'] leading-tight">Ronald Richards has requested a payment of $150</div>
-                            </div>
+        <div className="w-full bg-white flex flex-col gap-4">
+            {/* Notification Header */}
+            <div className="text-neutral-800 text-base font-bold leading-relaxed ">Notification</div>
+
+            {/* Notification Content */}
+            <div className="w-full flex divide-slate-100 divide-y-1 flex-col">
+                <div className="flex items-center py-5 gap-4">
+                    {/* Profile Image */}
+                    <Image className="w-10 h-10 rounded-full" src={profile} alt="Profile" />
+
+                    {/* Notification Content */}
+                    <div className="flex flex-col flex-grow">
+                        <div className="flex justify-between items-center">
+                            {/* Name & Time */}
+                            <div className="text-neutral-800 text-base font-normal font-['Urbanist'] leading-relaxed">Marvin McKinney</div>
+                            <div className="text-zinc-500 text-xs">{getRelativeTime(currentTime)}</div>
                         </div>
+
+                        {/* Message */}
+                        <div className="text-zinc-500 text-xs mt-1">Ronald Richards has requested a payment of $150</div>
                     </div>
-                    <div data-darkmode="No" data-transparant="No" className="self-stretch h-px p-2.5 bg-slate-50" />
                 </div>
-                 
+
+                {/* Repeat for other notifications */}
+                <div className="flex items-center py-5 gap-4">
+                    <Image className="w-10 h-10 rounded-full" src={profile} alt="Profile" />
+                    <div className="flex flex-col flex-grow">
+                        <div className="flex justify-between items-center">
+                            <div className="text-neutral-800 text-base font-normal font-['Urbanist'] leading-relaxed">Marvin McKinney</div>
+                            <div className="text-zinc-500 text-xs">{getRelativeTime(currentTime)}</div>
+                        </div>
+                        <div className="text-zinc-500 text-xs mt-1">Ronald Richards has requested a payment of $150</div>
+                    </div>
+                </div>
+
+                <div className="flex items-center py-5 gap-4">
+                    <Image className="w-10 h-10 rounded-full" src={profile} alt="Profile" />
+                    <div className="flex flex-col flex-grow">
+                        <div className="flex justify-between items-center">
+                            <div className="text-neutral-800 text-base font-normal font-['Urbanist'] leading-relaxed">Marvin McKinney</div>
+                            <div className="text-zinc-500 text-xs">{getRelativeTime(currentTime)}</div>
+                        </div>
+                        <div className="text-zinc-500 text-xs mt-1">Ronald Richards has requested a payment of $150</div>
+                    </div>
+                </div>
+
+                <div className="flex items-center py-5 gap-4">
+                    <Image className="w-10 h-10 rounded-full" src={profile} alt="Profile" />
+                    <div className="flex flex-col flex-grow">
+                        <div className="flex justify-between items-center">
+                            <div className="text-neutral-800 text-base font-normal font-['Urbanist'] leading-relaxed">Marvin McKinney</div>
+                            <div className="text-zinc-500 text-xs">{getRelativeTime(currentTime)}</div>
+                        </div>
+                        <div className="text-zinc-500 text-xs mt-1">Ronald Richards has requested a payment of $150</div>
+                    </div>
+                </div>
             </div>
-            <div className="self-stretch h-12 px-6 py-5 bg-sky-300 rounded-lg inline-flex justify-center items-center gap-2">
-                <div className="text-center justify-start text-white text-base font-medium font-['Urbanist'] leading-relaxed">Show All Notification</div>
-            </div>
+
+            {/* Action Button */}
+            <Link className="w-full h-12 px-6 py-3 bg-sky-300 rounded-lg flex justify-center items-center" href={'/notification'}>
+                <span className="text-white text-base font-medium">Show All Notifications</span>
+            </Link>
         </div>
     )
 }
 
 export default NotificationBanner
+ 
