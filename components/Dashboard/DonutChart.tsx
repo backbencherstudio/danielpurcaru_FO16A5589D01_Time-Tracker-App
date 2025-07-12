@@ -17,12 +17,12 @@ const roboto = Roboto({
 });
 
 export default function DonutChart({ typeOfEmp, title }) {
-    const series = typeOfEmp[0];
+    const series = typeOfEmp.map((type: typeof typeOfEmp)=> type.count);
     const options: ApexOptions = {
         chart: {
             type: "donut" as const
         },
-        labels: typeOfEmp[1],
+        labels: typeOfEmp.map((type:typeof typeOfEmp)=> type.role),
         colors: ["#F59E0B", "#3B82F6", "#14B8A6"],
         legend: {
             show: false,
@@ -51,7 +51,7 @@ export default function DonutChart({ typeOfEmp, title }) {
         },
     };
 
-    const value: number = typeOfEmp[0].reduce(
+    const value: number = series.reduce(
         (sum: number, item: number): number => {
             return sum + item;
         },

@@ -1,3 +1,5 @@
+'use client'
+
 import DashboardCard from "@/components/reusable/DashboardCard";
 import DonutChart from "@/components/Dashboard/DonutChart";
 import { Roboto } from 'next/font/google';
@@ -8,6 +10,10 @@ import sanvannah from "@/public/images/Employee/sanvannah.png";
 import guy from "@/public/images/Employee/guy.png";
 import Jerome from "@/public/images/Employee/Jerome.png";
 import theresa from "@/public/images/Employee/theresa.png";
+import { useEffect, useState } from "react";
+import { UserService } from "@/service/user/user.service";
+import { CookieHelper } from "@/helper/cookie.helper";
+import toast from "react-hot-toast";
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -16,41 +22,122 @@ const roboto = Roboto({
 });
 
 export default function Home() {
-  const cardData = [
-    ["Total Employee", 2500],
-    ["Total Hours", 1540],
-    ["Labor Cost", 3540],
-    ["Active Project", 10]
-  ]
-      const empData = [
-        [1, ronald, "Ronald Richards", "Baker", 10, 160],
-        [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-        [3, guy, "Guy Hawkins", "Electrician", 14, 168],
-        [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
-        [5, theresa, "Theresa Webb", "Electrician", 10, 142],
-    ];
-  const typeOfEmp = [[500, 700, 900], ["Baker", "Handyman", "Electrician"],["#F59E0B", "#3B82F6", "#14B8A6"]]
+  const [loading, setLoading] = useState(false);
+  const [cardData, setCardData] = useState({})
+  const [typeOfEmp, setTypeOfEmp] = useState([])
+  const [chartData, setChartData] = useState([])
+  useEffect(() => {
+    setLoading(true);
+
+    const fetchSummeryData = async () => {
+      try {
+        const res = await UserService?.getSummary({
+          title: "Home",
+          href: "/"
+        });
+        if (res?.data?.success) {
+          // console.log("Response:", res.data.data);
+          setCardData(res?.data?.data)
+        } else {
+          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchEmpRoleOverview = async () => {
+      try {
+        const res = await UserService?.getEmpRoleOverview({
+          title: "Home",
+          href: "/"
+        });
+        if (res?.data?.success) {
+          // console.log("Response:", res.data.data);
+          setTypeOfEmp(res.data.data.roles)
+        } else {
+          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
 
-  const totalEmp:any = typeOfEmp[0].reduce(
-    (sum: number, item: number): number => {
-      return sum + item;
-    },
-    0 // Initial value is 0
-  );
+    const fetchAttendanceReport = async () => {
+      try {
+        const res = await UserService?.getAttendanceReport({
+          title: "Home",
+          href: "/"
+        });
+        if (res?.data?.success) {
+          console.log("Response:", res.data.data);
+          setChartData(res.data.data)
+        } else {
+          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  // Calculate the percentage for each element in typeOfEmp[0]
-  const percentEmp = typeOfEmp[0].map((emp) => {
-    return ((emp / totalEmp) * 100).toFixed(2)  // Calculating percentage of each value in the array
-  });
+    fetchAttendanceReport();
+    fetchEmpRoleOverview();
+    fetchSummeryData();
+  }, []);
 
+  const empData = [
+    [1, ronald, "Ronald Richards", "Baker", 10, 160],
+    [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
+    [3, guy, "Guy Hawkins", "Electrician", 14, 168],
+    [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
+    [5, theresa, "Theresa Webb", "Electrician", 10, 142],
+  ];
+  const typeOfEmpColor = ["#F59E0B", "#3B82F6", "#14B8A6"]
+
+
+  // const totalEmp: any = typeOfEmp.reduce(
+  //   (sum: number, item: number): number => {
+  //     return sum + item;
+  //   },
+  //   0 // Initial value is 0
+  // );
+
+  // // Calculate the percentage for each element in typeOfEmp[0]
+  // const percentEmp = typeOfEmp[0].map((emp) => {
+  //   return ((emp / totalEmp) * 100).toFixed(2)  // Calculating percentage of each value in the array
+  // });
+
+console.log("Fetch data ",chartData)
 
   return (
     <div className="space-y-4">
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {cardData?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
+        {loading && <div className="text-lg font-medium">Loading...</div>}
+        {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
       </div>
-      <div className="w-full flex flex-col md:flex-row gap-4">
+      {!loading && <div className="w-full flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-fit bg-white flex flex-col items-center justify-center rounded-lg">
           <div className="md:px-[56px] py-6 bg-white w-fit rounded-lg">
             <DonutChart typeOfEmp={typeOfEmp} title="Total Emp." />
@@ -61,27 +148,27 @@ export default function Home() {
               <span className="text-[#737373] text-[14px] font-medium">%</span>
             </div>
             <div className="pb-6">
-              {typeOfEmp[1].map((emp,index:number)=><div key={index} className="flex justify-between py-[6px]">
+              {typeOfEmp.map((emp, index: number) => <div key={index} className="flex justify-between py-[6px]">
                 <div className="flex items-center gap-3">
-                  <div className={`w-[12px] h-[12px] rounded-full bg-[${typeOfEmp[2][index]}]`}></div>
-                  <h3 className={`${roboto.className} text-[14px] text-[#404040]`}>{emp}</h3>
+                  <div className={`w-[12px] h-[12px] rounded-full bg-[${typeOfEmpColor[index]}]`}></div>
+                  <h3 className={`${roboto.className} text-[14px] text-[#404040]`}>{emp.role}</h3>
                 </div>
-                <div className={`text-[#0A0A0A] text-[14px] font-medium ${roboto.className}`}>{percentEmp[index]}%</div>
+                <div className={`text-[#0A0A0A] text-[14px] font-medium ${roboto.className}`}>{emp.percent}%</div>
               </div>)}
             </div>
           </div>
         </div>
         <div className="flex-1 bg-white rounded-lg">
-          <BarChart />
+          <BarChart newData={chartData}/>
         </div>
-      </div>
-      <div className="bg-white rounded-lg p-5 space-y-6">
+      </div>}
+      {!loading && <div className="bg-white rounded-lg p-5 space-y-6">
         <div className="flex justify-between">
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <button className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</button>
         </div>
-        <EmployeeTable empData={empData} start={0} end={5}/>
-      </div>
+        <EmployeeTable empData={empData} start={0} end={5} />
+      </div>}
     </div>
   );
 }

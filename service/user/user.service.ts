@@ -7,10 +7,25 @@ const config = {
   },
 };
 
+
+interface SummaryParams {
+  title: string;
+  href: string;
+}
+
+
+interface GetSummaryConfig {
+  headers: {
+    "Content-Type": string;
+    Authorization: string;
+  };
+}
+
 export const UserService = {
   login: async ({ email, password }: { email: string; password: string }) => {
+    console.log(email)
     const data = {
-      email: email,
+      identifier: email,
       password: password,
     };
     return await Fetch.post("/auth/login", data, config);
@@ -25,6 +40,7 @@ export const UserService = {
     email: string;
     password: string;
   }) => {
+    console.log(username)
     const data = {
       username: username,
       email: email,
@@ -63,6 +79,63 @@ export const UserService = {
 
     return await Fetch.get(`/user`, _config);
   },
+
+  getSummary: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    console.log("Usertoken : ", userToken)
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/summary?${queryParams}`, config);
+  },
+  getEmpRoleOverview: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    console.log("Usertoken : ", userToken)
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/employee-role-distribution?${queryParams}`, config);
+  },
+  getAttendanceReport: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    console.log("Usertoken : ", userToken)
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/attendance-report?start=${"07"}&${queryParams}`, config);
+  },
+
+
 
   findOne: async (id: number, context = null) => {
     const userToken = CookieHelper.get({ key: "token", context });
