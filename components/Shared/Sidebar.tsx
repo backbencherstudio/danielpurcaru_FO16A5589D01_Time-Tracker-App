@@ -49,9 +49,6 @@ export default function Sidebar() {
     }, [])
 
 
-    console.log("Menu : ", menu)
-
-
 
     return (
         <div className="sm:px-4 px-2 bg-white translate-y-[90px] flex flex-col gap-5 justify-between" style={{ height: "calc(100vh - 130px)" }}>

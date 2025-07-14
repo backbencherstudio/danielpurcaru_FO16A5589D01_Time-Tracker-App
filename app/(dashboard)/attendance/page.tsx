@@ -1,11 +1,15 @@
 'use client'
+import { UserService } from "@/service/user/user.service";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function Page() {
     const [days, setDays] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [WorkHourEditor, setWorkHourEditor] = useState(false);
     const [updateWorkHour, setUpdateWorkHour] = useState<any>({});
+    const [loading,setLoading] = useState(false)
+    const [attendanceData,setAttendanceData] = useState([])
     const [empWorkingHour, setEmpWorkingHour] = useState<any>([
         ["Williamson", Array(31).fill("8hr")],
         ["Floyd Miles", Array(31).fill("8hr")],
@@ -57,6 +61,31 @@ export default function Page() {
         });
     }, [selectedMonth]); // This effect runs when selectedMonth changes
 
+
+    useEffect(()=>{
+        const fetchEmpData = async () => {
+            try {
+                const res = await UserService?.getAttendanceData(selectedMonth);
+                if (res?.data?.success) {
+                    console.log("Response:", res.data.data);
+                    setAttendanceData(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchEmpData()
+    },[selectedMonth])
+
     const handleWorkHour = (emp: string, day: number, value: string, operator: string) => {
         setEmpWorkingHour(prev => {
             return prev.map(employee => {
@@ -85,7 +114,7 @@ export default function Page() {
         });
     };
 
-    console.log(empWorkingHour);
+    console.log("Attendance data : ",attendanceData);
 
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">

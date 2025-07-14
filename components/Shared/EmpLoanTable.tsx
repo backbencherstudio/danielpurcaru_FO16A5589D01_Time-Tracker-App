@@ -1,13 +1,155 @@
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment } from 'react'
+import { UserService } from '@/service/user/user.service'
 
 const EmpLoanTable = ({ empData, start, end }: any) => {
+    const [searchQuery, setSearchQuery] = useState('')
+    const [data, setData] = useState([])
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [deleteMessage, setDeleteMessage] = useState({ text: '', isError: false })
+
+    // Initialize data with empData and update when empData changes
+    useEffect(() => {
+        setData(empData)
+    }, [empData])
+
+    // Filter employees based on search query (name)
+    const filteredData = useMemo(() => {
+        if (!searchQuery) return data
+        return data.filter((emp: any) =>
+            emp?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+    }, [data, searchQuery])
+
+    // Apply pagination to filtered data
+    const paginatedData = useMemo(() => {
+        return filteredData.slice(start, start + end)
+    }, [filteredData, start, end])
+
+    // Open delete confirmation modal
+    const openDeleteModal = (loanId: any) => {
+        setLoanToDelete(loanId)
+        setIsDeleteModalOpen(true)
+    }
+
+    // Close delete confirmation modal
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false)
+        setLoanToDelete(null)
+        setDeleteMessage({ text: '', isError: false })
+    }
+
+    // Delete function
+    const handleDelete = async () => {
+        if (!loanToDelete) return;
+        setIsDeleting(true);
+        try {
+            const response = await UserService?.deleteEmpLoadData(loanToDelete);
+            console.log("Response = ", response);
+            if (response?.data?.success) {
+                setData(prevData => prevData.filter((emp: any) => emp.id !== loanToDelete)); // Use loanToDelete.id for comparison
+                setDeleteMessage({ text: 'Loan deleted successfully', isError: false });
+                closeDeleteModal()
+            } else {
+                setDeleteMessage({
+                    text: 'Failed to delete loan',
+                    isError: true,
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting loan:', error);
+            setDeleteMessage({
+                text: 'Error deleting loan',
+                isError: true,
+            });
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+
+
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
+            {/* Delete Confirmation Modal */}
+            <Transition appear show={isDeleteModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={closeDeleteModal}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-25" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <Dialog.Title
+                                        as="h3"
+                                        className="text-lg font-medium leading-6 text-gray-900"
+                                    >
+                                        Delete Loan
+                                    </Dialog.Title>
+                                    <div className="mt-2">
+                                        <p className="text-sm text-gray-500">
+                                            Are you sure you want to delete this loan? This action cannot be undone.
+                                        </p>
+                                    </div>
+                                    {/* 
+                                    {deleteMessage.text && (
+                                        <div className={`mt-4 p-2 rounded-md ${deleteMessage.isError
+                                            ? 'bg-red-100 text-red-700'
+                                            : 'bg-green-100 text-green-700'
+                                            }`}>
+                                            {deleteMessage.text}
+                                        </div>
+                                    )} */}
+
+                                    <div className="mt-4 flex justify-end space-x-3">
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
+                                            onClick={closeDeleteModal}
+                                            disabled={isDeleting}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none"
+                                            onClick={handleDelete}
+                                            disabled={isDeleting}
+                                        >
+                                            {isDeleting ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
-                                    <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>
+                <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>
 
                 {/* Search Bar */}
                 <div className="flex-1 flex items-center gap-[10px] border border-[#E9EAEC] rounded-xl px-4 py-3 relative">
@@ -27,12 +169,12 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                     </svg>
                     <input
                         type="text"
-                        placeholder="Search employee"
+                        placeholder="Search by username"
                         className="w-full text-[14px] placeholder:text-[#A0AEC0] text-[#1D1F2C] outline-none"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-
-                 
             </div>
 
             {/* Table */}
@@ -48,18 +190,29 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                         </tr>
                     </thead>
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {empData.slice(start, start + end)?.map((emp) => (
-                            <tr key={emp.SL} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="text-center p-4">{emp.SL}</td>
+                        {paginatedData?.map((emp: any, index: number) => (
+                            <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA]">
+                                <td className="text-center p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp?.image} alt="Emp image" className="w-[24px] h-[24px] rounded-full" />
-                                    <h3 className="text-nowrap">{emp.employeeName}</h3>
+                                    <Image
+                                        src={emp?.user?.avatarUrl}
+                                        alt="Emp image"
+                                        width={24}
+                                        height={24}
+                                        className="rounded-full"
+                                        unoptimized // Add if using localhost images
+                                    />
+                                    <h3 className="text-nowrap">{emp?.user?.name}</h3>
                                 </td>
-
-                                <td className=" p-4">{emp.date}</td>
-                                <td className=" p-4">${emp.price}</td>
+                                <td className="p-4">
+                                    {emp?.created_at ? new Date(emp.created_at).toISOString().split('T')[0] : null}
+                                </td>
+                                <td className="p-4">${emp?.loan_amount}</td>
                                 <td className="flex items-center justify-center p-4">
-                                    <div className="w-7 h-7 bg-red-600 rounded-sm flex justify-center items-center">
+                                    <div
+                                        className="w-7 h-7 bg-red-600 rounded-sm flex justify-center items-center cursor-pointer hover:bg-red-700 transition-colors"
+                                        onClick={() => openDeleteModal(emp?.id)}
+                                    >
                                         <Trash2 className='text-white' size={18} />
                                     </div>
                                 </td>
@@ -68,6 +221,13 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Empty state when no results found */}
+            {filteredData.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                    No employees found matching your search
+                </div>
+            )}
 
             {/* Empty Overlay for Modal/Other Usage */}
             <div className="bg-gray-300 top-0 left-0 right-0 bottom-0 fixed z-[99] hidden"></div>

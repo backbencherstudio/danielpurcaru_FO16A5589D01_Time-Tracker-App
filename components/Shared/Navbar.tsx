@@ -12,7 +12,6 @@ export default function Navbar() {
     const userMail = "demo@mail.com"
     const profilePic = "/images/profileIcon.png";
     const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(e.target.value);
     };
 
     const notifications = [

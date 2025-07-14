@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { UserService } from "@/service/user/user.service";
 import { CookieHelper } from "@/helper/cookie.helper";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -36,7 +37,6 @@ export default function Home() {
           href: "/"
         });
         if (res?.data?.success) {
-          // console.log("Response:", res.data.data);
           setCardData(res?.data?.data)
         } else {
           toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -60,7 +60,6 @@ export default function Home() {
           href: "/"
         });
         if (res?.data?.success) {
-          // console.log("Response:", res.data.data);
           setTypeOfEmp(res.data.data.roles)
         } else {
           toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -85,7 +84,6 @@ export default function Home() {
           href: "/"
         });
         if (res?.data?.success) {
-          console.log("Response:", res.data.data);
           setChartData(res.data.data)
         } else {
           toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -101,35 +99,43 @@ export default function Home() {
         setLoading(false);
       }
     }
-
+    const fetchEmpData = async () => {
+      try {
+        const res = await UserService?.getEmpData(5);
+        if (res?.data?.success) {
+          console.log("Response:", res.data.data);
+          setEmpData(res.data.data)
+        } else {
+          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchAttendanceReport();
     fetchEmpRoleOverview();
     fetchSummeryData();
+    fetchEmpData();
   }, []);
 
-  const empData = [
-    [1, ronald, "Ronald Richards", "Baker", 10, 160],
-    [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-    [3, guy, "Guy Hawkins", "Electrician", 14, 168],
-    [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
-    [5, theresa, "Theresa Webb", "Electrician", 10, 142],
-  ];
+  const [empData, setEmpData] = useState([]);
+  // [
+  //   [1, ronald, "Ronald Richards", "Baker", 10, 160],
+  //   [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
+  //   [3, guy, "Guy Hawkins", "Electrician", 14, 168],
+  //   [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
+  //   [5, theresa, "Theresa Webb", "Electrician", 10, 142],
+  // ];
   const typeOfEmpColor = ["#F59E0B", "#3B82F6", "#14B8A6"]
 
-
-  // const totalEmp: any = typeOfEmp.reduce(
-  //   (sum: number, item: number): number => {
-  //     return sum + item;
-  //   },
-  //   0 // Initial value is 0
-  // );
-
-  // // Calculate the percentage for each element in typeOfEmp[0]
-  // const percentEmp = typeOfEmp[0].map((emp) => {
-  //   return ((emp / totalEmp) * 100).toFixed(2)  // Calculating percentage of each value in the array
-  // });
-
-console.log("Fetch data ",chartData)
+  console.log("Fetch data ", empData)
 
   return (
     <div className="space-y-4">
@@ -159,15 +165,15 @@ console.log("Fetch data ",chartData)
           </div>
         </div>
         <div className="flex-1 bg-white rounded-lg">
-          <BarChart newData={chartData}/>
+          <BarChart newData={chartData} />
         </div>
       </div>}
       {!loading && <div className="bg-white rounded-lg p-5 space-y-6">
         <div className="flex justify-between">
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
-          <button className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</button>
+          <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData} start={0} end={5} />
+        <EmployeeTable empData={empData}/>
       </div>}
     </div>
   );

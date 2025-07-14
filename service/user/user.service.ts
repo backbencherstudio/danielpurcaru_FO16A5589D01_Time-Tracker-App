@@ -14,6 +14,8 @@ interface SummaryParams {
 }
 
 
+
+
 interface GetSummaryConfig {
   headers: {
     "Content-Type": string;
@@ -100,7 +102,7 @@ export const UserService = {
   },
   getEmpRoleOverview: async (params: SummaryParams, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
-    console.log("Usertoken : ", userToken)
+
     const config: GetSummaryConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +120,7 @@ export const UserService = {
   },
   getAttendanceReport: async (params: SummaryParams, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
-    console.log("Usertoken : ", userToken)
+
     const config: GetSummaryConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -134,6 +136,82 @@ export const UserService = {
 
     return await Fetch.get(`/dashboard/attendance-report?start=${"07"}&${queryParams}`, config);
   },
+  getEmpData: async (limit?: number, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+    }).toString();
+
+    return await Fetch.get(`/employee?${queryParams}`, config);
+  },
+  getAllEmpData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee`, config);
+  },
+
+  getAttendanceData: async (month: number, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      month: month.toString(),
+    }).toString();
+
+    return await Fetch.get(`/attendance/grid?${queryParams}`, config);
+  },
+
+
+  getEmpLoadData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee-loan`, config);
+  },
+
+
+  deleteEmpLoadData: async (loanDetails: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+
+    return Fetch.delete(`/employee-loan/${loanDetails}`, config);
+  },
+
 
 
 
