@@ -6,14 +6,14 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import EditEmployeeDialog from './EditEmployeeDialog'
 
 interface Employee {
-  id: string;
-  first_name: string;
-  last_name: string;
-  name: string;
-  employee_role: string;
-  hourly_rate: string;
-  recorded_hours: number;
-  avatarUrl: string;
+    id: string;
+    first_name: string;
+    last_name: string;
+    name: string;
+    employee_role: string;
+    hourly_rate: string;
+    recorded_hours: number;
+    avatarUrl: string;
 }
 
 interface EmployeeTableProps {
@@ -26,35 +26,36 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedEmpId, setSelectedEmpId] = useState("");
 
     // Memoized filtered data
     const filteredEmpData = useMemo(() => {
         let result = empData;
-        
+
         // Apply job title filter
         if (selectedJobTitle !== "All Job Titles") {
             result = result?.filter(emp => emp.employee_role === selectedJobTitle);
         }
 
-        
+
         // Apply search filter
         if (searchQuery) {
-            console.log("Filter results : ",result)
+            console.log("Filter results : ", result)
             const query = searchQuery.toLowerCase();
-            result = result.filter(emp => 
+            result = result.filter(emp =>
                 emp?.name?.toLowerCase().includes(query) ||
                 emp?.employee_role?.toLowerCase().includes(query)
             );
         }
-        
+
         return result;
     }, [empData, selectedJobTitle, searchQuery]);
 
     const totalItems = filteredEmpData.length;
 
     // Extract unique job titles
-    const jobTitles = useMemo(() => 
-        Array.from(new Set(empData.map(emp => emp?.employee_role))), 
+    const jobTitles = useMemo(() =>
+        Array.from(new Set(empData.map(emp => emp?.employee_role))),
         [empData]
     );
 
@@ -103,7 +104,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     };
 
     const visiblePages = getVisiblePageNumbers();
-
+    console.log(empData);
     return (
         <div className="space-y-6 bg-white">
             {/* Search and Filter Section */}
@@ -169,12 +170,12 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <td className="p-4">{emp?.id}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     {emp?.avatarUrl && (
-                                        <Image 
-                                            src={emp?.avatarUrl} 
-                                            alt={`${emp?.name}'s avatar`} 
-                                            className="w-[24px] h-[24px] rounded-full" 
-                                            width={24} 
-                                            height={24} 
+                                        <Image
+                                            src={emp?.avatarUrl}
+                                            alt={`${emp?.name}'s avatar`}
+                                            className="w-[24px] h-[24px] rounded-full"
+                                            width={24}
+                                            height={24}
                                         />
                                     )}
                                     <h3>{emp?.name}</h3>
@@ -184,8 +185,8 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>
                                 <td className="text-center p-4">${emp?.recorded_hours * parseFloat(emp?.hourly_rate)}</td>
                                 <td className="flex items-center justify-center p-4">
-                                    <button 
-                                        onClick={() => setIsModalOpen(true)} 
+                                    <button
+                                        onClick={() => { setIsModalOpen(true); setSelectedEmpId(emp?.id) }}
                                         className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="22" viewBox="0 0 21 22" fill="none">
@@ -215,7 +216,6 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                         </svg>
                                     </button>
                                 </td>
-                                {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={()=>setIsModalOpen(false)} empId={emp?.id}/>}
                             </tr>
                         ))}
                     </tbody>
@@ -283,6 +283,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                     </div>
                 )}
             </div>
+            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId} data={filteredEmpData} />}
         </div>
     );
 }

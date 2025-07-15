@@ -6,14 +6,15 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from
 import { useForm } from 'react-hook-form';
 import prof from "@/public/images/profileIcon.png";
 import { StaticImageData } from 'next/image';
+import { UserService } from '@/service/user/user.service';
+import { toast } from 'react-toastify';
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
     const [avatar, setAvatar] = useState<string | StaticImageData>(prof);
-    
-    // Initialize React Hook Form
+    const [loading,setLoading] = useState(false);
+
     const { register, handleSubmit, formState: { errors }, setValue } = useForm();
 
-    // Handle file input change for avatar
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = URL.createObjectURL(e.target.files[0]);
@@ -22,10 +23,34 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
         }
     };
 
-    // Form submit handler
-    const onSubmit = (data: any) => {
-        console.log(data); // You can replace this with your form submission logic
-        handleDialogToggle(); // Close the dialog after submit
+    const onSubmit = async(data: any) => {
+        const empData = {
+            file:data.avatar,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            password: data.password,
+            email: data.email,
+            phone_number: data.phone,
+            physical_number: data.physicalNumber,
+            hourly_rate: parseInt(data.hourlyRate),
+            employee_role: data.role,
+            address: data.address,
+        }
+        try {
+            setLoading(true)
+            const res = await UserService?.createEmployee(empData);
+
+            if (res?.data?.success) {
+                toast.success(res.data.message);
+                handleDialogToggle()
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Registration failed");
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+        handleDialogToggle();
     };
 
     return (
@@ -40,11 +65,11 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                     <div className="flex justify-center items-center space-x-4 border-dashed border-2 border-gray-400 rounded-lg p-4 mb-6">
                         <Image src={avatar} alt="Upload" width={24} height={24} />
                         <label htmlFor="img" className="text-gray-500 text-sm">Upload photo (Maximum size of 2MB)</label>
-                        <input 
-                            type="file" 
-                            name="img" 
-                            id="img" 
-                            onChange={handleFileChange} 
+                        <input
+                            type="file"
+                            name="img"
+                            id="img"
+                            onChange={handleFileChange}
                             className="hidden"
                         />
                     </div>
@@ -81,8 +106,8 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                                     type="email"
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter Email"
-                                    {...register("email", { 
-                                        required: "Email is required", 
+                                    {...register("email", {
+                                        required: "Email is required",
                                         pattern: {
                                             value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                                             message: "Invalid email address"

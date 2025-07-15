@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { UserService } from '@/service/user/user.service'
+import { imgURL } from '@/config/app.config'
 
 const EmpLoanTable = ({ empData, start, end }: any) => {
     const [searchQuery, setSearchQuery] = useState('')
@@ -71,7 +72,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
         }
     };
 
-
+console.log(paginatedData)
 
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
@@ -195,7 +196,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <td className="text-center p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     <Image
-                                        src={emp?.user?.avatarUrl}
+                                        src={`${imgURL}/avatar/${emp?.user?.avatar}`}
                                         alt="Emp image"
                                         width={24}
                                         height={24}

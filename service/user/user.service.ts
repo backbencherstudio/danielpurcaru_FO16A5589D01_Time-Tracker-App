@@ -1,5 +1,6 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
+import { StaticImageData } from 'next/image';
 
 const config = {
   headers: {
@@ -185,7 +186,7 @@ export const UserService = {
   },
 
 
-  getEmpLoadData: async (context: any = null) => {
+  getEmpLoanData: async (context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -210,6 +211,83 @@ export const UserService = {
     }
 
     return Fetch.delete(`/employee-loan/${loanDetails}`, config);
+  },
+
+
+
+  updateEmp: async (data: {
+    name: string,
+    password: string,
+    employee_role: string,
+    hourly_rate: string
+  }, id: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'UPDATE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    console.log("Back data : ", data);
+    console.log("Id : ", id)
+    return await Fetch.patch(`/employee/${id}`, data, config);
+  },
+
+  createEmployee: async (data: {
+    file: string | StaticImageData,
+    first_name: string,
+    last_name: string,
+    password: string,
+    email: string,
+    phone_number: string,
+    physical_number: string,
+    hourly_rate: number,
+    employee_role: string,
+    address: string,
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.post(`/employee`, data, config);
+  },
+
+
+  createEmpHoliday: async (data: {
+    user_id: string ,
+    start_date: string,
+    end_date: string,
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    console.log("Back data : ", data);
+    return await Fetch.post(`/employee-holiday`, data, config);
+  },
+
+
+
+  getEmpHolidays: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee-holiday`, config);
   },
 
 
