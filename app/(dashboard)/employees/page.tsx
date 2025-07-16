@@ -16,28 +16,6 @@ import toast from "react-hot-toast";
 
 export default function page() {
     const [empData, setEmpData] = useState([])
-    // [
-    //     [1, ronald, "Ronald Richards", "Baker", 10, 160],
-    //     [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-    //     [3, guy, "Guy Hawkins", "Electrician", 14, 168],
-    //     [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
-    //     [5, theresa, "Theresa Webb", "Electrician", 10, 142],
-    //     [20, theresa, "Theresa Webb", "Electrician", 10, 142],
-    //     [6, ronald, "Ronald Richards", "Baker", 10, 160],
-    //     [7, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-    //     [8, guy, "Guy Hawkins", "Electrician", 14, 168],
-    //     [9, Jerome, "Jerome Bell", "Handyman", 18, 152],
-    //     [10, theresa, "Theresa Webb", "Electrician", 10, 142],
-    //     [19, Jerome, "Jerome Bell", "Handyman", 18, 152],
-    //     [11, ronald, "Ronald Richards", "Baker", 10, 160],
-    //     [12, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-    //     [17, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-    //     [13, guy, "Guy Hawkins", "Electrician", 14, 168],
-    //     [14, Jerome, "Jerome Bell", "Handyman", 18, 152],
-    //     [15, theresa, "Theresa Webb", "Electrician", 10, 142],
-    //     [16, ronald, "Ronald Richards", "Baker", 10, 160],
-    //     [18, guy, "Guy Hawkins", "Electrician", 14, 168],
-    // ];
     const totalPages = Math.ceil(empData.length / 8);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageStart, setPageStart] = useState(0);
@@ -74,7 +52,6 @@ export default function page() {
             try {
                 const res = await UserService?.getAllEmpData();
                 if (res?.data?.success) {
-                    // console.log("Response:", res.data.data);
                     setEmpData(res.data.data)
                 } else {
                     toast.error(res?.response?.data?.message || "Failed to fetch data");

@@ -259,7 +259,7 @@ export const UserService = {
 
 
   createEmpHoliday: async (data: {
-    user_id: string ,
+    user_id: string,
     start_date: string,
     end_date: string,
   }, context: any = null) => {
@@ -267,7 +267,7 @@ export const UserService = {
     const config = {
       method: 'INSERT',
       headers: {
-        'Content-Type': 'multipart/form-data;',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userToken}`,
       }
     }
@@ -290,6 +290,106 @@ export const UserService = {
     return await Fetch.get(`/employee-holiday`, config);
   },
 
+
+  getProjectData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/project`, config);
+  },
+
+
+  getProfile: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/auth/me`, config);
+  },
+
+
+  createNewProject: async (data: {
+    address: string,
+    assignees: string[],
+    end_date: string,
+    name: string,
+    price: number,
+    priority: string,
+    start_date: string
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    console.log("Back data : ", data);
+    return await Fetch.post(`/project`, data, config);
+  },
+
+
+  getSingleProjectData: async (id: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/project/${id}`, config);
+  },
+
+
+  deleteProject: async (projectid: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+
+    return Fetch.delete(`/project/${projectid}`, config);
+  },
+
+
+  updateAdminProfile: async (data: {
+    name: string,
+    email: string,
+    phone_number: string,
+    date_of_birth: string,
+    country: string,
+    state: string,
+    city: string,
+    address: string,
+    zip_code: string,
+  },context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'UPDATE',
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.patch(`/auth/update`, data, config);
+  },
 
 
 

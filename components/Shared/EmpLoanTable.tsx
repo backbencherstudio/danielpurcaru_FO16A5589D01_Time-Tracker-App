@@ -1,10 +1,10 @@
+'use client'
+
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState, useMemo, useEffect } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
 import { UserService } from '@/service/user/user.service'
-import { imgURL } from '@/config/app.config'
+import DeletePopUp from '../reusable/DeletePopUp'
 
 const EmpLoanTable = ({ empData, start, end }: any) => {
     const [searchQuery, setSearchQuery] = useState('')
@@ -50,7 +50,6 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
         setIsDeleting(true);
         try {
             const response = await UserService?.deleteEmpLoadData(loanToDelete);
-            console.log("Response = ", response);
             if (response?.data?.success) {
                 setData(prevData => prevData.filter((emp: any) => emp.id !== loanToDelete)); // Use loanToDelete.id for comparison
                 setDeleteMessage({ text: 'Loan deleted successfully', isError: false });
@@ -72,82 +71,9 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
         }
     };
 
-console.log(paginatedData)
-
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
-            {/* Delete Confirmation Modal */}
-            <Transition appear show={isDeleteModalOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={closeDeleteModal}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-25" />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
-                            >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    <Dialog.Title
-                                        as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900"
-                                    >
-                                        Delete Loan
-                                    </Dialog.Title>
-                                    <div className="mt-2">
-                                        <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this loan? This action cannot be undone.
-                                        </p>
-                                    </div>
-                                    {/* 
-                                    {deleteMessage.text && (
-                                        <div className={`mt-4 p-2 rounded-md ${deleteMessage.isError
-                                            ? 'bg-red-100 text-red-700'
-                                            : 'bg-green-100 text-green-700'
-                                            }`}>
-                                            {deleteMessage.text}
-                                        </div>
-                                    )} */}
-
-                                    <div className="mt-4 flex justify-end space-x-3">
-                                        <button
-                                            type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
-                                            onClick={closeDeleteModal}
-                                            disabled={isDeleting}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none"
-                                            onClick={handleDelete}
-                                            disabled={isDeleting}
-                                        >
-                                            {isDeleting ? 'Deleting...' : 'Delete'}
-                                        </button>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
+            <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={isDeleting} handleDelete={handleDelete}/>
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
                 <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>
@@ -196,12 +122,11 @@ console.log(paginatedData)
                                 <td className="text-center p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     <Image
-                                        src={`${imgURL}/avatar/${emp?.user?.avatar}`}
-                                        alt="Emp image"
+                                        src={emp?.user?.avatarUrl}
+                                        alt={`${emp?.name}'s avatar`}
+                                        className="w-[24px] h-[24px] rounded-full"
                                         width={24}
                                         height={24}
-                                        className="rounded-full"
-                                        unoptimized // Add if using localhost images
                                     />
                                     <h3 className="text-nowrap">{emp?.user?.name}</h3>
                                 </td>

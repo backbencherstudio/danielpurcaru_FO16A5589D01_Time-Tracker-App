@@ -40,7 +40,6 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
 
         // Apply search filter
         if (searchQuery) {
-            console.log("Filter results : ", result)
             const query = searchQuery.toLowerCase();
             result = result.filter(emp =>
                 emp?.name?.toLowerCase().includes(query) ||
@@ -104,7 +103,6 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     };
 
     const visiblePages = getVisiblePageNumbers();
-    console.log(empData);
     return (
         <div className="space-y-6 bg-white">
             {/* Search and Filter Section */}

@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
     const [avatar, setAvatar] = useState<string | StaticImageData>(prof);
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm();
 
@@ -23,9 +23,9 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
         }
     };
 
-    const onSubmit = async(data: any) => {
+    const onSubmit = async (data: any) => {
         const empData = {
-            file:data.avatar,
+            ...(data.avatar && { file: data.avatar }),
             first_name: data.firstName,
             last_name: data.lastName,
             password: data.password,
