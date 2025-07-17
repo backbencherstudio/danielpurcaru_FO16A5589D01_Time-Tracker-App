@@ -1,5 +1,7 @@
 ## Figma link : 
+```bash
 https://www.figma.com/design/wXeSvssEQsXQpPW1KcMRS4/danielpurcaru_FO621316BD804_Time-Tracker-App_AmazUI_Fiverr_-Client-File-?node-id=8543-1548&m=dev
+```
 
 
 
