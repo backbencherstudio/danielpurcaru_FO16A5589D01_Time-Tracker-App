@@ -67,7 +67,7 @@ export default function Page() {
             try {
                 const res = await UserService?.getEmpLoanData();
                 if (res?.data?.success) {
-                    // console.log("Response load :", res.data.data);
+                    console.log("Response load :", res.data.data);
                     setEmpLoadData(res.data.data)
                 } else {
                     toast.error(res?.response?.data?.message || "Failed to fetch data");

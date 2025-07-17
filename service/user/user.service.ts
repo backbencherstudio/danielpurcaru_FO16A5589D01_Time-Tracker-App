@@ -26,7 +26,6 @@ interface GetSummaryConfig {
 
 export const UserService = {
   login: async ({ email, password }: { email: string; password: string }) => {
-    console.log(email)
     const data = {
       identifier: email,
       password: password,
@@ -43,7 +42,6 @@ export const UserService = {
     email: string;
     password: string;
   }) => {
-    console.log(username)
     const data = {
       username: username,
       email: email,
@@ -85,7 +83,6 @@ export const UserService = {
 
   getSummary: async (params: SummaryParams, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
-    console.log("Usertoken : ", userToken)
     const config: GetSummaryConfig = {
       headers: {
         "Content-Type": "application/json",
@@ -229,8 +226,6 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    console.log("Back data : ", data);
-    console.log("Id : ", id)
     return await Fetch.patch(`/employee/${id}`, data, config);
   },
 
@@ -271,7 +266,6 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    console.log("Back data : ", data);
     return await Fetch.post(`/employee-holiday`, data, config);
   },
 
@@ -336,7 +330,6 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    console.log("Back data : ", data);
     return await Fetch.post(`/project`, data, config);
   },
 
@@ -390,6 +383,7 @@ export const UserService = {
     }
     return await Fetch.patch(`/auth/update`, data, config);
   },
+
 
 
 

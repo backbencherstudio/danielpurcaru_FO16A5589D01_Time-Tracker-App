@@ -5,41 +5,90 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Profilepic from '@/public/images/Employee/ronald.png';
 import Profilepic2 from '@/public/images/Employee/sanvannah.png';
 import Profilepic3 from '@/public/images/profileIcon.png';
+import { UserService } from "@/service/user/user.service";
 import { time } from "console";
+import { useState,useEffect } from "react";
+import { toast } from "react-toastify";
+
+
+
+interface loanData {
+  created_at: string,
+  id: string,
+  loan_amount:string,
+  loan_status:string,
+  notes:string,
+  user: userType,
+  user_id:string,
+}
+
+interface userType {
+  avatar:string,
+  avatarUrl: string,
+  id: string,
+  name: string
+}
 
 export default function Navbar() {
     const userName = "Jonathan"
     const userMail = "demo@mail.com"
     const profilePic = "/images/profileIcon.png";
+    const [empLoanData,setEmpLoanData] = useState<loanData[]>()
+    const [isNotificationOpen,setIsNotificationOpen] = useState(false);
     const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     };
 
     const notifications = [
-  {
-    imageSrc: Profilepic3,
-    name: "Kathryn Murphy",
-    message: "Kathryn Murphy has requested a payment of $150",
-    time: "Now",
-  },
-  {
-    imageSrc: Profilepic,
-    name: "Leslie Alexander",
-    message: "Leslie Alexander has requested a payment of $150",
-    time: "1pm",
-  },
-  {
-    imageSrc: Profilepic2,
-    name: "Leslie Murphy",
-    message: "Leslie Murphy has requested a payment of $150",
-    time: "1pm",
-  },
-  {
-    imageSrc: Profilepic3,
-    name: "Kathryn Murphy",
-    message: "Kathryn Murphy has requested a payment of $150",
-    time: "1pm",
-  },
-];
+        {
+            imageSrc: Profilepic3,
+            name: "Kathryn Murphy",
+            message: "Kathryn Murphy has requested a payment of $150",
+            time: "Now",
+        },
+        {
+            imageSrc: Profilepic,
+            name: "Leslie Alexander",
+            message: "Leslie Alexander has requested a payment of $150",
+            time: "1pm",
+        },
+        {
+            imageSrc: Profilepic2,
+            name: "Leslie Murphy",
+            message: "Leslie Murphy has requested a payment of $150",
+            time: "1pm",
+        },
+        {
+            imageSrc: Profilepic3,
+            name: "Kathryn Murphy",
+            message: "Kathryn Murphy has requested a payment of $150",
+            time: "1pm",
+        },
+    ];
+
+    
+      useEffect(()=>{
+            const fetchEmpData = async () => {
+                try {
+                    const res = await UserService?.getEmpLoanData();
+                    if (res?.data?.success) {
+                        console.log("Response load :", res.data.data);
+                        setEmpLoanData(res.data.data)
+                    } else {
+                        toast.error(res?.response?.data?.message || "Failed to fetch data");
+                    }
+                } catch (error: any) {
+                    toast.error(
+                        error.response?.data?.message ||
+                        error.message ||
+                        "An error occurred while fetching data"
+                    );
+                    console.error("Fetch error:", error);
+                } finally {
+                    // setLoading(false);
+                }
+            }
+            fetchEmpData()
+        },[])
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
             <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
@@ -61,9 +110,9 @@ export default function Navbar() {
                     </div>
                 </div>
                 {/* notification  */}
-                <Popover>
+                <Popover open={isNotificationOpen} onOpenChange={setIsNotificationOpen}>
                     <PopoverTrigger asChild>
-                        <div className="md:px-[14px] px-1 py-1 md:py-[12px] border border-[#E9E9EA] rounded-lg cursor-pointer">
+                        <div className="md:px-[14px] px-1 py-1 md:py-[12px] border border-[#E9E9EA] rounded-lg cursor-pointer" onClick={()=>setIsNotificationOpen(prev=>!prev)}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path d="M10.0166 2.4248C7.25828 2.4248 5.01662 4.66647 5.01662 7.4248V9.83314C5.01662 10.3415 4.79995 11.1165 4.54162 11.5498L3.58328 13.1415C2.99162 14.1248 3.39995 15.2165 4.48328 15.5831C8.07495 16.7831 11.95 16.7831 15.5416 15.5831C16.55 15.2498 16.9916 14.0581 16.4416 13.1415L15.4833 11.5498C15.2333 11.1165 15.0166 10.3415 15.0166 9.83314V7.4248C15.0166 4.6748 12.7666 2.4248 10.0166 2.4248Z" stroke="#161618" strokeWidth="1.4" strokeMiterlimit="10" strokeLinecap="round" />
                                 <path d="M11.5583 2.6667C11.3 2.5917 11.0333 2.53337 10.7583 2.50003C9.95831 2.40003 9.19164 2.45837 8.47498 2.6667C8.71664 2.05003 9.31664 1.6167 10.0166 1.6167C10.7166 1.6167 11.3166 2.05003 11.5583 2.6667Z" stroke="#161618" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -72,9 +121,9 @@ export default function Navbar() {
                         </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-4 rounded-xl shadow-[5px_5px_50px_0px_rgba(26,32,44,0.06)]">
-                       
-          <NotificationBanner notifications={notifications}/>
-         
+
+                        <NotificationBanner notifications={empLoanData} closeNotification={()=> setIsNotificationOpen(prev => !prev)}/>
+
                     </PopoverContent>
                 </Popover>
 

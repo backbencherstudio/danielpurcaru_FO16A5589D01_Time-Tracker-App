@@ -15,8 +15,6 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
     const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
     const [loading, setLoading] = useState(false);
 
-    console.log(data)
-
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         const data = {
@@ -25,7 +23,6 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
             ...(empHourlyRate && { hourly_rate: empHourlyRate }),
             ...(empPassword && { password: empPassword }),
         };
-        console.log("Editer data : ",data)
         try {
             setLoading(true)
             const res = await UserService?.updateEmp(data, empId);
@@ -36,7 +33,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed");
-            console.log(error);
+            console.error(error);
         } finally {
             setLoading(false);
         }

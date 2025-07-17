@@ -1,8 +1,32 @@
+'use client'
+
 import Image from "next/image";
 import NotificationCard from "./NotificationCard";
 import Profilepic from '@/public/images/Employee/ronald.png';
 import Profilepic2 from '@/public/images/Employee/sanvannah.png';
 import Profilepic3 from '@/public/images/profileIcon.png';
+import { UserService } from "@/service/user/user.service";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
+
+interface loanData {
+  created_at: string,
+  id: string,
+  loan_amount:string,
+  loan_status:string,
+  notes:string,
+  user: userType,
+  user_id:string,
+}
+
+interface userType {
+  avatar:string,
+  avatarUrl: string,
+  id: string,
+  name: string
+}
+
 
 const notifications = [
   {
@@ -28,6 +52,32 @@ const notifications = [
 ];
 
 export default function Page() {
+
+  const [empLoanData,setEmpLoanData] = useState<loanData[]>()
+
+  useEffect(()=>{
+        const fetchEmpData = async () => {
+            try {
+                const res = await UserService?.getEmpLoanData();
+                if (res?.data?.success) {
+                    console.log("Response load :", res.data.data);
+                    setEmpLoanData(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            } finally {
+                // setLoading(false);
+            }
+        }
+        fetchEmpData()
+    },[])
   return (
     <div className="p-5 bg-gradient-to-l from-white/60 to-white rounded-2xl">
       <div className="flex flex-col gap-8">
@@ -41,15 +91,16 @@ export default function Page() {
         </div>
 
         {/* Map through the notifications array */}
-        {notifications.map((notification, index) => (
+        {empLoanData?.filter(emp=> emp.loan_status.toLowerCase() === "pending").map((notification, index) => (
           <NotificationCard
             key={index}
-            imageSrc={notification.imageSrc}
-            name={notification.name}
-            message={notification.message}
+            imageSrc={notification?.user?.avatarUrl}
+            name={notification?.user?.name}
+            message={`${notification.user.name}  has requested a payment of $ ${notification.loan_amount}`}
           />
         ))}
       </div>
     </div>
   );
 }
+

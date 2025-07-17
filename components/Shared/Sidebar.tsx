@@ -40,10 +40,8 @@ export default function Sidebar() {
 
     useEffect(() => {
         if (window.location.pathname === "/") {
-            console.log(window.location.pathname)
             handleMenu("dashboard")
         } else {
-            console.log(window.location.pathname)
             handleMenu(window.location.pathname.split("/")[1])
         }
     }, [])

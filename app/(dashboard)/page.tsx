@@ -103,7 +103,7 @@ export default function Home() {
       try {
         const res = await UserService?.getEmpData(5);
         if (res?.data?.success) {
-          console.log("Response:", res.data.data);
+          // console.log("Response:", res.data.data);
           setEmpData(res.data.data)
         } else {
           toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -135,7 +135,7 @@ export default function Home() {
   // ];
   const typeOfEmpColor = ["#F59E0B", "#3B82F6", "#14B8A6"]
 
-  console.log("Fetch data ", empData)
+  // console.log("Fetch data ", empData)
 
   return (
     <div className="space-y-4">

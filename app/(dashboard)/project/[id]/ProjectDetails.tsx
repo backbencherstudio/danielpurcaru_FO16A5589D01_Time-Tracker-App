@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 
 
 export default function ProjectDetails({ id }) {
-    console.log(id);
+    // console.log(id);
     // const projectData = {
     //     "projectName": "Project 01",
     //     "status": "Active",
@@ -87,7 +87,7 @@ export default function ProjectDetails({ id }) {
             try {
                 const res = await UserService?.getSingleProjectData(id);
                 if (res?.data?.success) {
-                    console.log("Response project :", res.data.data);
+                    // console.log("Response project :", res.data.data);
                     setProjectData(res.data.data)
                 } else {
                     toast.error(res?.response?.data?.message || "Failed to fetch data");

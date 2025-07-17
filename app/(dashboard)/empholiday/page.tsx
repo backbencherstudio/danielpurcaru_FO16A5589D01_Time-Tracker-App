@@ -79,7 +79,7 @@ export default function Page() {
     }, [])
 
 
-    console.log(empHolidays)
+    // console.log(empHolidays)
 
     return (
         <div className="w-full space-y-6">

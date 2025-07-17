@@ -61,12 +61,10 @@ export default function page() {
 
             if (res?.data?.success) {
                 toast.success(res.data.message);
-                console.log("Success");
-                console.log(password)
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed");
-            console.log(error);
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -84,7 +82,6 @@ export default function page() {
                     setSelectedState(adminInfo.state || "")
                     setSelectedCity(adminInfo.city || "")
                     setAvatar(adminInfo.avatar_url)
-                    console.log(res?.data?.data)
                 } else {
                     toast.error(res?.response?.data?.message || "Failed to fetch data");
                 }
@@ -206,7 +203,7 @@ export default function page() {
                             type="date"
                             id="DateOfBirth"
                             className="h-14 px-4 py-4   rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
-                            value={adminInfo?.date_of_birth || ""}
+                            value={adminInfo?.date_of_birth.split("T")[0] || ""}
                             onChange={(e) => handleChange("date_of_birth", e.target.value)}
                         />
                     </div>

@@ -64,7 +64,7 @@ export default function ProjectManagementPage() {
         error.message ||
         "An error occurred while fetching data"
       );
-      console.error("Fetch error:", error);
+      // console.error("Fetch error:", error);
     } finally {
       setLoading(false);
     }
