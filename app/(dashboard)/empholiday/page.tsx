@@ -5,57 +5,21 @@ import Jerome from "@/public/images/Employee/Jerome.png";
 import ronald from "@/public/images/Employee/ronald.png";
 import sanvannah from "@/public/images/Employee/sanvannah.png";
 import theresa from "@/public/images/Employee/theresa.png";
+import { UserService } from "@/service/user/user.service";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 
 export default function Page() {
-    const [empHolidays, setEmpHolidays] = useState([
-        {
-            id: 1,
-            name: "Ronald Richards",
-            img: ronald,
-            from: "01 Mar 2025",
-            to: "01 April 2025",
-            total: 30,
-        },
-        {
-            id: 2,
-            name: "Guy Hawkins",
-            img: guy,
-            from: "01 Mar 2025",
-            to: "01 April 2025",
-            total: 30,
-        },
-        {
-            id: 3,
-            name: "Savannah Nguyen",
-            img: sanvannah,
-            from: "01 Mar 2025",
-            to: "01 April 2025",
-            total: 30,
-        },
-        {
-            id: 4,
-            name: "Theresa Webb",
-            img: theresa,
-            from: "01 Mar 2025",
-            to: "01 April 2025",
-            total: 30,
-        },
-        {
-            id: 5,
-            name: "Jacob Jones",
-            img: Jerome,
-            from: "01 Mar 2025",
-            to: "01 April 2025",
-            total: 30,
-        },
-    ]);
+    const { handleSubmit, register } = useForm()
+    const [empHolidays, setEmpHolidays] = useState([]);
     const [addHoliday, setAddHoliday] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+    const [loading, setLoading] = useState(false)
 
     // Toggle visibility of the Add Holiday form
     const handleAddHolidayOpen = () => {
@@ -63,13 +27,59 @@ export default function Page() {
 
     }
 
-    // Handle adding holiday (this is where you should handle the form submission)
-    const handleEmpAddHoliday = (e) => {
-        e.preventDefault();
-        // Add holiday logic (for now just log the date values)
-        console.log("Holiday added from:", startDate, "to:", endDate);
+
+    const handleFormSubmit = async(data) => {
+        const holidayData={
+            "user_id": data.empId,
+            "start_date": startDate.toISOString().split("T")[0],
+            "end_date": endDate.toISOString().split("T")[0],
+        }
+
+        try {
+            setLoading(true)
+            const res = await UserService?.createEmpHoliday(holidayData);
+
+            if (res?.data?.success) {
+                toast.success(res.data.message);
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Registration failed");
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
         
+
     }
+
+
+    useEffect(() => {
+        setLoading(true)
+        const fetchHoliday = async () => {
+            try {
+                const res = await UserService?.getEmpHolidays();
+                if (res?.data?.success) {
+                    // console.log("Response load :", res.data.data);
+                    setEmpHolidays(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchHoliday()
+    }, [])
+
+
+    // console.log(empHolidays)
 
     return (
         <div className="w-full space-y-6">
@@ -144,16 +154,16 @@ export default function Page() {
                         </tr>
                     </thead>
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {empHolidays.map((emp) => (
+                        {empHolidays.map((emp, index) => (
                             <tr key={emp.id} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="p-4">{emp.id < 10 ? `0${emp.id}` : `${emp.id}`}</td>
+                                <td className="p-4">{index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp.img} alt="Emp image" className="w-[24px] h-[24px] rounded-full" />
-                                    <h3>{emp.name}</h3>
+                                    <Image src={emp?.user?.avatarUrl} alt="Emp image" width={24} height={24} className="rounded-full" />
+                                    <h3>{emp?.user?.name}</h3>
                                 </td>
-                                <td className="p-4">{emp.from}</td>
-                                <td className="p-4">{emp.to}</td>
-                                <td className="text-center p-4">{emp.total} Days</td>
+                                <td className="p-4">{emp.start_date.split("T")[0]}</td>
+                                <td className="p-4">{emp.end_date.split("T")[0]}</td>
+                                <td className="text-center p-4">{emp.total_days} Days</td>
                             </tr>
                         ))}
                     </tbody>
@@ -161,16 +171,17 @@ export default function Page() {
             </div>
             {addHoliday && (
                 <div className="top-0 bottom-0 left-0 right-0 bg-[#e2e2e233] absolute z-[99] flex items-center justify-center backdrop-blur-[10px]">
-                    <form className="bg-white w-[567px] rounded-xl p-[32px] space-y-[40px] relative" onSubmit={handleEmpAddHoliday}>
+                    <form onSubmit={handleSubmit(handleFormSubmit)} className="bg-white w-[567px] rounded-xl p-[32px] space-y-[40px] relative">
                         <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Add Employee Holiday</h3>
                         <div className="space-y-6">
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="name" className="text-[#1D1F2C] text-base font-medium">Employee Name</label>
+                                <label htmlFor="empId" className="text-[#1D1F2C] text-base font-medium">Employee ID</label>
                                 <input
                                     type="text"
-                                    id="name"
-                                    placeholder="Employee Name"
+                                    id="empId"
+                                    placeholder="Employee ID"
                                     className="bg-[#F7F8F9] py-[18px] px-4 rounded-lg border border-[#E9E9EA] text-[#1D1F2C] text-base outline-none"
+                                    {...register("empId", { required: "Employee id required" })}
                                 />
                             </div>
                             <div>
@@ -196,7 +207,7 @@ export default function Page() {
                                         dateFormat="MMMM d, yyyy"  // Format for displaying the date
                                         className="w-full outline-none flex-1"
                                         placeholderText="Select a date"
-                                        minDate={new Date()}  // Disable past dates
+                                        minDate={new Date(new Date().setDate(new Date().getDate() + 1))}  // Disable past dates
                                         id="endDate"
                                     />
                                 </div>

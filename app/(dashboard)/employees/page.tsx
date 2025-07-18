@@ -11,37 +11,19 @@ import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { UserService } from "@/service/user/user.service";
+import toast from "react-hot-toast";
 
 export default function page() {
-    const empData = [
-        [1, ronald, "Ronald Richards", "Baker", 10, 160],
-        [2, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-        [3, guy, "Guy Hawkins", "Electrician", 14, 168],
-        [4, Jerome, "Jerome Bell", "Handyman", 18, 152],
-        [5, theresa, "Theresa Webb", "Electrician", 10, 142],
-        [20, theresa, "Theresa Webb", "Electrician", 10, 142],
-        [6, ronald, "Ronald Richards", "Baker", 10, 160],
-        [7, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-        [8, guy, "Guy Hawkins", "Electrician", 14, 168],
-        [9, Jerome, "Jerome Bell", "Handyman", 18, 152],
-        [10, theresa, "Theresa Webb", "Electrician", 10, 142],
-        [19, Jerome, "Jerome Bell", "Handyman", 18, 152],
-        [11, ronald, "Ronald Richards", "Baker", 10, 160],
-        [12, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-        [17, sanvannah, "Savannah Nguyen", "Handyman", 15, 140],
-        [13, guy, "Guy Hawkins", "Electrician", 14, 168],
-        [14, Jerome, "Jerome Bell", "Handyman", 18, 152],
-        [15, theresa, "Theresa Webb", "Electrician", 10, 142],
-        [16, ronald, "Ronald Richards", "Baker", 10, 160],
-        [18, guy, "Guy Hawkins", "Electrician", 14, 168],
-    ];
+    const [empData, setEmpData] = useState([])
     const totalPages = Math.ceil(empData.length / 8);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageStart,setPageStart] = useState(0);
+    const [pageStart, setPageStart] = useState(0);
     const [pageLeft, setPageLeft] = useState([]);
     const [pageRight, setPageRight] = useState([]);
     const [isLargeScreen, setIsLargeScreen] = useState(2);
-const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const handlePageChange = async (pageNumber) => {
         if (pageNumber != currentPage) {
             // setPageLoading(true);
@@ -63,6 +45,30 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+
+    useEffect(() => {
+        const fetchEmpData = async () => {
+            try {
+                const res = await UserService?.getAllEmpData();
+                if (res?.data?.success) {
+                    setEmpData(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchEmpData()
+    }, [])
 
     const getPageNumbers = () => {
         const pageNumbers = [];
@@ -87,11 +93,10 @@ const [isModalOpen, setIsModalOpen] = useState(false);
         getPageNumbers();
     }, [currentPage, isLargeScreen]);
 
-    console.log("Emp data : ",empData[0][1])
 
     return (
         <div className="bg-white rounded-lg p-5">
-             <div className="w-full flex justify-between items-start gap-5 mb-5">
+            <div className="w-full flex justify-between items-start gap-5 mb-5">
                 <div className="flex flex-col justify-start gap-2">
                     <span className="text-neutral-800 text-2xl font-semibold">Employees</span>
                     <span className="text-zinc-500 text-base">Manage your Employee</span>
@@ -108,9 +113,8 @@ const [isModalOpen, setIsModalOpen] = useState(false);
                     </button>
                 </div>
             </div>
-            <EmployeeTable empData={empData} start={pageStart} end={8}/>
-            {isModalOpen  && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen}/>}
+            <EmployeeTable empData={empData} />
+            {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
         </div>
     );
 }
- 

@@ -1,4 +1,4 @@
- import AcademicCalendar from "@/components/Callender";
+ import AcademicCalendar from "@/components/Calendar";
 
 export default function page() {
     return (

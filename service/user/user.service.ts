@@ -1,5 +1,6 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
+import { StaticImageData } from 'next/image';
 
 const config = {
   headers: {
@@ -7,10 +8,26 @@ const config = {
   },
 };
 
+
+interface SummaryParams {
+  title: string;
+  href: string;
+}
+
+
+
+
+interface GetSummaryConfig {
+  headers: {
+    "Content-Type": string;
+    Authorization: string;
+  };
+}
+
 export const UserService = {
   login: async ({ email, password }: { email: string; password: string }) => {
     const data = {
-      email: email,
+      identifier: email,
       password: password,
     };
     return await Fetch.post("/auth/login", data, config);
@@ -63,6 +80,362 @@ export const UserService = {
 
     return await Fetch.get(`/user`, _config);
   },
+
+  getSummary: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/summary?${queryParams}`, config);
+  },
+  getEmpRoleOverview: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/employee-role-distribution?${queryParams}`, config);
+  },
+  getAttendanceReport: async (params: SummaryParams, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      title: params.title,
+      href: params.href
+    }).toString();
+
+    return await Fetch.get(`/dashboard/attendance-report?start=${"07"}&${queryParams}`, config);
+  },
+  getEmpData: async (limit?: number, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      limit: limit.toString(),
+    }).toString();
+
+    return await Fetch.get(`/employee?${queryParams}`, config);
+  },
+  getAllEmpData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee`, config);
+  },
+
+  getAttendanceData: async (month: number, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    // For GET requests, parameters should typically be in the URL, not body
+    const queryParams = new URLSearchParams({
+      month: month.toString(),
+    }).toString();
+
+    return await Fetch.get(`/attendance/grid?${queryParams}`, config);
+  },
+
+
+  getEmpLoanData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee-loan`, config);
+  },
+
+
+  deleteEmpLoadData: async (loanDetails: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+
+    return Fetch.delete(`/employee-loan/${loanDetails}`, config);
+  },
+
+
+
+  updateEmp: async (data: {
+    name: string,
+    password: string,
+    employee_role: string,
+    hourly_rate: string
+  }, id: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'UPDATE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.patch(`/employee/${id}`, data, config);
+  },
+
+  createEmployee: async (data: {
+    file: string | StaticImageData,
+    first_name: string,
+    last_name: string,
+    password: string,
+    email: string,
+    phone_number: string,
+    physical_number: string,
+    hourly_rate: number,
+    employee_role: string,
+    address: string,
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.post(`/employee`, data, config);
+  },
+
+
+  createEmpHoliday: async (data: {
+    user_id: string,
+    start_date: string,
+    end_date: string,
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.post(`/employee-holiday`, data, config);
+  },
+
+
+
+  getEmpHolidays: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee-holiday`, config);
+  },
+
+
+  getProjectData: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/project`, config);
+  },
+
+
+  getProfile: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/auth/me`, config);
+  },
+
+
+  createNewProject: async (data: {
+    address: string,
+    assignees: string[],
+    end_date: string,
+    name: string,
+    price: number,
+    priority: string,
+    start_date: string
+  }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.post(`/project`, data, config);
+  },
+
+
+  getSingleProjectData: async (id: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/project/${id}`, config);
+  },
+
+
+  deleteProject: async (projectid: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+
+    return Fetch.delete(`/project/${projectid}`, config);
+  },
+
+
+  updateAdminProfile: async (data: {
+    name: string,
+    email: string,
+    phone_number: string,
+    date_of_birth: string,
+    country: string,
+    state: string,
+    city: string,
+    address: string,
+    zip_code: string,
+  },context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'UPDATE',
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.patch(`/auth/update`, data, config);
+  },
+
+
+  getEvents: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/academic-calendar`, config);
+  },
+  createEvent: async (eventData:{title:string,start_date:string,end_date:string,event_type:string},context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      method: 'INSERT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.post(`/academic-calendar`,eventData, config);
+  },
+  updateEvent: async (eventId:string,eventData:{title:string,start_date:string,end_date:string,event_type:string},context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+     const config = {
+      method: 'UPDATE',
+      headers: {
+        'Content-Type': "application/json",
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+
+    return await Fetch.patch(`/academic-calendar/${eventId}`,eventData, config);
+  },
+  deleteEvent: async (eventId:string,context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.delete(`/academic-calendar/${eventId}`, config);
+  },
+
+
+
 
   findOne: async (id: number, context = null) => {
     const userToken = CookieHelper.get({ key: "token", context });

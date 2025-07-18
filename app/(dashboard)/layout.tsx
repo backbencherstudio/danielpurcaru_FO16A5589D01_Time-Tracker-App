@@ -14,7 +14,7 @@ export default function RootLayout({
           <Navbar />
           <div className="w-full flex bg-white">
             <Sidebar />
-            <div className="bg-[#F8FAFB] h-full w-full px-5 py-6 mt-[90px] overflow-y-scroll" style={{ height: "calc(100vh - 90px)"}}>
+            <div className="bg-[#F8FAFB] h-full w-full px-5 py-6 mt-[90px] overflow-y-auto" style={{ height: "calc(100vh - 90px)"}}>
               {children}
             </div>
           </div>

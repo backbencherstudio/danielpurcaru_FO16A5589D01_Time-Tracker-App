@@ -20,16 +20,16 @@ const ProjectDetailsTable = ({ projectData }: any) => {
                         </tr>
                     </thead>
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {projectData.employees.map((emp: any) => (
-                            <tr key={emp.SL} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="text-center p-4">{emp.SL}</td>
+                        {projectData?.assignees.map((emp: any,index:number) => (
+                            <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA]">
+                                <td className="text-center p-4">{index+1}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp.image} alt="Emp image" width={24} height={24} className="w-[24px] h-[24px] rounded-full" />
-                                    <h3 className="text-nowrap">{emp.Name}</h3>
+                                    <Image src={emp?.avatarUrl} alt="Emp image" width={24} height={24} className="w-[24px] h-[24px] rounded-full" />
+                                    <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
-                                <td className=" p-4">{emp.Role}</td>
-                                <td className=" p-4">{emp.Hours}</td>
-                                <td className=" p-4">{emp.Cost}</td>
+                                <td className=" p-4">{emp?.role}</td>
+                                <td className=" p-4">{emp?.hours}</td>
+                                <td className=" p-4">{emp?.cost}</td>
                             </tr>
                         ))}
                     </tbody>

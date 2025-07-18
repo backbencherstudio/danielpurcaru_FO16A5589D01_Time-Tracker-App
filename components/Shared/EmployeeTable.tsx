@@ -1,81 +1,95 @@
 'use client'
 
-import Image, { StaticImageData } from "next/image";
-import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useState, useMemo } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import EditEmployeeDialog from './EditEmployeeDialog'
 
+interface Employee {
+    id: string;
+    first_name: string;
+    last_name: string;
+    name: string;
+    employee_role: string;
+    hourly_rate: string;
+    recorded_hours: number;
+    avatarUrl: string;
+}
+
 interface EmployeeTableProps {
-    empData: (string | number | StaticImageData)[][];
-    start?: number;
-    end?: number;
+    empData: Employee[];
 }
 
 export default function EmployeeTable({ empData }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [filteredEmpData, setFilteredEmpData] = useState(empData);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedEmpId, setSelectedEmpId] = useState("");
+
+    // Memoized filtered data
+    const filteredEmpData = useMemo(() => {
+        let result = empData;
+
+        // Apply job title filter
+        if (selectedJobTitle !== "All Job Titles") {
+            result = result?.filter(emp => emp.employee_role === selectedJobTitle);
+        }
+
+
+        // Apply search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(emp =>
+                emp?.name?.toLowerCase().includes(query) ||
+                emp?.employee_role?.toLowerCase().includes(query)
+            );
+        }
+
+        return result;
+    }, [empData, selectedJobTitle, searchQuery]);
+
     const totalItems = filteredEmpData.length;
 
-    // Extract unique job titles from empData
-    const jobTitles = Array.from(new Set(empData.map(emp => emp[3])));
+    // Extract unique job titles
+    const jobTitles = useMemo(() =>
+        Array.from(new Set(empData.map(emp => emp?.employee_role))),
+        [empData]
+    );
+
+    // Pagination calculations
+    const { currentEntries, totalPages } = useMemo(() => {
+        const lastIndex = currentPage * itemsPerPage;
+        const firstIndex = lastIndex - itemsPerPage;
+        return {
+            currentEntries: filteredEmpData.slice(firstIndex, lastIndex),
+            totalPages: Math.ceil(filteredEmpData.length / itemsPerPage)
+        };
+    }, [filteredEmpData, currentPage, itemsPerPage]);
 
     const handleJobTitleFilter = (jobTitle: string) => {
         setSelectedJobTitle(jobTitle);
-        setCurrentPage(1); // Reset to first page when filter changes
-
-        if (jobTitle === "All Job Titles") {
-            setFilteredEmpData(empData);
-        } else {
-            const filtered = empData.filter(emp => emp[3] === jobTitle);
-            setFilteredEmpData(filtered);
-        }
+        setCurrentPage(1);
     };
 
-    // Handle search
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        if (query) {
-            const filtered = empData.filter((emp) =>
-                `${emp[2]}`.toLowerCase().includes(query.toLowerCase()) // Assuming `emp[2]` is the name field
-            );
-            setFilteredEmpData(filtered);
-        } else {
-            setFilteredEmpData(empData); // Reset when search is cleared
-        }
-        setCurrentPage(1); // Reset to first page when search changes
+        setCurrentPage(1);
     };
 
-    // Calculate pagination
-    const lastIndex = currentPage * itemsPerPage;
-    const firstIndex = lastIndex - itemsPerPage;
-    const currentEntries = filteredEmpData.slice(firstIndex, lastIndex);
-    const totalPages = Math.ceil(filteredEmpData.length / itemsPerPage);
-
-    // Handle page change
     const handlePageChange = (pageNumber: number) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
         }
     };
 
-    // Handle entries per page change
     const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newItemsPerPage = Number(e.target.value);
         setItemsPerPage(newItemsPerPage);
-        setCurrentPage(1); // Reset to first page when items per page changes
-
-        // Recalculate the total pages
-        const newTotalPages = Math.ceil(filteredEmpData.length / newItemsPerPage);
-        if (currentPage > newTotalPages) {
-            setCurrentPage(newTotalPages || 1);
-        }
+        setCurrentPage(1);
     };
 
-    // Generate visible page numbers
     const getVisiblePageNumbers = () => {
         const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
@@ -89,7 +103,6 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     };
 
     const visiblePages = getVisiblePageNumbers();
-
     return (
         <div className="space-y-6 bg-white">
             {/* Search and Filter Section */}
@@ -115,7 +128,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                         placeholder="Search employee"
                         className="w-full text-[14px] placeholder:text-[#A0AEC0] text-[#1D1F2C] outline-none"
                         value={searchQuery}
-                        onChange={(e) => handleSearch(e.target.value)} // Added the search handler
+                        onChange={(e) => handleSearch(e.target.value)}
                     />
                 </div>
 
@@ -128,7 +141,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                     >
                         <option>All Job Titles</option>
                         {jobTitles.map((title, index) => (
-                            <option key={index}>{`${title}`}</option>
+                            <option key={index}>{title}</option>
                         ))}
                     </select>
                 </div>
@@ -139,7 +152,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                 <table className="w-full table-auto">
                     <thead className="text-[#4A4C56] bg-[#F6F8FA] font-semibold text-[12px] w-full text-nowrap">
                         <tr>
-                            <th className="py-4 px-4">SL</th>
+                            <th className="py-4 px-4">ID</th>
                             <th className="py-4 px-4">Name</th>
                             <th className="py-4 px-4">Role</th>
                             <th className="py-4 text-center px-4">Hourly Rate</th>
@@ -149,20 +162,31 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                         </tr>
                     </thead>
 
-                    <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {currentEntries.map((emp, index) => (
-                            <tr key={parseInt(`${emp[0]}`)} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="p-4">{parseInt(`${emp[0]}`) < 9 ? `0${parseInt(`${emp[0]}`)}` : parseInt(`${emp[0]}`)}</td>
+                    <tbody className="text-[#1D1F2C] text-[12px] font-medium ">
+                        {currentEntries.map((emp) => (
+                            <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA] ">
+                                <td className="p-4">{emp?.id}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp[1]["src"]} alt="Emp image" className="w-[24px] h-[24px] rounded-full" width={24} height={24} />
-                                    <h3>{`${emp[2]}`}</h3>
+                                    {emp?.avatarUrl && (
+                                        <Image
+                                            src={emp?.avatarUrl}
+                                            alt={`${emp?.name}'s avatar`}
+                                            className="w-[24px] h-[24px] rounded-full"
+                                            width={24}
+                                            height={24}
+                                        />
+                                    )}
+                                    <h3>{emp?.name}</h3>
                                 </td>
-                                <td className="p-4">{`${emp[3]}`}</td>
-                                <td className="text-center p-4">${`${emp[4]}`}</td>
-                                <td className="text-center p-4">{`${emp[5]}`}</td>
-                                <td className="text-center p-4">${parseInt(`${emp[5]}`) * parseInt(`${emp[4]}`)}</td>
+                                <td className="p-4">{emp?.employee_role}</td>
+                                <td className="text-center p-4">${emp?.hourly_rate}</td>
+                                <td className="text-center p-4">{emp?.recorded_hours}</td>
+                                <td className="text-center p-4">${emp?.recorded_hours * parseFloat(emp?.hourly_rate)}</td>
                                 <td className="flex items-center justify-center p-4">
-                                    <div onClick={() => setIsModalOpen(true)} className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer">
+                                    <button
+                                        onClick={() => { setIsModalOpen(true); setSelectedEmpId(emp?.id) }}
+                                        className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="22" viewBox="0 0 21 22" fill="none">
                                             <path
                                                 d="M9.62561 2.25H7.87561C3.50061 2.25 1.75061 4 1.75061 8.375V13.625C1.75061 18 3.50061 19.75 7.87561 19.75H13.1256C17.5006 19.75 19.2506 18 19.2506 13.625V11.875"
@@ -188,15 +212,12 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                                 strokeLinejoin="round"
                                             />
                                         </svg>
-                                    </div>
+                                    </button>
                                 </td>
-
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                            {isModalOpen  && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen}/>}
-                
             </div>
 
             {/* Pagination */}
@@ -260,6 +281,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                     </div>
                 )}
             </div>
+            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId} data={filteredEmpData} />}
         </div>
     );
 }

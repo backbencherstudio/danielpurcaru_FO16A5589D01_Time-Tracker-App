@@ -3,36 +3,16 @@ import EditEmployeeDialog from "@/components/Shared/EditEmployeeDialog";
 import EmpLoanTable from "@/components/Shared/EmpLoanTable";
 import down from '@/public/icons/file-download.svg';
 import loanImage from "@/public/images/profileIcon.png"; // Correct image import
+import { UserService } from "@/service/user/user.service";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { toast } from "react-toastify";
 
 export default function Page() {
-    const empData = [
-        { SL: 1, image: loanImage, employeeName: "Ronald Richards", date: "01/06/2025", price: "$100" },
-        { SL: 2, image: loanImage, employeeName: "Savannah Nguyen", date: "11/06/2025", price: "$120" },
-        { SL: 3, image: loanImage, employeeName: "Guy Hawkins", date: "05/06/2025", price: "$140" },
-        { SL: 4, image: loanImage, employeeName: "Bessie Cooper", date: "15/06/2025", price: "$100" },
-        { SL: 5, image: loanImage, employeeName: "Floyd Miles", date: "20/06/2025", price: "$150" },
-        { SL: 6, image: loanImage, employeeName: "Jacob Jones", date: "21/06/2025", price: "$100" },
-        { SL: 7, image: loanImage, employeeName: "Darrell Steward", date: "25/06/2025", price: "$150" },
-        { SL: 8, image: loanImage, employeeName: "Darrell Steward", date: "01/06/2025", price: "$200" },
-        { SL: 9, image: loanImage, employeeName: "Theresa Webb", date: "05/06/2025", price: "$100" },
-        { SL: 10, image: loanImage, employeeName: "William Johnson", date: "22/06/2025", price: "$250" },
-        { SL: 11, image: loanImage, employeeName: "Anna Brown", date: "23/06/2025", price: "$130" },
-        { SL: 12, image: loanImage, employeeName: "Ethan Green", date: "14/06/2025", price: "$110" },
-        { SL: 13, image: loanImage, employeeName: "Olivia Taylor", date: "25/06/2025", price: "$160" },
-        { SL: 14, image: loanImage, employeeName: "Mason Wilson", date: "18/06/2025", price: "$180" },
-        { SL: 15, image: loanImage, employeeName: "Liam Harris", date: "26/06/2025", price: "$190" },
-        { SL: 16, image: loanImage, employeeName: "Emily Clark", date: "12/06/2025", price: "$120" },
-        { SL: 17, image: loanImage, employeeName: "James Lewis", date: "09/06/2025", price: "$110" },
-        { SL: 18, image: loanImage, employeeName: "Isabella Walker", date: "17/06/2025", price: "$140" },
-        { SL: 19, image: loanImage, employeeName: "Benjamin Hall", date: "08/06/2025", price: "$130" },
-        { SL: 20, image: loanImage, employeeName: "Charlotte Allen", date: "13/06/2025", price: "$150" },
-    ];
-
-    const totalPages = Math.ceil(empData.length / 8);
+    const [empLoadData,setEmpLoadData] = useState([])
+    const totalPages = Math.ceil(empLoadData.length / 8);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageStart, setPageStart] = useState(0);
     const [pageLeft, setPageLeft] = useState([]);
@@ -81,13 +61,36 @@ export default function Page() {
         getPageNumbers();
     }, [currentPage, isLargeScreen]);
 
+
+    useEffect(()=>{
+        const fetchEmpData = async () => {
+            try {
+                const res = await UserService?.getEmpLoanData();
+                if (res?.data?.success) {
+                    console.log("Response load :", res.data.data);
+                    setEmpLoadData(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            } finally {
+                // setLoading(false);
+            }
+        }
+        fetchEmpData()
+    },[])
+
     return (
         <div className="bg-white rounded-lg">
-
-
-            <EmpLoanTable empData={empData} start={pageStart} end={pageStart + itemsPerPage} />
+            <EmpLoanTable empData={empLoadData} start={pageStart} end={pageStart + itemsPerPage} />
             <div className="bg-white rounded-lg">
-                {empData.length > 0 && (
+                {empLoadData.length > 0 && (
                     <div className="flex justify-start items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg">
                         <div className="flex items-center rounded-lg sm:px-4">
                             <button
