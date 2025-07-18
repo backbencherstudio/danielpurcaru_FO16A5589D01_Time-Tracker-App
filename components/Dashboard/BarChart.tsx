@@ -12,7 +12,6 @@ interface OriginalData {
 }
 
 const BarChart = ({ newData }) => {
-
     const [transformData, setTransformData] = useState([])
     const formatDate = (dateStr: string): string => {
         const date = new Date(dateStr);
@@ -20,11 +19,15 @@ const BarChart = ({ newData }) => {
     };
     useEffect(() => {
         const transformToLast10Days = (data: OriginalData) => {
+            let startDate = 0;
+            if(new Date().getDate() >= 18 ){
+                startDate = new Date().getDate() - 10;
+            }
             const newData = { absent: [], present: [], dates: [] }
             const dataArray = [];
-            newData.absent = data?.absent?.slice(-10);
-            newData.present = data?.present?.slice(-10);
-            newData.dates = data?.dates?.slice(-10);
+            newData.absent = data?.absent?.slice(startDate,new Date().getDate());
+            newData.present = data?.present?.slice(startDate,new Date().getDate());
+            newData.dates = data?.dates?.slice(startDate,new Date().getDate());
             for (let i = 0; i < newData?.dates?.length; i++) {
                 dataArray.push({ date: formatDate(newData.dates[i]), present: newData.present[i], absent: newData.absent[i] })
             }
