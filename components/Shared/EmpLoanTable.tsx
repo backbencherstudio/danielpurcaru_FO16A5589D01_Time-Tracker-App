@@ -73,7 +73,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
 
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
-            <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={isDeleting} handleDelete={handleDelete}/>
+            <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={isDeleting} handleDelete={handleDelete} title={(data.find(project => project.id === loanToDelete)?.user?.name + "'s Loan" || 'Project')}/>
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
                 <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>

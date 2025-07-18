@@ -11,7 +11,7 @@ interface DeletePopUpProps {
   title: string
 }
 
-export default function DeletePopUp({
+export default function NotificationConfirmation({
   isDeleteModalOpen,
   closeDeleteModal,
   isDeleting,

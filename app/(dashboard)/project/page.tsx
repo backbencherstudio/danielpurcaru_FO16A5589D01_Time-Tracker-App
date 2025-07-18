@@ -33,7 +33,7 @@ export default function ProjectManagementPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
+  const [projectToDelete, setprojectToDelete] = useState<string | null>(null)
 
   const totalItems = data.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -46,7 +46,7 @@ export default function ProjectManagementPage() {
 
   const closeDeleteModal = () => {
         setIsDeleteModalOpen(false)
-        setLoanToDelete(null)
+        setprojectToDelete(null)
     }
 
   const fetchProjectData = useCallback(async () => {
@@ -77,10 +77,10 @@ export default function ProjectManagementPage() {
   const handleDeleteProject = async () => {
     try {
       setLoading(true);
-      const res = await UserService.deleteProject(loanToDelete);
+      const res = await UserService.deleteProject(projectToDelete);
       if (res?.data?.success) {
         toast.success("Project deleted successfully");
-        setData(prev => prev.filter(project => project.id !== loanToDelete));
+        setData(prev => prev.filter(project => project.id !== projectToDelete));
         if (currentItems.length === 1 && currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
@@ -157,7 +157,7 @@ export default function ProjectManagementPage() {
 
   return (
     <div className="bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl flex flex-col gap-6">
-        <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={loading} handleDelete={handleDeleteProject}/>
+        <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={loading} handleDelete={handleDeleteProject} title={(data.find(project => project.id === projectToDelete)?.name || 'Project')}/>
       {/* Header Section */}
       <div className="w-full flex flex-col sm:flex-row justify-between items-start gap-5">
         <div className="flex flex-col justify-start gap-2">
@@ -216,7 +216,7 @@ export default function ProjectManagementPage() {
                   key={row.id}
                   row={row}
                   index={index}
-                  onDelete={()=> {setLoanToDelete(row?.id);setIsDeleteModalOpen(true)}}
+                  onDelete={()=> {setprojectToDelete(row?.id);setIsDeleteModalOpen(true)}}
                   loading={loading}
                 />
               ))

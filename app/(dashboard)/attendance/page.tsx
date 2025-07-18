@@ -89,7 +89,7 @@ export default function Page() {
     useEffect(() => {
         const fetchEmpData = async () => {
             try {
-                const res = await UserService?.getAttendanceData(selectedMonth);
+                const res = await UserService?.getAttendanceData(selectedMonth+1);
                 if (res?.data?.success) {
                     // console.log("Response:", res.data.data);
                     setAttendanceData(res.data.data)
@@ -130,6 +130,12 @@ export default function Page() {
             };
         }));
     };
+
+
+    const handleSaveData=(id:string)=>{
+        const updatedData = attendanceData.filter(emp=> emp.user.id === id)
+        console.log(updatedData)
+    }
 
 
 
@@ -325,7 +331,7 @@ export default function Page() {
                 {WorkHourEditor && <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 p-3 space-y-3 bg-white rounded-lg">
                     <div className="flex justify-between">
                         <h3>Edit Hour</h3>
-                        <FaCheck className="text-[#82C8E5] cursor-pointer" onClick={() => setWorkHourEditor(false)} />
+                        <FaCheck className="text-[#82C8E5] cursor-pointer" onClick={() => {setWorkHourEditor(false);handleSaveData(updateWorkHour.emp)}} />
                         {/* <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="none" className="cursor-pointer" onClick={() => setWorkHourEditor(false)}>
                             <path d="M17.8855 16.0001L24.9428 8.94276C25.4642 8.42276 25.4642 7.5775 24.9428 7.0575C24.4215 6.53617 23.5788 6.53617 23.0575 7.0575L16.0002 14.1148L8.94284 7.0575C8.42151 6.53617 7.57884 6.53617 7.0575 7.0575C6.53617 7.5775 6.53617 8.42276 7.0575 8.94276L14.1148 16.0001L7.0575 23.0575C6.53617 23.5775 6.53617 24.4228 7.0575 24.9428C7.3175 25.2028 7.65884 25.3335 8.00017 25.3335C8.3415 25.3335 8.68284 25.2028 8.94284 24.9428L16.0002 17.8855L23.0575 24.9428C23.3175 25.2028 23.6588 25.3335 24.0002 25.3335C24.3415 25.3335 24.6828 25.2028 24.9428 24.9428C25.4642 24.4228 25.4642 23.5775 24.9428 23.0575L17.8855 16.0001Z" fill="#82C8E5" />
                         </svg> */}
