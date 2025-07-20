@@ -1,6 +1,10 @@
 'use client'
 import { useState, useEffect } from "react"
 import Link from "next/link";
+import { CookieHelper } from "@/helper/cookie.helper";
+import { LogOut } from "lucide-react";
+import router from "next/router";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
     const [menu, setMenu] = useState({
@@ -47,6 +51,14 @@ export default function Sidebar() {
     }, [])
 
 
+    const logOut = () => {
+        // Clear token cookie
+        CookieHelper.remove('empdashtoken');
+
+        // Redirect to login
+        router.push('/login');
+        toast.success('Logged out successfully');
+    }
 
     return (
         <div className="sm:px-4 px-2 bg-white translate-y-[90px] flex flex-col gap-5 justify-between" style={{ height: "calc(100vh - 130px)" }}>
@@ -144,7 +156,7 @@ export default function Sidebar() {
                 </Link>
             </div>
 
-            <Link href="/login" className={`flex   items-center lg:gap-[10px] py-2 rounded-lg cursor-pointer w-fit lg:w-full`}  >
+            <Link href="/login" className={`flex   items-center lg:gap-[10px] py-2 rounded-lg cursor-pointer w-fit lg:w-full`} onClick={logOut}>
                 <div className="bg-[#FEECEE] p-3 rounded-full w-fit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M10 11.75C9.95093 12.9846 8.92207 14.0329 7.54373 13.9992C7.22307 13.9913 6.82673 13.8796 6.03408 13.656C4.12641 13.1179 2.47037 12.2135 2.07304 10.1877C2 9.81533 2 9.39627 2 8.5582V7.4418C2 6.60374 2 6.1847 2.07304 5.81231C2.47037 3.78643 4.12641 2.8821 6.03408 2.34402C6.82673 2.12042 7.22307 2.00863 7.54373 2.00079C8.92207 1.96707 9.95093 3.01538 10 4.25" stroke="#EB3D4D" strokeWidth="1.5" strokeLinecap="round" />
@@ -154,7 +166,7 @@ export default function Sidebar() {
                 <span className="text-[16px] text-nowrap hidden lg:block">Logout</span>
             </Link>
 
-             
+
         </div>
     )
 }
