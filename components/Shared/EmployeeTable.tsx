@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import EditEmployeeDialog from './EditEmployeeDialog'
+import { useEffect } from "react";
 
 interface Employee {
     id: string;
@@ -13,6 +14,7 @@ interface Employee {
     employee_role: string;
     hourly_rate: string;
     recorded_hours: number;
+    earnings: string,
     avatarUrl: string;
 }
 
@@ -27,10 +29,17 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedEmpId, setSelectedEmpId] = useState("");
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [employeeData, setEmployeeData] = useState(empData);
+
+
+    useEffect(() => {
+        setEmployeeData(empData);
+    }, [empData]);
 
     // Memoized filtered data
     const filteredEmpData = useMemo(() => {
-        let result = empData;
+        let result = employeeData;
 
         // Apply job title filter
         if (selectedJobTitle !== "All Job Titles") {
@@ -48,18 +57,18 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
         }
 
         return result;
-    }, [empData, selectedJobTitle, searchQuery]);
+    }, [employeeData, selectedJobTitle, searchQuery]);
 
     const totalItems = filteredEmpData.length;
 
     // Extract unique job titles
     const jobTitles = useMemo(() =>
-        Array.from(new Set(empData.map(emp => emp?.employee_role))),
-        [empData]
+        Array.from(new Set(employeeData.map(emp => emp?.employee_role))),
+        [employeeData]
     );
 
     // Pagination calculations
-    const { currentEntries, totalPages } = useMemo(() => {
+    let { currentEntries, totalPages } = useMemo(() => {
         const lastIndex = currentPage * itemsPerPage;
         const firstIndex = lastIndex - itemsPerPage;
         return {
@@ -67,6 +76,24 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
             totalPages: Math.ceil(filteredEmpData.length / itemsPerPage)
         };
     }, [filteredEmpData, currentPage, itemsPerPage]);
+
+
+    const handleSorting = (key: keyof Employee) => {
+        const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+        setSortOrder(newOrder);
+
+        setEmployeeData([...employeeData].sort((a, b) => {
+            // Add null checks
+            const aValue = a[key] || '';
+            const bValue = b[key] || '';
+
+            if (newOrder === 'asc') {
+                return String(aValue).localeCompare(String(bValue));
+            } else {
+                return String(bValue).localeCompare(String(aValue));
+            }
+        }));
+    };
 
     const handleJobTitleFilter = (jobTitle: string) => {
         setSelectedJobTitle(jobTitle);
@@ -103,6 +130,8 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     };
 
     const visiblePages = getVisiblePageNumbers();
+
+    console.log("Current entries : ", currentEntries)
     return (
         <div className="space-y-6 bg-white">
             {/* Search and Filter Section */}
@@ -152,12 +181,84 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                 <table className="w-full table-auto">
                     <thead className="text-[#4A4C56] bg-[#F6F8FA] font-semibold text-[12px] w-full text-nowrap">
                         <tr>
-                            <th className="py-4 px-4">ID</th>
-                            <th className="py-4 px-4">Name</th>
-                            <th className="py-4 px-4">Role</th>
-                            <th className="py-4 text-center px-4">Hourly Rate</th>
-                            <th className="py-4 text-center px-4">Recorded Hours</th>
-                            <th className="py-4 text-center px-4">Earnings</th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>ID</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Name</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Role</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("employee_role")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-center px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Hourly Rate</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("hourly_rate")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-center px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Recorded Hours</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("recorded_hours")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-center px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Earnings</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("earnings")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
                             <th className="py-4 px-4">Action</th>
                         </tr>
                     </thead>
@@ -176,9 +277,9 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                             height={24}
                                         />
                                     )}
-                                    <h3>{emp?.name}</h3>
+                                    <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
-                                <td className="p-4">{emp?.employee_role}</td>
+                                <td className="p-4 text-nowrap">{emp?.employee_role}</td>
                                 <td className="text-center p-4">${emp?.hourly_rate}</td>
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>
                                 <td className="text-center p-4">${emp?.recorded_hours * parseFloat(emp?.hourly_rate)}</td>

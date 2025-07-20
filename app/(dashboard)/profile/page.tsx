@@ -203,7 +203,7 @@ export default function page() {
                             type="date"
                             id="DateOfBirth"
                             className="h-14 px-4 py-4   rounded-lg   outline-1 outline-offset-[-1px] outline-gray-200"
-                            value={adminInfo?.date_of_birth.split("T")[0] || ""}
+                            value={adminInfo?.date_of_birth?.split("T")[0] || ""}
                             onChange={(e) => handleChange("date_of_birth", e.target.value)}
                         />
                     </div>

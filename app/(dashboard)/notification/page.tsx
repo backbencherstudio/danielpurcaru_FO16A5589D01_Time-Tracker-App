@@ -55,24 +55,28 @@ interface userType {
 export default function Page() {
 
   const [empLoanData, setEmpLoanData] = useState<loanData[]>();
+  const [getLoan,setGetLoan] = useState(true);
 
 
-  const handleEmpLoan = (id: string, status: boolean)=>{
-
-    const newData = empLoanData.map(loan => {
-      if (loan.id === id) {
-        if(status){
-          loan.loan_status = "ACCEPTED"
-        }else{
-          loan.loan_status = "REJECTED"
+  const handleEmpLoan = async(id: string, status: boolean)=>{
+    try {
+        const res = await UserService?.updateEmpLoan(id,{loan_status:status?"APPROVED":"REJECTED"});
+        if (res?.data?.success) {
+          console.log("Response load :", res.data.data);
+          setGetLoan(prev => !prev)
+        } else {
+          toast.error(res?.response?.data?.message || "Failed to fetch data");
         }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        // setLoading(false);
       }
-      return loan;
-    })
-
-    setEmpLoanData(newData)
-
-    console.log("Updated loan : ",newData);
   }
 
   useEffect(() => {
@@ -97,7 +101,7 @@ export default function Page() {
       }
     }
     fetchEmpData()
-  }, [])
+  }, [getLoan])
   return (
     <div className="p-5 bg-gradient-to-l from-white/60 to-white rounded-2xl">
       <div className="flex flex-col gap-8">
@@ -111,14 +115,14 @@ export default function Page() {
         </div>
 
         {/* Map through the notifications array */}
-        {empLoanData?.filter(emp => emp.loan_status.toLowerCase() === "pending").map((notification, index) => (
+        {empLoanData?.filter(emp => emp?.loan_status?.toLowerCase() === "pending")?.map((notification, index) => (
           <NotificationCard
             key={index}
             imageSrc={notification?.user?.avatarUrl}
             name={notification?.user?.name}
-            id={notification.id}
+            id={notification?.id}
             handleEmpLoan={handleEmpLoan}
-            message={`${notification.user.name}  has requested a payment of $ ${notification.loan_amount}`}
+            message={`${notification?.user?.name}  has requested a payment of $ ${notification?.loan_amount}`}
           />
         ))}
       </div>
