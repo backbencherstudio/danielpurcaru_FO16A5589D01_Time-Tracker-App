@@ -6,6 +6,11 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { UserService } from '@/service/user/user.service'
 import DeletePopUp from '../reusable/DeletePopUp'
 
+type empLoan={
+    id:string,
+
+}
+
 const EmpLoanTable = ({ empData, start, end }: any) => {
     const [searchQuery, setSearchQuery] = useState('')
     const [data, setData] = useState([])
@@ -13,6 +18,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
     const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteMessage, setDeleteMessage] = useState({ text: '', isError: false })
+     const [sortOrder, setSortOrder] = useState('asc');
 
     // Initialize data with empData and update when empData changes
     useEffect(() => {
@@ -71,6 +77,30 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
         }
     };
 
+
+    const handleSorting = (key:string) => {
+        const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+        setSortOrder(newOrder);
+
+        setData([...data].sort((a, b) => {
+            // Add null checks
+            let aValue:typeof data ;
+            let bValue: typeof data ;
+            if(key === "name"){
+                aValue = a.user[key] || '';
+                bValue = b.user[key] || '';
+            }else{
+                aValue = a[key] || '';
+                bValue = b[key] || '';
+            }
+
+            if (newOrder === 'asc') {
+                return String(aValue).localeCompare(String(bValue));
+            } else {
+                return String(bValue).localeCompare(String(aValue));
+            }
+        }));
+    };
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
             <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={isDeleting} handleDelete={handleDelete} title={(data.find(project => project.id === loanToDelete)?.user?.name + "'s Loan" || 'Project')}/>
@@ -109,10 +139,58 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                 <table className="w-full table-auto">
                     <thead className="text-[#4A4C56] bg-[#F6F8FA] font-semibold text-[12px]">
                         <tr>
-                            <th className="py-4 px-4">SL</th>
-                            <th className="py-4 text-start px-4">Employee Name</th>
-                            <th className="py-4 text-start px-4">Date</th>
-                            <th className="py-4 px-4 text-start">Price</th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>SL</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-start px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Employee Name</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 text-start px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Date</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("created_at")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 px-4 text-start">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Price</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("loan_amount")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
                             <th className="py-4 px-4">Action</th>
                         </tr>
                     </thead>

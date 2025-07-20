@@ -372,7 +372,7 @@ export const UserService = {
     city: string,
     address: string,
     zip_code: string,
-  },context: any = null) => {
+  }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
     const config = {
       method: 'UPDATE',
@@ -397,7 +397,7 @@ export const UserService = {
 
     return await Fetch.get(`/academic-calendar`, config);
   },
-  createEvent: async (eventData:{title:string,start_date:string,end_date:string,event_type:string},context: any = null) => {
+  createEvent: async (eventData: { title: string, start_date: string, end_date: string, event_type: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
     const config = {
       method: 'INSERT',
@@ -406,12 +406,12 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    return await Fetch.post(`/academic-calendar`,eventData, config);
+    return await Fetch.post(`/academic-calendar`, eventData, config);
   },
-  updateEvent: async (eventId:string,eventData:{title:string,start_date:string,end_date:string,event_type:string},context: any = null) => {
+  updateEvent: async (eventId: string, eventData: { title: string, start_date: string, end_date: string, event_type: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
-     const config = {
+    const config = {
       method: 'UPDATE',
       headers: {
         'Content-Type': "application/json",
@@ -419,9 +419,9 @@ export const UserService = {
       }
     }
 
-    return await Fetch.patch(`/academic-calendar/${eventId}`,eventData, config);
+    return await Fetch.patch(`/academic-calendar/${eventId}`, eventData, config);
   },
-  deleteEvent: async (eventId:string,context: any = null) => {
+  deleteEvent: async (eventId: string, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -432,6 +432,46 @@ export const UserService = {
     };
 
     return await Fetch.delete(`/academic-calendar/${eventId}`, config);
+  },
+
+  checkAttendance: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.post(`/attendance/check-absence`, {}, config);
+  },
+
+  updateAttendance: async (id: string, data: { hours: number, attendance_status: string }, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.patch(`/attendance/${id}`, data, config);
+  },
+
+
+  updateEmpLoan: async (id:string,data:{loan_status:string},context = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.patch(`/employee-loan/${id}`, data, config);
   },
 
 
