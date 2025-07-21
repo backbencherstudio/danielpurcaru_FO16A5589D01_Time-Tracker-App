@@ -38,7 +38,18 @@ export default function Navbar() {
     const [empLoanData,setEmpLoanData] = useState<loanData[]>()
     const [isNotificationOpen,setIsNotificationOpen] = useState(false);
     const [avatar,setAvatar] = useState();
-    const [adminInfo,setAdminInfo] = useState()
+    const [adminInfo,setAdminInfo] = useState({
+        name: "",
+        email: "",
+        phone_number: "",
+        date_of_birth: "",
+        country: "",
+        state: "",
+        city: "",
+        address: "",
+        zip_code: "",
+        avatar_url: ""
+    })
     const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     };
 
