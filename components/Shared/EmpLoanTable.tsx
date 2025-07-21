@@ -5,6 +5,7 @@ import Image from 'next/image'
 import React, { useState, useMemo, useEffect } from 'react'
 import { UserService } from '@/service/user/user.service'
 import DeletePopUp from '../reusable/DeletePopUp'
+import avatar from "@/public/avatar.png"
 
 type empLoan={
     id:string,
@@ -143,11 +144,11 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>SL</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -156,11 +157,11 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Employee Name</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -169,11 +170,11 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Date</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("created_at")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -182,11 +183,11 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Price</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("loan_amount")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -200,7 +201,7 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                                 <td className="text-center p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     <Image
-                                        src={emp?.user?.avatarUrl}
+                                        src={emp?.user?.avatarUrl || avatar}
                                         alt={`${emp?.name}'s avatar`}
                                         className="w-[24px] h-[24px] rounded-full"
                                         width={24}

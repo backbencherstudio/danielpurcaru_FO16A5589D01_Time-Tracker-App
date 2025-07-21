@@ -5,6 +5,8 @@ import { useState, useMemo } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import EditEmployeeDialog from './EditEmployeeDialog'
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import avatar from '@/public/avatar.png'
 
 interface Employee {
     id: string;
@@ -20,9 +22,12 @@ interface Employee {
 
 interface EmployeeTableProps {
     empData: Employee[];
+    empDataSaved: boolean,
+    showPage: boolean,
+    handleEmpDataSaved: () => void
 }
 
-export default function EmployeeTable({ empData }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSaved, showPage }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
@@ -34,8 +39,9 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
 
 
     useEffect(() => {
+        console.log("Reloading....")
         setEmployeeData(empData);
-    }, [empData]);
+    }, [empData, empDataSaved]);
 
     // Memoized filtered data
     const filteredEmpData = useMemo(() => {
@@ -134,6 +140,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
     console.log("Current entries : ", currentEntries)
     return (
         <div className="space-y-6 bg-white">
+            <Toaster position="top-right" />
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
                 {/* Search Bar */}
@@ -185,11 +192,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>ID</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -198,11 +205,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Name</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -211,11 +218,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Role</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("employee_role")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -224,11 +231,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Hourly Rate</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("hourly_rate")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -237,11 +244,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Recorded Hours</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("recorded_hours")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -250,11 +257,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Earnings</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("earnings")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -268,15 +275,11 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                             <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA] ">
                                 <td className="p-4">{emp?.id}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    {emp?.avatarUrl && (
-                                        <Image
-                                            src={emp?.avatarUrl}
-                                            alt={`${emp?.name}'s avatar`}
-                                            className="w-[24px] h-[24px] rounded-full"
-                                            width={24}
-                                            height={24}
-                                        />
+                                    <div className="w-6 h-6">
+                                        {emp?.avatarUrl && (
+                                        <Image src={emp?.avatarUrl ? emp?.avatarUrl : avatar} alt={`${emp?.name}'s avatar`} width={24} height={24} className="w-[24px] h-[24px] rounded-full object-cover" />
                                     )}
+                                    </div>
                                     <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
                                 <td className="p-4 text-nowrap">{emp?.employee_role}</td>
@@ -322,7 +325,7 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
             </div>
 
             {/* Pagination */}
-            <div className="bg-white rounded-lg">
+            {showPage && <div className="bg-white rounded-lg">
                 {filteredEmpData.length > 0 && (
                     <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
                         <div className="flex items-center rounded-lg sm:px-4">
@@ -381,8 +384,8 @@ export default function EmployeeTable({ empData }: EmployeeTableProps) {
                         </div>
                     </div>
                 )}
-            </div>
-            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId} data={filteredEmpData} />}
+            </div>}
+            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empDataSaved={() => handleEmpDataSaved} empId={selectedEmpId} data={filteredEmpData} />}
         </div>
     );
 }
