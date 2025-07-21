@@ -12,7 +12,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { UserService } from "@/service/user/user.service";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function page() {
     const [empData, setEmpData] = useState([])
@@ -24,6 +24,7 @@ export default function page() {
     const [isLargeScreen, setIsLargeScreen] = useState(2);
     const [loading, setLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [empDataSaved, setEmpDataSaved] = useState(false);
     const handlePageChange = async (pageNumber) => {
         if (pageNumber != currentPage) {
             // setPageLoading(true);
@@ -94,8 +95,14 @@ export default function page() {
     }, [currentPage, isLargeScreen]);
 
 
+    const handleEmpDataSaved = () => {
+        console.log("Emp update saved...")
+        setEmpDataSaved(prev => !prev)
+    }
+
     return (
         <div className="bg-white rounded-lg p-5">
+            <Toaster position="top-right" />
             <div className="w-full flex justify-between items-start gap-5 mb-5">
                 <div className="flex flex-col justify-start gap-2">
                     <span className="text-neutral-800 text-2xl font-semibold">Employees</span>
@@ -113,7 +120,7 @@ export default function page() {
                     </button>
                 </div>
             </div>
-            <EmployeeTable empData={empData} />
+            <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={true} />
             {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
         </div>
     );

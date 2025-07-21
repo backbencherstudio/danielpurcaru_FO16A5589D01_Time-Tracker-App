@@ -9,6 +9,8 @@ import { UserService } from "@/service/user/user.service";
 import { time } from "console";
 import { useState,useEffect } from "react";
 import { toast } from "react-toastify";
+import Image from "next/image";
+import defaultAvatar from "@/public/avatar.png"
 
 
 
@@ -35,6 +37,8 @@ export default function Navbar() {
     const profilePic = "/images/profileIcon.png";
     const [empLoanData,setEmpLoanData] = useState<loanData[]>()
     const [isNotificationOpen,setIsNotificationOpen] = useState(false);
+    const [avatar,setAvatar] = useState();
+    const [adminInfo,setAdminInfo] = useState()
     const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     };
 
@@ -89,6 +93,32 @@ export default function Navbar() {
             }
             fetchEmpData()
         },[])
+
+
+        useEffect(() => {
+        const getProfileInfo = async () => {
+            try {
+                const res = await UserService?.getProfile();
+                if (res?.data?.success) {
+                    setAdminInfo(res.data.data)
+                    setAvatar(res.data.data.avatar_url)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            }
+        }
+        getProfileInfo();
+    }, [])
+
+    console.log("Admin info : ",adminInfo)
+
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
             <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
@@ -129,11 +159,11 @@ export default function Navbar() {
 
                 <div className="flex md:gap-[12px]">
                     <div>
-                        <img src={profilePic} alt="Pic" className="sm:w-[44px] w-[30px] aspect-square rounded-full" />
+                        <Image src={avatar || defaultAvatar} alt="Pic" className="rounded-full" width={30} height={30}/>
                     </div>
                     <div className="hidden md:block">
-                        <h3 className="text-[14px] text-[#1D1F2C] font-semibold">{userName}</h3>
-                        <h2 className="text-[#A5A5AB] text-[10px] font-medium">{userMail}</h2>
+                        <h3 className="text-[14px] text-[#1D1F2C] font-semibold">{adminInfo?.name || "No-name"}</h3>
+                        <h2 className="text-[#A5A5AB] text-[10px] font-medium">{adminInfo?.email || "example@abc.com"}</h2>
                     </div>
                 </div>
             </div>

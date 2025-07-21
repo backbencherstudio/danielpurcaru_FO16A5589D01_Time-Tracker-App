@@ -13,7 +13,7 @@ import theresa from "@/public/images/Employee/theresa.png";
 import { useEffect, useState } from "react";
 import { UserService } from "@/service/user/user.service";
 import { CookieHelper } from "@/helper/cookie.helper";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 
 const roboto = Roboto({
@@ -27,6 +27,29 @@ export default function Home() {
   const [cardData, setCardData] = useState({})
   const [typeOfEmp, setTypeOfEmp] = useState([])
   const [chartData, setChartData] = useState([])
+  const [empDataSaved,setEmpDataSaved]= useState(false);
+
+
+
+useEffect(()=>{
+  // checkAttendance
+  const checkAttendance = async()=>{
+    try {
+        const res = await UserService?.checkAttendance();
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+      }
+  }
+  checkAttendance();
+},[])
+
+
   useEffect(() => {
     setLoading(true);
 
@@ -123,7 +146,7 @@ export default function Home() {
     fetchEmpRoleOverview();
     fetchSummeryData();
     fetchEmpData();
-  }, []);
+  }, [empDataSaved]);
 
   const [empData, setEmpData] = useState([]);
   // [
@@ -137,8 +160,15 @@ export default function Home() {
 
   // console.log("Fetch data ", empData)
 
+
+  const handleEmpDataSaved=()=>{
+    console.log("Emp update saved...")
+    setEmpDataSaved(prev=>!prev)
+  }
+
   return (
     <div className="space-y-4">
+       <Toaster position="top-right" />
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {loading && <div className="text-lg font-medium">Loading...</div>}
         {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
@@ -173,7 +203,7 @@ export default function Home() {
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData}/>
+        <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={false}/>
       </div>}
     </div>
   );

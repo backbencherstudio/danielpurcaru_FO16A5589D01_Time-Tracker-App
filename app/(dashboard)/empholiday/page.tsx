@@ -1,10 +1,5 @@
 'use client'
 
-import guy from "@/public/images/Employee/guy.png";
-import Jerome from "@/public/images/Employee/Jerome.png";
-import ronald from "@/public/images/Employee/ronald.png";
-import sanvannah from "@/public/images/Employee/sanvannah.png";
-import theresa from "@/public/images/Employee/theresa.png";
 import { UserService } from "@/service/user/user.service";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
+import avatar from '@/public/avatar.png'
 
 export default function Page() {
     const { handleSubmit, register } = useForm()
@@ -90,8 +86,8 @@ export default function Page() {
                 </div>
                 <button className="bg-[#82C8E5] flex gap-1 items-center px-4 py-4 rounded-xl cursor-pointer" onClick={handleAddHolidayOpen}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.0002 3.3335C10.4604 3.3335 10.8335 3.70659 10.8335 4.16683V15.8335C10.8335 16.2937 10.4604 16.6668 10.0002 16.6668C9.53993 16.6668 9.16683 16.2937 9.16683 15.8335V4.16683C9.16683 3.70659 9.53993 3.3335 10.0002 3.3335Z" fill="white" />
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.3335 10.0002C3.3335 9.53993 3.70659 9.16683 4.16683 9.16683H15.8335C16.2937 9.16683 16.6668 9.53993 16.6668 10.0002C16.6668 10.4604 16.2937 10.8335 15.8335 10.8335H4.16683C3.70659 10.8335 3.3335 10.4604 3.3335 10.0002Z" fill="white" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M10.0002 3.3335C10.4604 3.3335 10.8335 3.70659 10.8335 4.16683V15.8335C10.8335 16.2937 10.4604 16.6668 10.0002 16.6668C9.53993 16.6668 9.16683 16.2937 9.16683 15.8335V4.16683C9.16683 3.70659 9.53993 3.3335 10.0002 3.3335Z" fill="white" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M3.3335 10.0002C3.3335 9.53993 3.70659 9.16683 4.16683 9.16683H15.8335C16.2937 9.16683 16.6668 9.53993 16.6668 10.0002C16.6668 10.4604 16.2937 10.8335 15.8335 10.8335H4.16683C3.70659 10.8335 3.3335 10.4604 3.3335 10.0002Z" fill="white" />
                     </svg>
                     <span className="text-white text-[16px] font-medium">Add Holiday</span>
                 </button>
@@ -103,11 +99,11 @@ export default function Page() {
                             <th className="py-4 px-4 flex justify-between gap-3">
                                 <span>SL</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                    <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                     <g opacity="0.4">
-                                        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                     </g>
                                 </svg>
                             </th>
@@ -115,11 +111,11 @@ export default function Page() {
                                 <div className="flex items-center justify-between">
                                     <span>Name</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -128,11 +124,11 @@ export default function Page() {
                                 <div className="flex justify-between items-center">
                                     <span>From</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -141,11 +137,11 @@ export default function Page() {
                                 <div className="flex items-center justify-between">
                                     <span>To</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         </g>
                                     </svg>
                                 </div>
@@ -158,7 +154,7 @@ export default function Page() {
                             <tr key={emp.id} className="border-t-[0.2px] border-[#F6F8FA]">
                                 <td className="p-4">{index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp?.user?.avatarUrl} alt="Emp image" width={24} height={24} className="rounded-full" />
+                                    <Image src={emp?.user?.avatarUrl || avatar} alt="Emp image" width={24} height={24} className="rounded-full object-cover" />
                                     <h3>{emp?.user?.name}</h3>
                                 </td>
                                 <td className="p-4">{emp.start_date.split("T")[0]}</td>

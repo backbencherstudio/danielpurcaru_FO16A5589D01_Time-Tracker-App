@@ -1,7 +1,7 @@
 'use client'
 import { Eye, EyeOff } from 'lucide-react';
 import { UserService } from '@/service/user/user.service';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation';
@@ -52,7 +52,11 @@ const RegisterPage = () => {
                 toast.success(res.data.message);
                 localStorage.setItem("verifyemail", data.email);
                 // router.push("/verify-email");
-
+                setTimeout(() => {
+                    router.push("/login");
+                }, 2000);
+            }else{
+                toast.error(res.data.message)
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed");
@@ -64,6 +68,7 @@ const RegisterPage = () => {
 
     return (
         <div id='RegisterPage' className='mx-auto min-h-screen w-full px-5 py-6 md:px-10 md:py-8 lg:px-[100px] lg:py-[60px] flex flex-col justify-between'>
+             <Toaster position="top-right" />
             <h1 className="text-neutral-800 text-2xl font-bold font-['Urbanist'] leading-10 tracking-tight">Company Name</h1>
             
             <form onSubmit={handleSubmit(onSubmit)} className='flex w-full flex-col gap-6 md:max-w-[485px]'>

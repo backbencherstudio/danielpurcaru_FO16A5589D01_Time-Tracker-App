@@ -8,11 +8,10 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { UserService } from '@/service/user/user.service';
 import AddNewProjectForm from '@/components/allforms/AddNewProjectForm';
-
-// Icons
-import swap from '@/public/icons/arrow-swap.svg';
 import down from '@/public/icons/file-download.svg';
 import DeletePopUp from '@/components/reusable/DeletePopUp';
+import { Toaster } from 'react-hot-toast';
+import avatar from "@/public/avatar.png"
 
 interface Project {
   id: string;
@@ -32,22 +31,48 @@ export default function ProjectManagementPage() {
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [projectToDelete, setprojectToDelete] = useState<string | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' } | null>(null);
 
   const totalItems = data.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+  const sortedData = useMemo(() => {
+    let sortableData = [...data];
+    if (sortConfig !== null) {
+      sortableData.sort((a, b) => {
+        // @ts-ignore
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        // @ts-ignore
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableData;
+  }, [data, sortConfig]);
+
   const currentItems = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return data.slice(startIndex, startIndex + itemsPerPage);
-  }, [data, currentPage, itemsPerPage]);
+    return sortedData.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedData, currentPage, itemsPerPage]);
 
+  const requestSort = (key: string) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
 
   const closeDeleteModal = () => {
-        setIsDeleteModalOpen(false)
-        setprojectToDelete(null)
-    }
+    setIsDeleteModalOpen(false);
+    setProjectToDelete(null);
+  };
 
   const fetchProjectData = useCallback(async () => {
     setLoading(true);
@@ -64,7 +89,6 @@ export default function ProjectManagementPage() {
         error.message ||
         "An error occurred while fetching data"
       );
-      // console.error("Fetch error:", error);
     } finally {
       setLoading(false);
     }
@@ -75,6 +99,8 @@ export default function ProjectManagementPage() {
   }, [fetchProjectData]);
 
   const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+    
     try {
       setLoading(true);
       const res = await UserService.deleteProject(projectToDelete);
@@ -84,7 +110,7 @@ export default function ProjectManagementPage() {
         if (currentItems.length === 1 && currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
-        closeDeleteModal()
+        closeDeleteModal();
       } else {
         toast.error(res?.response?.data?.message || "Failed to delete project");
       }
@@ -94,7 +120,6 @@ export default function ProjectManagementPage() {
         error.message ||
         "An error occurred while deleting project"
       );
-      console.error("Delete error:", error);
     } finally {
       setLoading(false);
     }
@@ -120,7 +145,11 @@ export default function ProjectManagementPage() {
 
     if (startPage > 1) {
       buttons.push(
-        <button key={1} onClick={() => handlePageChange(1)} className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100">
+        <button 
+          key={1} 
+          onClick={() => handlePageChange(1)} 
+          className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
+        >
           1
         </button>
       );
@@ -146,7 +175,11 @@ export default function ProjectManagementPage() {
         buttons.push(<span key="end-ellipsis" className="px-2">...</span>);
       }
       buttons.push(
-        <button key={totalPages} onClick={() => handlePageChange(totalPages)} className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100">
+        <button 
+          key={totalPages} 
+          onClick={() => handlePageChange(totalPages)} 
+          className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
+        >
           {totalPages}
         </button>
       );
@@ -155,9 +188,36 @@ export default function ProjectManagementPage() {
     return buttons;
   };
 
+  const SortIcon = ({ onClick }: { onClick: () => void }) => (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 16 16" 
+      fill="none" 
+      className="cursor-pointer"
+      onClick={onClick}
+    >
+      <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      <g opacity="0.4">
+        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+
   return (
     <div className="bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl flex flex-col gap-6">
-        <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={loading} handleDelete={handleDeleteProject} title={(data.find(project => project.id === projectToDelete)?.name || 'Project')}/>
+      <Toaster position="top-right" />
+      <DeletePopUp 
+        isDeleteModalOpen={isDeleteModalOpen} 
+        closeDeleteModal={closeDeleteModal} 
+        isDeleting={loading} 
+        handleDelete={handleDeleteProject} 
+        title={(data.find(project => project.id === projectToDelete)?.name || 'Project')} 
+      />
+      
       {/* Header Section */}
       <div className="w-full flex flex-col sm:flex-row justify-between items-start gap-5">
         <div className="flex flex-col justify-start gap-2">
@@ -169,8 +229,8 @@ export default function ProjectManagementPage() {
             <Image className="w-3 h-4" src={down} alt="Download" />
             <span className="text-sky-300 ml-2">Download</span>
           </button>
-          <button 
-            onClick={toggleModal} 
+          <button
+            onClick={toggleModal}
             className="w-full sm:w-44 p-3 sm:p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl flex justify-center items-center gap-1"
           >
             <Plus className="text-white" size={16} />
@@ -181,17 +241,52 @@ export default function ProjectManagementPage() {
 
       {/* Table Section */}
       <div className='overflow-x-auto'>
-        <table className="w-full rounded-tl-[10px] rounded-tr-[10px]">
+        <table className="w-full">
           <thead className="bg-slate-50">
-            <tr className="grid grid-cols-8 min-w-[800px]">
-              <TableHeaderCell label="SL" width="w-16" />
-              <TableHeaderCell label="Project Name" width="w-36" />
-              <TableHeaderCell label="Assignees" width="w-34" />
-              <TableHeaderCell label="Due Date" width="w-36" />
-              <TableHeaderCell label="Priority" width="w-32" />
-              <TableHeaderCell label="Price" width="w-36" />
-              <TableHeaderCell label="Status" width="w-46" />
-              <th className="w-36 p-4 bg-slate-50 text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight text-center">
+            <tr>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span>SL</span>
+                  <SortIcon onClick={() => requestSort('id')} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2 text-nowrap">
+                  <span>Project Name</span>
+                  <SortIcon onClick={() => requestSort('name')} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span>Assignees</span>
+                  <SortIcon onClick={() => {}} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2 text-nowrap">
+                  <span>Due Date</span>
+                  <SortIcon onClick={() => requestSort('start_date')} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span>Priority</span>
+                  <SortIcon onClick={() => requestSort('priority')} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span>Price</span>
+                  <SortIcon onClick={() => requestSort('price')} />
+                </div>
+              </th>
+              <th className="p-4 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span>Status</span>
+                  <SortIcon onClick={() => requestSort('status')} />
+                </div>
+              </th>
+              <th className="p-4 text-center">
                 Action
               </th>
             </tr>
@@ -199,27 +294,76 @@ export default function ProjectManagementPage() {
 
           <tbody>
             {loading ? (
-              <tr className="grid grid-cols-8 min-w-[800px]">
+              <tr>
                 <td colSpan={8} className="py-8 text-center text-gray-500">
                   Loading projects...
                 </td>
               </tr>
             ) : currentItems.length === 0 ? (
-              <tr className="grid grid-cols-8 min-w-[800px]">
+              <tr>
                 <td colSpan={8} className="py-8 text-center text-gray-500">
                   No projects found
                 </td>
               </tr>
             ) : (
-              currentItems.map((row, index) => (
-                <ProjectRow 
-                  key={row.id}
-                  row={row}
-                  index={index}
-                  onDelete={()=> {setprojectToDelete(row?.id);setIsDeleteModalOpen(true)}}
-                  loading={loading}
-                />
-              ))
+              currentItems.map((row, index) => {
+                const startDate = new Date(row.start_date).toLocaleDateString();
+                const priority = row.priority.charAt(0).toUpperCase() + row.priority.slice(1).toLowerCase();
+                const statusText = row.status === 1 ? "In Progress" : "Completed";
+                const statusClass = row.status === 1 ? 'bg-sky-100' : 'bg-green-50';
+
+                return (
+                  <tr key={row.id} className="bg-white hover:bg-gray-50 border-b">
+                    <td className="p-4">{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+                    <td className="p-4">{row.name}</td>
+                    <td className="p-4">
+                      <div className="flex -space-x-3">
+                        {row.assignees.slice(0, 3).map((assignee, idx) => (
+                          <div key={idx} className="relative">
+                            <Image
+                              className="w-6 h-6 rounded-full border-2 border-sky-300 bg-white object-cover"
+                              src={assignee?.user?.avatarUrl || avatar}
+                              alt={`Assignee ${idx + 1}`}
+                              width={24}
+                              height={24}
+                            />
+                          </div>
+                        ))}
+                        {row.assignees.length > 3 && (
+                          <div className="bg-gray-100 p-1.5 -ml-4 rounded-full text-neutral-800 text-xs flex items-center justify-center w-6 h-6">
+                            +{row.assignees.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4">{startDate}</td>
+                    <td className="p-4">{priority}</td>
+                    <td className="p-4">${row.price}</td>
+                    <td className="p-4 text-nowrap">
+                      <div className={`px-2 py-1 flex justify-center items-center text-teal-600 ${statusClass} rounded-lg text-[10px] font-medium`}>
+                        {statusText}
+                      </div>
+                    </td>
+                    <td className="p-4 flex justify-center items-center gap-2">
+                      <Link
+                        href={`/project/${row.id}`}
+                        className="bg-sky-300 rounded-lg p-2 text-white hover:bg-sky-400 transition-colors"
+                        aria-label="View project"
+                      >
+                        <Eye size={16} />
+                      </Link>
+                      <button
+                        onClick={() => { setProjectToDelete(row.id); setIsDeleteModalOpen(true); }}
+                        disabled={loading}
+                        className="bg-red-500 rounded-lg p-2 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                        aria-label="Delete project"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -228,17 +372,17 @@ export default function ProjectManagementPage() {
       {/* Pagination Section */}
       <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
         <div className="flex items-center gap-1">
-          <button 
-            onClick={() => handlePageChange(currentPage - 1)} 
-            disabled={currentPage === 1} 
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
             className="p-2 rounded-lg border disabled:opacity-50"
           >
             <MdKeyboardArrowLeft />
           </button>
           {renderPaginationButtons()}
-          <button 
-            onClick={() => handlePageChange(currentPage + 1)} 
-            disabled={currentPage === totalPages} 
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
             className="p-2 rounded-lg border disabled:opacity-50"
           >
             <MdKeyboardArrowRight />
@@ -249,12 +393,12 @@ export default function ProjectManagementPage() {
           <span className="text-sm">
             Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </span>
-          <select 
-            value={itemsPerPage} 
+          <select
+            value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(Number(e.target.value));
               setCurrentPage(1);
-            }} 
+            }}
             className="border rounded-md px-2 py-1 text-sm"
           >
             {ITEMS_PER_PAGE_OPTIONS.map(number => (
@@ -265,9 +409,9 @@ export default function ProjectManagementPage() {
       </div>
 
       {isModalOpen && (
-        <AddNewProjectForm 
-          isOpen={isModalOpen} 
-          handleDialogToggle={toggleModal} 
+        <AddNewProjectForm
+          isOpen={isModalOpen}
+          handleDialogToggle={toggleModal}
           onSuccess={() => {
             fetchProjectData();
             setCurrentPage(1);
@@ -277,80 +421,3 @@ export default function ProjectManagementPage() {
     </div>
   );
 }
-
-// Extracted components for better readability and reusability
-
-const TableHeaderCell = ({ label, width }: { label: string; width: string }) => (
-  <th className={`${width} pl-4 py-4 bg-slate-50 flex justify-between items-center gap-3`}>
-    <span className="flex-1 text-neutral-600 text-xs font-semibold font-['Urbanist'] leading-tight">
-      {label}
-    </span>
-    <Image src={swap} alt="Sort" className="w-3 h-3" />
-  </th>
-);
-
-const ProjectRow = ({ row, index, onDelete, loading }: { 
-  row: Project; 
-  index: number; 
-  onDelete: (id: string) => void;
-  loading: boolean;
-}) => {
-  const startDate = new Date(row.start_date).toLocaleDateString();
-  const priority = row.priority.charAt(0).toUpperCase() + row.priority.slice(1).toLowerCase();
-  const statusText = row.status === 1 ? "In Progress" : "Completed";
-  const statusClass = row.status === 2 ? 'bg-sky-100' : 'bg-green-50';
-
-  return (
-    <tr className="grid grid-cols-8 min-w-[800px] bg-white hover:bg-gray-50">
-      <td className="w-16 pl-4 py-4 flex items-center text-sm">{index + 1}</td>
-      <td className="w-36 pl-4 py-4 flex items-center text-sm">{row.name}</td>
-      <td className="w-34 pl-4 py-4 flex items-center">
-        <AssigneeAvatars assignees={row.assignees} />
-      </td>
-      <td className="w-36 pl-10 py-4 flex items-center text-sm">{startDate}</td>
-      <td className="w-32 pl-10 py-4 flex items-center text-sm">{priority}</td>
-      <td className="w-36 pl-14 py-4 flex items-center text-sm">${row.price}</td>
-      <td className={`w-32 mx-6 my-auto h-8 flex justify-center items-center text-teal-600 ${statusClass} rounded-lg text-[10px] font-medium`}>
-        {statusText}
-      </td>
-      <td className="w-36 p-2 flex justify-center items-center gap-2">
-        <Link 
-          href={`/project/${row.id}`} 
-          className="bg-sky-300 rounded-lg p-2 text-white hover:bg-sky-400 transition-colors"
-          aria-label="View project"
-        >
-          <Eye size={16} />
-        </Link>
-        <button
-          onClick={() => onDelete(row.id)}
-          disabled={loading}
-          className="bg-red-500 rounded-lg p-2 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
-          aria-label="Delete project"
-        >
-          <Trash2 size={16} />
-        </button>
-      </td>
-    </tr>
-  );
-};
-
-const AssigneeAvatars = ({ assignees }: { assignees: Project['assignees'] }) => (
-  <div className="flex -space-x-3">
-    {assignees.slice(0, 3).map((assignee, index) => (
-      <div key={index} className="relative">
-        <Image
-          className="w-6 h-6 rounded-full border-2 border-sky-300 bg-white"
-          src={assignee?.user?.avatarUrl || '/default-avatar.png'}
-          alt={`Assignee ${index + 1}`}
-          width={24}
-          height={24}
-        />
-      </div>
-    ))}
-    {assignees.length > 3 && (
-      <div className="bg-gray-100 p-1.5 -ml-4 rounded-full text-neutral-800 text-xs flex items-center justify-center w-6 h-6">
-        +{assignees.length - 3}
-      </div>
-    )}
-  </div>
-);

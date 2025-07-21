@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
+import avatar from "@/public/avatar.png"
 
 const ProjectDetailsTable = ({ projectData }: any) => {
     return (
@@ -24,7 +25,7 @@ const ProjectDetailsTable = ({ projectData }: any) => {
                             <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA]">
                                 <td className="text-center p-4">{index+1}</td>
                                 <td className="flex items-center gap-2 p-4">
-                                    <Image src={emp?.avatarUrl} alt="Emp image" width={24} height={24} className="w-[24px] h-[24px] rounded-full" />
+                                    <Image src={emp?.avatarUrl || avatar} alt="Emp image" width={24} height={24} className="w-[24px] h-[24px] rounded-full object-cover" />
                                     <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
                                 <td className=" p-4">{emp?.role}</td>

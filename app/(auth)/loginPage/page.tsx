@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { CookieHelper } from '@/helper/cookie.helper';
 import { UserService } from '@/service/user/user.service';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 
 type FormValues = {
@@ -33,16 +33,16 @@ const LoginPage = () => {
             });
 
             if (res?.data?.success) {
-                const token = res.data.authorization?.token;
+                const token = res?.data?.authorization?.token;
                 console.log(res)
                 if (token) {
                     CookieHelper.set({
                         key: "empdashtoken",
                         value: token,
-                        expires: data.rememberMe ? 7 : undefined
+                        expires: data?.rememberMe ? 7 : undefined
 
                     });
-                    toast.success(res.data.message);
+                    toast.success(res?.data?.message);
                     router.push("/");
                 }
             } else {
@@ -50,8 +50,7 @@ const LoginPage = () => {
             }
         } catch (error: any) {
             toast.error(
-                error.response?.data?.message ||
-                error.message ||
+                error.response?.data?.message?.message ||
                 "An error occurred during login"
             );
             console.error("Login error:", error);
@@ -62,6 +61,7 @@ const LoginPage = () => {
 
     return (
         <div id='LoginPage' className='mx-auto min-h-screen w-full px-5 py-6 md:px-10 md:py-8 lg:px-[100px] lg:py-[60px] flex flex-col justify-between'>
+             <Toaster position="top-right" />
             <h1 className="text-neutral-800 text-2xl font-bold font-['Urbanist'] leading-10 tracking-tight">
                 Company Name
             </h1>
@@ -88,7 +88,7 @@ const LoginPage = () => {
                         />
                         {errors.email && (
                             <span className="text-red-500 text-xs">
-                                {errors.email.message}
+                                {errors?.email?.message}
                             </span>
                         )}
                     </div>
@@ -119,7 +119,7 @@ const LoginPage = () => {
                         </div>
                         {errors.password && (
                             <span className="text-red-500 text-xs">
-                                {errors.password.message}
+                                {errors?.password?.message}
                             </span>
                         )}
                     </div>

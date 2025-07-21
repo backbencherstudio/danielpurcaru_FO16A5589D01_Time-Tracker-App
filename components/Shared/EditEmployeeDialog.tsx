@@ -6,8 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid'; // Importing Heroicons for eye icon
 import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
+import { Toaster } from 'react-hot-toast';
 
-export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, data }) {
+export default function EditEmployeeDialog({ isOpen, handleDialogToggle,empDataSaved, empId, data }) {
     const [empName, setEmpName] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.name);
     const [empRole, setEmpRole] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.employee_role);
     const [empHourlyRate, setEmpHourlyRate] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.hourly_rate);
@@ -28,8 +29,9 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
             const res = await UserService?.updateEmp(data, empId);
 
             if (res?.data?.success) {
-                toast.success(res.data.message);
+                toast.success("Employee data saved...");
                 handleDialogToggle()
+                empDataSaved()
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed");
@@ -41,6 +43,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
 
     return (
         <div className="p-6">
+            <Toaster position="top-right" />
             <Dialog open={isOpen} onOpenChange={handleDialogToggle}>
                 <DialogContent className="max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
                     <DialogHeader>
