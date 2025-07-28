@@ -136,7 +136,7 @@ export default function Navbar() {
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
 
             <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
-                {t("title")}
+                Company Name
             </h3>
             <div className="flex md:gap-[32px] gap-3 items-center">
                 <LanguageSwitcher />
