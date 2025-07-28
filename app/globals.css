@@ -244,3 +244,25 @@ input[type="checkbox"]:hover {
     justify-content: center;
     background: #F6F8FA;
 }
+
+
+.skiptranslate {
+  display: none !important;
+}
+
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+
+body {
+  top: 0px !important;
+  position: static !important;
+} 
+
+
+
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf{
+  display: none !important;
+}

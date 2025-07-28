@@ -18,6 +18,8 @@ interface Employee {
     recorded_hours: number;
     earnings: string,
     avatarUrl: string;
+    username: string;
+    email:string;
 }
 
 interface EmployeeTableProps {
@@ -190,7 +192,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                         <tr>
                             <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
-                                    <span>ID</span>
+                                    <span>SL</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
                                         <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -204,6 +206,32 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                             <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Name</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>User Name</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
+                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        <g opacity="0.4">
+                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </th>
+                            <th className="py-4 px-4">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Email</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
                                         <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -271,9 +299,9 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                     </thead>
 
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium ">
-                        {currentEntries.map((emp) => (
+                        {currentEntries.map((emp,index) => (
                             <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA] ">
-                                <td className="p-4">{emp?.id}</td>
+                                <td className="p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     <div className="w-6 h-6">
                                         {emp?.avatarUrl && (
@@ -282,6 +310,8 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                                     </div>
                                     <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
+                                <td className="p-4 text-nowrap">{emp?.username}</td>
+                                <td className="p-4 text-nowrap">{emp?.email}</td>
                                 <td className="p-4 text-nowrap">{emp?.employee_role}</td>
                                 <td className="text-center p-4">${emp?.hourly_rate}</td>
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>

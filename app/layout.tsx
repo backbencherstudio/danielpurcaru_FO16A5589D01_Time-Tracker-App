@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppConfig } from "@/config/app.config";
 import { Urbanist } from 'next/font/google';
-import Navbar from "@/components/Shared/Navbar";
-import Sidebar from "@/components/Shared/Sidebar";
+import { Providers } from "./providers"; // We'll create this
 import ProtectedPageWrapper from "@/components/ProtectedPageWrapper/ProtectedPageWrapper";
+import { LanguageProvider } from "@/context/LanguageContext";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: AppConfig().app.name,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 const urbanist = Urbanist({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'], // Add any weights you need
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
@@ -25,9 +26,30 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={urbanist.className}>
       <body className="bg-white flex justify-center">
-        <ProtectedPageWrapper>
-          {children}
-        </ProtectedPageWrapper>
+        <div id="google_translate_element" style={{ display: "hidden" }}></div>
+        <Script id="google-translate-init" strategy="afterInteractive">
+          {`
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,pt',
+                autoDisplay: false
+              }, 'google_translate_element');
+            }
+          `}
+        </Script>
+
+        <Script
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
+        <LanguageProvider>
+          <Providers>
+            <ProtectedPageWrapper>
+              {children}
+            </ProtectedPageWrapper>
+          </Providers>
+        </LanguageProvider>
       </body>
     </html>
   );
