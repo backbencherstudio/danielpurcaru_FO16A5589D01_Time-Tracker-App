@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppConfig } from "@/config/app.config";
 import { Urbanist } from 'next/font/google';
-import { Providers } from "./providers"; // We'll create this
 import ProtectedPageWrapper from "@/components/ProtectedPageWrapper/ProtectedPageWrapper";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Script from "next/script";
@@ -44,11 +43,9 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <LanguageProvider>
-          <Providers>
             <ProtectedPageWrapper>
               {children}
             </ProtectedPageWrapper>
-          </Providers>
         </LanguageProvider>
       </body>
     </html>
