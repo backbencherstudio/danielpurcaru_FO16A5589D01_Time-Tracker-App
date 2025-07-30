@@ -328,7 +328,7 @@ export default function Page() {
                                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
                                 className="border rounded-md px-2 py-1 text-[#1D1F2C]"
                             >
-                                {[5, 6, 10, 15, 20].map((number) => (
+                                {[5, 10, 20,50].map((number) => (
                                     <option key={number} value={number}>
                                         {number}
                                     </option>

@@ -33,7 +33,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedEmpId, setSelectedEmpId] = useState("");
     const [sortOrder, setSortOrder] = useState('asc');
@@ -405,7 +405,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                                 onChange={handleItemsPerPageChange}
                                 className="border rounded-md px-2 py-1 text-[#1D1F2C]"
                             >
-                                {[5, 6, 10, 15, 20].map((number) => (
+                                {[5, 10, 20,50].map((number) => (
                                     <option key={number} value={number}>
                                         {number}
                                     </option>

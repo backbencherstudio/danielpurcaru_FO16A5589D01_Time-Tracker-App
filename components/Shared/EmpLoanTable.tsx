@@ -1,45 +1,73 @@
 'use client'
-
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { UserService } from '@/service/user/user.service'
 import DeletePopUp from '../reusable/DeletePopUp'
 import avatar from "@/public/avatar.png"
 
-type empLoan={
-    id:string,
-
+interface EmployeeLoan {
+    id: string;
+    user: {
+        name: string;
+        avatarUrl?: string;
+    };
+    created_at: string;
+    loan_amount: number;
 }
 
-const EmpLoanTable = ({ empData, start, end }: any) => {
+interface EmpLoanTableProps {
+    empData: EmployeeLoan[];
+    isLoading: boolean;
+}
+
+const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
     const [searchQuery, setSearchQuery] = useState('')
-    const [data, setData] = useState([])
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteMessage, setDeleteMessage] = useState({ text: '', isError: false })
-     const [sortOrder, setSortOrder] = useState('asc');
-
-    // Initialize data with empData and update when empData changes
-    useEffect(() => {
-        setData(empData)
-    }, [empData])
+    const [sortConfig, setSortConfig] = useState<{ key: keyof EmployeeLoan; direction: 'asc' | 'desc' } | null>(null)
 
     // Filter employees based on search query (name)
-    const filteredData = useMemo(() => {
-        if (!searchQuery) return data
-        return data.filter((emp: any) =>
-            emp?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-    }, [data, searchQuery])
+    const filteredData = empData.filter((emp) =>
+        emp?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
 
-    // Apply pagination to filtered data
-    const paginatedData = useMemo(() => {
-        return filteredData.slice(start, start + end)
-    }, [filteredData, start, end])
+    // Apply sorting
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (!sortConfig) return 0
+        
+        const key = sortConfig.key
+        let aValue, bValue
+
+        if (key === 'user') {
+            aValue = a.user.name.toLowerCase()
+            bValue = b.user.name.toLowerCase()
+        } else {
+            aValue = a[key]
+            bValue = b[key]
+        }
+
+        if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1
+        }
+        return 0
+    })
+
+    const requestSort = (key: keyof EmployeeLoan) => {
+        let direction: 'asc' | 'desc' = 'asc'
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc'
+        }
+        setSortConfig({ key, direction })
+    }
 
     // Open delete confirmation modal
-    const openDeleteModal = (loanId: any) => {
+    const openDeleteModal = (loanId: string) => {
         setLoanToDelete(loanId)
         setIsDeleteModalOpen(true)
     }
@@ -53,58 +81,97 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
 
     // Delete function
     const handleDelete = async () => {
-        if (!loanToDelete) return;
-        setIsDeleting(true);
+        if (!loanToDelete) return
+        setIsDeleting(true)
         try {
-            const response = await UserService?.deleteEmpLoadData(loanToDelete);
+            const response = await UserService.deleteEmpLoadData(loanToDelete)
             if (response?.data?.success) {
-                setData(prevData => prevData.filter((emp: any) => emp.id !== loanToDelete)); // Use loanToDelete.id for comparison
-                setDeleteMessage({ text: 'Loan deleted successfully', isError: false });
+                setDeleteMessage({ text: 'Loan deleted successfully', isError: false })
+                // Note: In server-side pagination, we should refresh the data instead of local filtering
                 closeDeleteModal()
+                // You might want to add a callback prop to notify parent to refresh data
             } else {
                 setDeleteMessage({
-                    text: 'Failed to delete loan',
+                    text: response?.response?.data?.message || 'Failed to delete loan',
                     isError: true,
-                });
+                })
             }
         } catch (error) {
-            console.error('Error deleting loan:', error);
+            console.error('Error deleting loan:', error)
             setDeleteMessage({
                 text: 'Error deleting loan',
                 isError: true,
-            });
+            })
         } finally {
-            setIsDeleting(false);
+            setIsDeleting(false)
         }
-    };
+    }
 
+    const getSortIcon = (key: string) => {
+        if (!sortConfig || sortConfig.key !== key) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                    <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                    <g opacity="0.4">
+                        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                    </g>
+                </svg>
+            )
+        }
+        return (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+                <path 
+                    d="M6.00682 13.6662L2.66016 10.3262" 
+                    stroke="#4A4C56" 
+                    strokeWidth="1.6" 
+                    strokeMiterlimit="10" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    opacity={sortConfig.direction === 'desc' ? 1 : 0.4}
+                />
+                <path 
+                    d="M6.00586 2.33398V13.6673" 
+                    stroke="#4A4C56" 
+                    strokeWidth="1.6" 
+                    strokeMiterlimit="10" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    opacity={sortConfig.direction === 'desc' ? 1 : 0.4}
+                />
+                <path 
+                    d="M9.99414 2.33398L13.3408 5.67398" 
+                    stroke="#4A4C56" 
+                    strokeWidth="1.6" 
+                    strokeMiterlimit="10" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    opacity={sortConfig.direction === 'asc' ? 1 : 0.4}
+                />
+                <path 
+                    d="M9.99414 13.6673V2.33398" 
+                    stroke="#4A4C56" 
+                    strokeWidth="1.6" 
+                    strokeMiterlimit="10" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    opacity={sortConfig.direction === 'asc' ? 1 : 0.4}
+                />
+            </svg>
+        )
+    }
 
-    const handleSorting = (key:string) => {
-        const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-        setSortOrder(newOrder);
-
-        setData([...data].sort((a, b) => {
-            // Add null checks
-            let aValue:typeof data ;
-            let bValue: typeof data ;
-            if(key === "name"){
-                aValue = a.user[key] || '';
-                bValue = b.user[key] || '';
-            }else{
-                aValue = a[key] || '';
-                bValue = b[key] || '';
-            }
-
-            if (newOrder === 'asc') {
-                return String(aValue).localeCompare(String(bValue));
-            } else {
-                return String(bValue).localeCompare(String(aValue));
-            }
-        }));
-    };
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
-            <DeletePopUp isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} isDeleting={isDeleting} handleDelete={handleDelete} title={(data.find(project => project.id === loanToDelete)?.user?.name + "'s Loan" || 'Project')}/>
+            <DeletePopUp 
+                isDeleteModalOpen={isDeleteModalOpen} 
+                closeDeleteModal={closeDeleteModal} 
+                isDeleting={isDeleting} 
+                handleDelete={handleDelete} 
+                title={(empData.find(emp => emp.id === loanToDelete)?.user?.name + "'s Loan" || 'Loan')} 
+            />
+
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
                 <span className="flex-2 text-neutral-800 text-2xl font-semibold">Employee Loan List</span>
@@ -143,99 +210,81 @@ const EmpLoanTable = ({ empData, start, end }: any) => {
                             <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>SL</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("id")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        </g>
-                                    </svg>
+                                    {getSortIcon('id')}
                                 </div>
                             </th>
                             <th className="py-4 text-start px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Employee Name</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        </g>
-                                    </svg>
+                                    <div onClick={() => requestSort('user')}>
+                                        {getSortIcon('user')}
+                                    </div>
                                 </div>
                             </th>
                             <th className="py-4 text-start px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Date</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("created_at")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        </g>
-                                    </svg>
+                                    <div onClick={() => requestSort('created_at')}>
+                                        {getSortIcon('created_at')}
+                                    </div>
                                 </div>
                             </th>
                             <th className="py-4 px-4 text-start">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Price</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("loan_amount")}>
-                                        <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <g opacity="0.4">
-                                            <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        </g>
-                                    </svg>
+                                    <div onClick={() => requestSort('loan_amount')}>
+                                        {getSortIcon('loan_amount')}
+                                    </div>
                                 </div>
                             </th>
                             <th className="py-4 px-4">Action</th>
                         </tr>
                     </thead>
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium">
-                        {paginatedData?.map((emp: any, index: number) => (
-                            <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA]">
-                                <td className="text-center p-4">{index + 1}</td>
-                                <td className="flex items-center gap-2 p-4">
-                                    <Image
-                                        src={emp?.user?.avatarUrl || avatar}
-                                        alt={`${emp?.name}'s avatar`}
-                                        className="w-[24px] h-[24px] rounded-full"
-                                        width={24}
-                                        height={24}
-                                    />
-                                    <h3 className="text-nowrap">{emp?.user?.name}</h3>
-                                </td>
-                                <td className="p-4">
-                                    {emp?.created_at ? new Date(emp.created_at).toISOString().split('T')[0] : null}
-                                </td>
-                                <td className="p-4">${emp?.loan_amount}</td>
-                                <td className="flex items-center justify-center p-4">
-                                    <div
-                                        className="w-7 h-7 bg-red-600 rounded-sm flex justify-center items-center cursor-pointer hover:bg-red-700 transition-colors"
-                                        onClick={() => openDeleteModal(emp?.id)}
-                                    >
-                                        <Trash2 className='text-white' size={18} />
-                                    </div>
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan={5} className="text-center py-8">
+                                    Loading...
                                 </td>
                             </tr>
-                        ))}
+                        ) : sortedData.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="text-center py-8 text-gray-500">
+                                    {searchQuery ? 'No employees found matching your search' : 'No loan data available'}
+                                </td>
+                            </tr>
+                        ) : (
+                            sortedData.map((emp, index) => (
+                                <tr key={emp.id} className="border-t-[0.2px] border-[#F6F8FA]">
+                                    <td className="text-center p-4">{index + 1}</td>
+                                    <td className="flex items-center gap-2 p-4">
+                                        <Image
+                                            src={emp?.user?.avatarUrl || avatar}
+                                            alt={`${emp.user.name}'s avatar`}
+                                            className="w-[24px] h-[24px] rounded-full"
+                                            width={24}
+                                            height={24}
+                                        />
+                                        <h3 className="text-nowrap">{emp.user.name}</h3>
+                                    </td>
+                                    <td className="p-4">
+                                        {emp.created_at ? new Date(emp.created_at).toISOString().split('T')[0] : '-'}
+                                    </td>
+                                    <td className="p-4">${emp.loan_amount}</td>
+                                    <td className="flex items-center justify-center p-4">
+                                        <div
+                                            className="w-7 h-7 bg-red-600 rounded-sm flex justify-center items-center cursor-pointer hover:bg-red-700 transition-colors"
+                                            onClick={() => openDeleteModal(emp.id)}
+                                        >
+                                            <Trash2 className='text-white' size={18} />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
-
-            {/* Empty state when no results found */}
-            {filteredData.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                    No employees found matching your search
-                </div>
-            )}
-
-            {/* Empty Overlay for Modal/Other Usage */}
-            <div className="bg-gray-300 top-0 left-0 right-0 bottom-0 fixed z-[99] hidden"></div>
         </div>
     )
 }
