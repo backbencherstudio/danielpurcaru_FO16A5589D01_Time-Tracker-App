@@ -1,171 +1,168 @@
 'use client'
-import EditEmployeeDialog from "@/components/Shared/EditEmployeeDialog";
 import EmpLoanTable from "@/components/Shared/EmpLoanTable";
-import down from '@/public/icons/file-download.svg';
-import loanImage from "@/public/images/profileIcon.png"; // Correct image import
+import EmployeeTable from "@/components/Shared/EmployeeTable";
 import { UserService } from "@/service/user/user.service";
-import { Plus } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { toast } from "react-toastify";
 
+interface PaginationMeta {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+interface ApiResponse {
+    data: any[];
+    meta: PaginationMeta;
+    success: boolean;
+}
+
 export default function Page() {
-    const [empLoadData, setEmpLoadData] = useState([])
-    const totalPages = Math.ceil(empLoadData.length / 8);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageStart, setPageStart] = useState(0);
-    const [pageLeft, setPageLeft] = useState([]);
-    const [pageRight, setPageRight] = useState([]);
-    const [isLargeScreen, setIsLargeScreen] = useState(2);
-    const [itemsPerPage, setItemsPerPage] = useState(8);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const handlePageChange = (pageNumber) => {
-        if (pageNumber !== currentPage) {
-            setCurrentPage(pageNumber);
-            setPageStart((pageNumber - 1) * itemsPerPage);
+    const [empLoadData, setEmpLoadData] = useState<any[]>([]);
+    const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 1
+    });
+    const [isLargeScreen, setIsLargeScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const getVisiblePages = () => {
+        const totalVisiblePages = isLargeScreen ? 10 : 5;
+        const { page, totalPages } = paginationMeta;
+        
+        let startPage = Math.max(page - Math.floor(totalVisiblePages / 2), 1);
+        let endPage = Math.min(startPage + totalVisiblePages - 1, totalPages);
+        
+        if (endPage - startPage + 1 < totalVisiblePages) {
+            startPage = Math.max(endPage - totalVisiblePages + 1, 1);
+        }
+        
+        return Array.from({length: endPage - startPage + 1}, (_, i) => startPage + i);
+    };
+    
+    const visiblePages = getVisiblePages();
+
+    const handlePageChange = async (pageNumber: number) => {
+        if (pageNumber >= 1 && pageNumber <= paginationMeta.totalPages && pageNumber !== paginationMeta.page) {
+            await fetchEmpData(pageNumber, paginationMeta.limit);
         }
     };
 
+    const handleItemsPerPageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newLimit = Number(e.target.value);
+        await fetchEmpData(1, newLimit); // Always reset to page 1 when changing limit
+    };
 
-    // token extract helper
-    const getCookieToken = () => {
-        if (typeof document === "undefined") return null;
-
-        const cookieString = document.cookie
-            .split("; ")
-            .find((cookie) => cookie.startsWith("empdashtoken="));
-        return cookieString?.split("=")[1] || null;
+    const fetchEmpData = async (page: number = 1, limit: number = 10) => {
+        setIsLoading(true);
+        try {
+            const res = await UserService.getEmpLoanData(page, limit);
+            if (res?.data?.success) {
+                setEmpLoadData(res.data.data);
+                setPaginationMeta(res.data.meta);
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to fetch data");
+            }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data"
+            );
+            console.error("Fetch error:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
         const handleResize = () => {
-            setIsLargeScreen(window.innerWidth >= 600 ? 3 : 2);
+            setIsLargeScreen(window.innerWidth >= 768);
         };
 
         handleResize();
         window.addEventListener("resize", handleResize);
-
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const getPageNumbers = () => {
-        const pageNumbers = [];
-        const totalPagesToShow = isLargeScreen === 3 ? 6 : 4;
-
-        let startPage = Math.max(currentPage - Math.floor(totalPagesToShow / 2), 1);
-        let endPage = Math.min(startPage + totalPagesToShow - 1, totalPages);
-
-        if (endPage - startPage + 1 < totalPagesToShow) {
-            startPage = Math.max(endPage - totalPagesToShow + 1, 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        setPageLeft(pageNumbers.slice(0, Math.ceil(pageNumbers.length / 2)));
-        setPageRight(pageNumbers.slice(Math.ceil(pageNumbers.length / 2)));
-    };
-
     useEffect(() => {
-        getPageNumbers();
-    }, [currentPage, isLargeScreen]);
+        fetchEmpData();
+    }, []);
 
-
-    useEffect(() => {
-        const token = getCookieToken();
-        const fetchEmpData = async () => {
-            try {
-                const res = await UserService?.getEmpLoanData();
-                if (res?.data?.success) {
-                    console.log("Response load :", res.data.data);
-                    setEmpLoadData(res.data.data)
-                } else {
-                    toast.error(res?.response?.data?.message || "Failed to fetch data");
-                }
-            } catch (error: any) {
-                toast.error(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "An error occurred while fetching data"
-                );
-                console.error("Fetch error:", error);
-            } finally {
-                // setLoading(false);
-            }
-        }
-        if (token)
-            fetchEmpData()
-    }, [])
+    console.log("Employee loan data : ",empLoadData)
 
     return (
         <div className="bg-white rounded-lg">
-            <EmpLoanTable empData={empLoadData} start={pageStart} end={pageStart + itemsPerPage} />
-            <div className="bg-white rounded-lg">
-                {empLoadData.length > 0 && (
-                    <div className="flex justify-start items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg">
-                        <div className="flex items-center rounded-lg sm:px-4">
-                            <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className={`flex items-center gap-1 pr-2 sm:px-2 ${currentPage === 1
-                                    ? "text-[#1D1F2C]"
+            <EmpLoanTable 
+                empData={empLoadData} 
+                isLoading={isLoading}
+            />
+            
+            {paginationMeta.total > 0 && (
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
+                    <div className="flex items-center rounded-lg sm:px-4">
+                        <button
+                            onClick={() => handlePageChange(paginationMeta.page - 1)}
+                            disabled={paginationMeta.page === 1 || isLoading}
+                            className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${
+                                paginationMeta.page === 1 || isLoading 
+                                    ? "text-gray-400 cursor-not-allowed" 
                                     : "text-[#1D1F2C] hover:bg-gray-100"
-                                    } text-xs sm:text-base border border-[#F6F8FA] py-2 rounded-lg`}
-                            >
-                                <MdKeyboardArrowLeft className="text-xl" />
-                            </button>
+                            } border border-[#F6F8FA] rounded-lg`}
+                        >
+                            <MdKeyboardArrowLeft className="text-xl" />
+                        </button>
 
-                            {pageLeft.map((number) => (
-                                <div key={number} className="m-auto">
-                                    <button
-                                        onClick={() => handlePageChange(number)}
-                                        className={` ${currentPage === number
-                                            ? "bg-[#F8FAFB] text-[#1D1F2C]"
-                                            : "text-[#1D1F2C] hover:bg-gray-100"
-                                            } text-xs sm:text-base w-[25px] h-[25px] sm:w-[40px] sm:h-[40px] m-1 rounded-xl`}
-                                    >
-                                        {number}
-                                    </button>
-                                </div>
-                            ))}
-
-                            {pageRight.length !== 0 && (
-                                <div className="w-[25px] h-[25px] sm:w-[40px] sm:h-[40px] m-1 flex items-center justify-center">
-                                    <div className="text-xl">...</div>
-                                </div>
-                            )}
-
-                            {pageRight.map((number) => (
-                                <div key={number} className="m-auto">
-                                    <button
-                                        onClick={() => handlePageChange(number)}
-                                        className={`w-[25px] h-[25px] sm:w-[40px] sm:h-[40px] m-1 ${currentPage === number
-                                            ? "bg-[#F8FAFB] text-[#1D1F2C]"
-                                            : "text-[#1D1F2C] hover:bg-gray-100"
-                                            } text-xs sm:text-base rounded-xl`}
-                                    >
-                                        {number}
-                                    </button>
-                                </div>
-                            ))}
-
+                        {visiblePages.map(number => (
                             <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className={`flex text-xs sm:text-base items-center pl-2 sm:px-2 ${currentPage === totalPages
-                                    ? "text-gray-400"
-                                    : "text-gray-700 hover:text-blue-600"
-                                    } border border-[#F6F8FA] py-2 rounded-lg`}
+                                key={number}
+                                onClick={() => handlePageChange(number)}
+                                disabled={isLoading}
+                                className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${
+                                    paginationMeta.page === number
+                                        ? "bg-[#F6F8FA]"
+                                        : "text-[#1D1F2C] hover:bg-gray-100"
+                                } rounded-lg`}
                             >
-                                <MdKeyboardArrowRight className="text-xl" />
+                                {number}
                             </button>
-                        </div>
-                    </div>
-                )}
-            </div>
+                        ))}
 
+                        <button
+                            onClick={() => handlePageChange(paginationMeta.page + 1)}
+                            disabled={paginationMeta.page === paginationMeta.totalPages || isLoading}
+                            className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${
+                                paginationMeta.page === paginationMeta.totalPages || isLoading
+                                    ? "text-gray-400 cursor-not-allowed"
+                                    : "text-[#1D1F2C] hover:bg-gray-100"
+                            } border border-[#F6F8FA] rounded-lg`}
+                        >
+                            <MdKeyboardArrowRight className="text-xl" />
+                        </button>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-[#777980] font-normal">
+                        <span>
+                            Showing {((paginationMeta.page - 1) * paginationMeta.limit) + 1} to{' '}
+                            {Math.min(paginationMeta.page * paginationMeta.limit, paginationMeta.total)} of {paginationMeta.total} entries
+                        </span>
+                        <select
+                            value={paginationMeta.limit}
+                            onChange={handleItemsPerPageChange}
+                            disabled={isLoading}
+                            className="border rounded-md px-2 py-1 text-[#1D1F2C]"
+                        >
+                            {[5, 10, 20, 50].map(number => (
+                                <option key={number} value={number}>{number}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -22,6 +22,10 @@ interface GetSummaryConfig {
     "Content-Type": string;
     Authorization: string;
   };
+  params?:{
+    limit:number;
+    page:number;
+  }
 }
 
 export const UserService = {
@@ -183,18 +187,22 @@ export const UserService = {
   },
 
 
-  getEmpLoanData: async (context: any = null) => {
+  getEmpLoanData: async (page: number = 1, limit: number = 10, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+        },
+        params: {
+            page,
+            limit
+        }
     };
 
     return await Fetch.get(`/employee-loan`, config);
-  },
+},
 
 
   deleteEmpLoadData: async (loanDetails: string, context: any = null) => {

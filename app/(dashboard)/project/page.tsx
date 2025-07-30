@@ -23,7 +23,7 @@ interface Project {
   status: number;
 }
 
-const ITEMS_PER_PAGE_OPTIONS = [5, 6, 7, 8, 9, 10];
+const ITEMS_PER_PAGE_OPTIONS = [5,10,20,50];
 
 export default function ProjectManagementPage() {
   const [data, setData] = useState<Project[]>([]);
