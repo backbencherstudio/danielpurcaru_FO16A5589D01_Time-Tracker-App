@@ -11,7 +11,7 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { toast } from "react-toastify";
 
 export default function Page() {
-    const [empLoadData,setEmpLoadData] = useState([])
+    const [empLoadData, setEmpLoadData] = useState([])
     const totalPages = Math.ceil(empLoadData.length / 8);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageStart, setPageStart] = useState(0);
@@ -25,6 +25,17 @@ export default function Page() {
             setCurrentPage(pageNumber);
             setPageStart((pageNumber - 1) * itemsPerPage);
         }
+    };
+
+
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
     };
 
     useEffect(() => {
@@ -62,7 +73,8 @@ export default function Page() {
     }, [currentPage, isLargeScreen]);
 
 
-    useEffect(()=>{
+    useEffect(() => {
+        const token = getCookieToken();
         const fetchEmpData = async () => {
             try {
                 const res = await UserService?.getEmpLoanData();
@@ -83,8 +95,9 @@ export default function Page() {
                 // setLoading(false);
             }
         }
-        fetchEmpData()
-    },[])
+        if (token)
+            fetchEmpData()
+    }, [])
 
     return (
         <div className="bg-white rounded-lg">

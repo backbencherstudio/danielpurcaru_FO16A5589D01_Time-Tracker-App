@@ -34,6 +34,16 @@ export default function page() {
         avatar_url: ""
     })
 
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
+    };
+
     const togglePasswordVisibility = () => {
         setShowPassword(prevState => !prevState);
     };
@@ -72,6 +82,7 @@ export default function page() {
     const [selectedValue, setSelectedValue] = useState('');
 
     useEffect(() => {
+        const token = getCookieToken();
         const getProfileInfo = async () => {
             try {
                 setLoading(true)
@@ -96,7 +107,8 @@ export default function page() {
                 setLoading(false);
             }
         }
-        getProfileInfo();
+        if (token)
+            getProfileInfo();
     }, [])
 
 

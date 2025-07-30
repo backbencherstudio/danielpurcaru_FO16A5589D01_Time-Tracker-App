@@ -3,7 +3,6 @@ import "./globals.css";
 import { AppConfig } from "@/config/app.config";
 import { Urbanist } from 'next/font/google';
 import ProtectedPageWrapper from "@/components/ProtectedPageWrapper/ProtectedPageWrapper";
-import { LanguageProvider } from "@/context/LanguageContext";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -42,11 +41,9 @@ export default function RootLayout({
           src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           strategy="afterInteractive"
         />
-        <LanguageProvider>
             <ProtectedPageWrapper>
               {children}
             </ProtectedPageWrapper>
-        </LanguageProvider>
       </body>
     </html>
   );

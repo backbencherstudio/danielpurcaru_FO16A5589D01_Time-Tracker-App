@@ -61,7 +61,7 @@ const LoginPage = () => {
 
     return (
         <div id='LoginPage' className='mx-auto min-h-screen w-full px-5 py-6 md:px-10 md:py-8 lg:px-[100px] lg:py-[60px] flex flex-col justify-between'>
-             <Toaster position="top-right" />
+             {/* <Toaster position="top-right" /> */}
             <h1 className="text-neutral-800 text-2xl font-bold font-['Urbanist'] leading-10 tracking-tight">
                 Company Name
             </h1>

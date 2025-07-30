@@ -55,31 +55,41 @@ interface userType {
 export default function Page() {
 
   const [empLoanData, setEmpLoanData] = useState<loanData[]>();
-  const [getLoan,setGetLoan] = useState(true);
+  const [getLoan, setGetLoan] = useState(true);
 
+  // token extract helper
+  const getCookieToken = () => {
+    if (typeof document === "undefined") return null;
 
-  const handleEmpLoan = async(id: string, status: boolean)=>{
+    const cookieString = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("empdashtoken="));
+    return cookieString?.split("=")[1] || null;
+  };
+
+  const handleEmpLoan = async (id: string, status: boolean) => {
     try {
-        const res = await UserService?.updateEmpLoan(id,{loan_status:status?"APPROVED":"REJECTED"});
-        if (res?.data?.success) {
-          console.log("Response load :", res.data.data);
-          setGetLoan(prev => !prev)
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
-        }
-      } catch (error: any) {
-        toast.error(
-          error.response?.data?.message ||
-          error.message ||
-          "An error occurred while fetching data"
-        );
-        console.error("Fetch error:", error);
-      } finally {
-        // setLoading(false);
+      const res = await UserService?.updateEmpLoan(id, { loan_status: status ? "APPROVED" : "REJECTED" });
+      if (res?.data?.success) {
+        console.log("Response load :", res.data.data);
+        setGetLoan(prev => !prev)
+      } else {
+        toast.error(res?.response?.data?.message || "Failed to fetch data");
       }
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while fetching data"
+      );
+      console.error("Fetch error:", error);
+    } finally {
+      // setLoading(false);
+    }
   }
 
   useEffect(() => {
+    const token = getCookieToken();
     const fetchEmpData = async () => {
       try {
         const res = await UserService?.getEmpLoanData();
@@ -100,7 +110,8 @@ export default function Page() {
         // setLoading(false);
       }
     }
-    fetchEmpData()
+    if (token)
+      fetchEmpData()
   }, [getLoan])
   return (
     <div className="p-5 bg-gradient-to-l from-white/60 to-white rounded-2xl">
