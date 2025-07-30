@@ -192,10 +192,10 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full h-full">
       <Toaster position="top-right" />
+        {loading && <div className="text-lg font-medium min-h-[calc(100vw - 90px)] w-full flex items-center justify-center">Loading...</div>}
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {loading && <div className="text-lg font-medium">Loading...</div>}
         {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
       </div>
       {!loading && <div className="w-full flex flex-col md:flex-row gap-4">
