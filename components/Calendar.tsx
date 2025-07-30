@@ -13,7 +13,48 @@ type Event = {
   title: string
   event_type: string
   start_date: string
-  end_date?: string | null
+  end_date?: string | null;
+  summary?: string;
+}
+
+interface GoogleCalendarHoliday {
+  kind: string;
+  etag: string;
+  id: string;
+  status: string;
+  htmlLink: string;
+  created: string;
+  updated: string;
+  summary: string;
+  description: string;
+  creator: {
+    email: string;
+    displayName: string;
+    self: boolean;
+  };
+  organizer: {
+    email: string;
+    displayName: string;
+    self: boolean;
+  };
+  start: {
+    date: string; // Format: "YYYY-MM-DD"
+    dateTime?: never; // Holidays are all-day events
+  };
+  end: {
+    date: string; // Format: "YYYY-MM-DD"
+    dateTime?: never; // Holidays are all-day events
+  };
+  transparency: string;
+  visibility: string;
+  iCalUID: string;
+  sequence: number;
+  eventType: string;
+}
+
+type data = {
+  events: Event[],
+  holidays: GoogleCalendarHoliday[]
 }
 
 export default function AcademicCalendar() {
@@ -25,7 +66,8 @@ export default function AcademicCalendar() {
   const [eventType, setEventType] = useState('OFF_DAY')
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [events, setEvents] = useState<Event[]>([])
+  const [events, setEvents] = useState<data>()
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
   const handleDateClick = (arg: { dateStr: string }) => {
     setSelectedDate(arg.dateStr)
@@ -36,7 +78,7 @@ export default function AcademicCalendar() {
   }
 
   const handleEventClick = (arg: { event: { id: string } }) => {
-    const event = events.find(e => e.id === arg.event.id)
+    const event = events.events.find(e => e.id === arg.event.id)
     if (event) {
       setSelectedEventId(event.id)
       setEventTitle(event.title)
@@ -48,6 +90,7 @@ export default function AcademicCalendar() {
   }
 
   const handleSaveEvent = async () => {
+    console.log("Event is created...")
     try {
       const newEvent = {
         title: eventTitle,
@@ -68,6 +111,11 @@ export default function AcademicCalendar() {
       toast.error(error.response?.data?.message || 'Error creating event')
     }
   }
+
+  const handleDatesSet = (arg) => {
+    setCurrentMonth(arg.view.currentEnd.getMonth());
+  };
+
 
   const handleEditEvent = async () => {
     if (!selectedEventId) return
@@ -126,65 +174,118 @@ export default function AcademicCalendar() {
     return date.toISOString().split('T')[0]
   }
 
+  // const fetchProjectData = useCallback(async () => {
+  //   setLoading(true)
+  //     let month = currentMonth;
+  //     if(month === 0){
+  //       month = 12;
+  //     }
+  //   try {
+  //     const res = await UserService.getEvents(month)
+  //     if (res?.data?.success) {
+  //       console.log(res.data.data)
+  //       setEvents(res.data.data)
+  //     } else {
+  //       toast.error(res?.response?.data?.message || "Failed to fetch events")
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(
+  //       error.response?.data?.message ||
+  //       error.message ||
+  //       "An error occurred while fetching events"
+  //     )
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }, [currentMonth])
+
+
   const fetchProjectData = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
+    let month = currentMonth;
+    if (month === 0) {
+      month = 12;
+    }
+
     try {
-      const res = await UserService.getEvents()
-      if (res?.data?.success) {
-        console.log(res.data.data)
-        setEvents(res.data.data)
+      const response = await fetch(`https://nec-kelly-skins-settlement.trycloudflare.com/api/academic-calendar?month=${month}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const res = await response.json();
+
+      if (res?.success) {
+        console.log(res.data);
+        setEvents(res.data);
       } else {
-        toast.error(res?.response?.data?.message || "Failed to fetch events")
+        toast.error(res?.message || "Failed to fetch events");
       }
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message ||
         error.message ||
         "An error occurred while fetching events"
-      )
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, [currentMonth]);
 
   useEffect(() => {
     fetchProjectData()
-  }, [fetchProjectData])
+  }, [fetchProjectData, currentMonth])
+
+  console.log("Events : ",events);
 
   return (
     <div className="calendar-container bg-white p-4 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-4">Academic Calendar</h2>
 
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={events.map(e => ({
-          id: e.id,
-          title: e.title,
-          start: e.start_date,
-          allDay: true,
-          end: formatCalendarEndDate(e.end_date),
-          color: getEventColor(e.event_type),
-          extendedProps: {
-            event_type: e.event_type
-          }
-        }))}
-        dateClick={handleDateClick}
-        eventClick={handleEventClick}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,dayGridWeek'
-        }}
-        height="auto"
-        eventContent={(arg) => (
-          <div className="fc-event-content select-none" title={arg.event.title}>
-            <div className="truncate">
-              {arg.event.title}
-            </div>
-          </div>
-        )}
-      />
+  plugins={[dayGridPlugin, interactionPlugin]}
+  initialView="dayGridMonth"
+  datesSet={handleDatesSet}
+  events={[
+    ...(events?.events?.map(e => ({
+      id: e.id,
+      title: e.title,
+      start: e.start_date,
+      allDay: true,
+      end: formatCalendarEndDate(e.end_date),
+      color: getEventColor(e.event_type),
+      extendedProps: {
+        event_type: e.event_type
+      }
+    })) || []),
+    ...(events?.holidays?.map(h => ({
+      id: h.id,
+      title: h.summary,
+      start: h.start.date,
+      allDay: true,
+      end: h.end.date,
+      color: '#ff9f89', // You can set a specific color for holidays
+      extendedProps: {
+        event_type: 'HOLIDAY'
+      }
+    })) || [])
+  ]}
+  dateClick={handleDateClick}
+  eventClick={handleEventClick}
+  headerToolbar={{
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,dayGridWeek'
+  }}
+  height="auto"
+  eventContent={(arg) => (
+    <div className="fc-event-content select-none" title={arg.event.title}>
+      <div className="truncate">
+        {arg.event.title}
+      </div>
+    </div>
+  )}
+/>
 
       {/* Add Event Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
