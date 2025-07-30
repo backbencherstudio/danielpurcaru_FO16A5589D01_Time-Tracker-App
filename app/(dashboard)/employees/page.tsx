@@ -36,6 +36,17 @@ export default function page() {
         }
     };
 
+
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
+    };
+
     useEffect(() => {
         const handleResize = () => {
             setIsLargeScreen(window.innerWidth >= 600 ? 3 : 2);
@@ -49,6 +60,7 @@ export default function page() {
 
 
     useEffect(() => {
+        const token = getCookieToken();
         const fetchEmpData = async () => {
             try {
                 const res = await UserService?.getAllEmpData();
@@ -68,7 +80,9 @@ export default function page() {
                 setLoading(false);
             }
         }
-        fetchEmpData()
+        if (token) {
+            fetchEmpData()
+        }
     }, [])
 
     const getPageNumbers = () => {

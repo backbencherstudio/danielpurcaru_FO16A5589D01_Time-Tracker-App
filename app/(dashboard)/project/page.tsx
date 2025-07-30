@@ -69,6 +69,16 @@ export default function ProjectManagementPage() {
     setSortConfig({ key, direction });
   };
 
+  // token extract helper
+  const getCookieToken = () => {
+    if (typeof document === "undefined") return null;
+
+    const cookieString = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("empdashtoken="));
+    return cookieString?.split("=")[1] || null;
+  };
+
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setProjectToDelete(null);
@@ -95,12 +105,14 @@ export default function ProjectManagementPage() {
   }, []);
 
   useEffect(() => {
-    fetchProjectData();
+    const token = getCookieToken();
+    if (token)
+      fetchProjectData();
   }, [fetchProjectData]);
 
   const handleDeleteProject = async () => {
     if (!projectToDelete) return;
-    
+
     try {
       setLoading(true);
       const res = await UserService.deleteProject(projectToDelete);
@@ -145,9 +157,9 @@ export default function ProjectManagementPage() {
 
     if (startPage > 1) {
       buttons.push(
-        <button 
-          key={1} 
-          onClick={() => handlePageChange(1)} 
+        <button
+          key={1}
+          onClick={() => handlePageChange(1)}
           className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
         >
           1
@@ -175,9 +187,9 @@ export default function ProjectManagementPage() {
         buttons.push(<span key="end-ellipsis" className="px-2">...</span>);
       }
       buttons.push(
-        <button 
-          key={totalPages} 
-          onClick={() => handlePageChange(totalPages)} 
+        <button
+          key={totalPages}
+          onClick={() => handlePageChange(totalPages)}
           className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
         >
           {totalPages}
@@ -189,12 +201,12 @@ export default function ProjectManagementPage() {
   };
 
   const SortIcon = ({ onClick }: { onClick: () => void }) => (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="16" 
-      height="16" 
-      viewBox="0 0 16 16" 
-      fill="none" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
       className="cursor-pointer"
       onClick={onClick}
     >
@@ -210,14 +222,14 @@ export default function ProjectManagementPage() {
   return (
     <div className="bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl flex flex-col gap-6">
       <Toaster position="top-right" />
-      <DeletePopUp 
-        isDeleteModalOpen={isDeleteModalOpen} 
-        closeDeleteModal={closeDeleteModal} 
-        isDeleting={loading} 
-        handleDelete={handleDeleteProject} 
-        title={(data.find(project => project.id === projectToDelete)?.name || 'Project')} 
+      <DeletePopUp
+        isDeleteModalOpen={isDeleteModalOpen}
+        closeDeleteModal={closeDeleteModal}
+        isDeleting={loading}
+        handleDelete={handleDeleteProject}
+        title={(data.find(project => project.id === projectToDelete)?.name || 'Project')}
       />
-      
+
       {/* Header Section */}
       <div className="w-full flex flex-col sm:flex-row justify-between items-start gap-5">
         <div className="flex flex-col justify-start gap-2">
@@ -259,7 +271,7 @@ export default function ProjectManagementPage() {
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>Assignees</span>
-                  <SortIcon onClick={() => {}} />
+                  <SortIcon onClick={() => { }} />
                 </div>
               </th>
               <th className="p-4 text-left">

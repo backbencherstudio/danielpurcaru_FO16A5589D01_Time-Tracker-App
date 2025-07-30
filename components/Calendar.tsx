@@ -200,6 +200,16 @@ export default function AcademicCalendar() {
   // }, [currentMonth])
 
 
+  // token extract helper
+  const getCookieToken = () => {
+    if (typeof document === "undefined") return null;
+
+    const cookieString = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("empdashtoken="));
+    return cookieString?.split("=")[1] || null;
+  };
+
   const fetchProjectData = useCallback(async () => {
     setLoading(true);
     let month = currentMonth;
@@ -233,59 +243,61 @@ export default function AcademicCalendar() {
   }, [currentMonth]);
 
   useEffect(() => {
-    fetchProjectData()
+    const token = getCookieToken();
+    if (token)
+      fetchProjectData()
   }, [fetchProjectData, currentMonth])
 
-  console.log("Events : ",events);
+  console.log("Events : ", events);
 
   return (
     <div className="calendar-container bg-white p-4 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-4">Academic Calendar</h2>
 
       <FullCalendar
-  plugins={[dayGridPlugin, interactionPlugin]}
-  initialView="dayGridMonth"
-  datesSet={handleDatesSet}
-  events={[
-    ...(events?.events?.map(e => ({
-      id: e.id,
-      title: e.title,
-      start: e.start_date,
-      allDay: true,
-      end: formatCalendarEndDate(e.end_date),
-      color: getEventColor(e.event_type),
-      extendedProps: {
-        event_type: e.event_type
-      }
-    })) || []),
-    ...(events?.holidays?.map(h => ({
-      id: h.id,
-      title: h.summary,
-      start: h.start.date,
-      allDay: true,
-      end: h.end.date,
-      color: '#ff9f89', // You can set a specific color for holidays
-      extendedProps: {
-        event_type: 'HOLIDAY'
-      }
-    })) || [])
-  ]}
-  dateClick={handleDateClick}
-  eventClick={handleEventClick}
-  headerToolbar={{
-    left: 'prev,next today',
-    center: 'title',
-    right: 'dayGridMonth,dayGridWeek'
-  }}
-  height="auto"
-  eventContent={(arg) => (
-    <div className="fc-event-content select-none" title={arg.event.title}>
-      <div className="truncate">
-        {arg.event.title}
-      </div>
-    </div>
-  )}
-/>
+        plugins={[dayGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        datesSet={handleDatesSet}
+        events={[
+          ...(events?.events?.map(e => ({
+            id: e.id,
+            title: e.title,
+            start: e.start_date,
+            allDay: true,
+            end: formatCalendarEndDate(e.end_date),
+            color: getEventColor(e.event_type),
+            extendedProps: {
+              event_type: e.event_type
+            }
+          })) || []),
+          ...(events?.holidays?.map(h => ({
+            id: h.id,
+            title: h.summary,
+            start: h.start.date,
+            allDay: true,
+            end: h.end.date,
+            color: '#ff9f89', // You can set a specific color for holidays
+            extendedProps: {
+              event_type: 'HOLIDAY'
+            }
+          })) || [])
+        ]}
+        dateClick={handleDateClick}
+        eventClick={handleEventClick}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,dayGridWeek'
+        }}
+        height="auto"
+        eventContent={(arg) => (
+          <div className="fc-event-content select-none" title={arg.event.title}>
+            <div className="truncate">
+              {arg.event.title}
+            </div>
+          </div>
+        )}
+      />
 
       {/* Add Event Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

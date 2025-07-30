@@ -27,14 +27,25 @@ export default function Home() {
   const [cardData, setCardData] = useState({})
   const [typeOfEmp, setTypeOfEmp] = useState([])
   const [chartData, setChartData] = useState([])
-  const [empDataSaved,setEmpDataSaved]= useState(false);
+  const [empDataSaved, setEmpDataSaved] = useState(false);
 
 
+  // token extract helper
+  const getCookieToken = () => {
+    if (typeof document === "undefined") return null;
 
-useEffect(()=>{
-  // checkAttendance
-  const checkAttendance = async()=>{
-    try {
+    const cookieString = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("empdashtoken="));
+    return cookieString?.split("=")[1] || null;
+  };
+
+
+  useEffect(() => {
+    const token = getCookieToken();
+    // checkAttendance
+    const checkAttendance = async () => {
+      try {
         const res = await UserService?.checkAttendance();
       } catch (error: any) {
         toast.error(
@@ -45,17 +56,21 @@ useEffect(()=>{
         console.error("Fetch error:", error);
       } finally {
       }
-  }
-  checkAttendance();
-},[])
+    }
+    if (token) {
+      checkAttendance();
+    }
+  }, [])
 
 
   useEffect(() => {
+    const token = getCookieToken();
     setLoading(true);
 
     const fetchSummeryData = async () => {
       try {
-        const res = await UserService?.getSummary({
+        if(token){
+          const res = await UserService?.getSummary({
           title: "Home",
           href: "/"
         });
@@ -63,6 +78,7 @@ useEffect(()=>{
           setCardData(res?.data?.data)
         } else {
           toast.error(res?.response?.data?.message || "Failed to fetch data");
+        }
         }
       } catch (error: any) {
         toast.error(
@@ -77,15 +93,18 @@ useEffect(()=>{
     };
 
     const fetchEmpRoleOverview = async () => {
+      const token = getCookieToken();
       try {
-        const res = await UserService?.getEmpRoleOverview({
-          title: "Home",
-          href: "/"
-        });
-        if (res?.data?.success) {
-          setTypeOfEmp(res.data.data.roles)
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        if (token) {
+          const res = await UserService?.getEmpRoleOverview({
+            title: "Home",
+            href: "/"
+          });
+          if (res?.data?.success) {
+            setTypeOfEmp(res.data.data.roles)
+          } else {
+            toast.error(res?.response?.data?.message || "Failed to fetch data");
+          }
         }
       } catch (error: any) {
         toast.error(
@@ -101,15 +120,18 @@ useEffect(()=>{
 
 
     const fetchAttendanceReport = async () => {
+      const token = getCookieToken();
       try {
-        const res = await UserService?.getAttendanceReport({
-          title: "Home",
-          href: "/"
-        });
-        if (res?.data?.success) {
-          setChartData(res.data.data)
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        if (token) {
+          const res = await UserService?.getAttendanceReport({
+            title: "Home",
+            href: "/"
+          });
+          if (res?.data?.success) {
+            setChartData(res.data.data)
+          } else {
+            toast.error(res?.response?.data?.message || "Failed to fetch data");
+          }
         }
       } catch (error: any) {
         toast.error(
@@ -123,13 +145,16 @@ useEffect(()=>{
       }
     }
     const fetchEmpData = async () => {
+      const token = getCookieToken();
       try {
-        const res = await UserService?.getEmpData(5);
-        if (res?.data?.success) {
-          // console.log("Response:", res.data.data);
-          setEmpData(res.data.data)
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
+        if (token) {
+          const res = await UserService?.getEmpData(5);
+          if (res?.data?.success) {
+            // console.log("Response:", res.data.data);
+            setEmpData(res.data.data)
+          } else {
+            toast.error(res?.response?.data?.message || "Failed to fetch data");
+          }
         }
       } catch (error: any) {
         toast.error(
@@ -161,14 +186,14 @@ useEffect(()=>{
   // console.log("Fetch data ", empData)
 
 
-  const handleEmpDataSaved=()=>{
+  const handleEmpDataSaved = () => {
     console.log("Emp update saved...")
-    setEmpDataSaved(prev=>!prev)
+    setEmpDataSaved(prev => !prev)
   }
 
   return (
     <div className="space-y-4">
-       <Toaster position="top-right" />
+      <Toaster position="top-right" />
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {loading && <div className="text-lg font-medium">Loading...</div>}
         {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
@@ -203,7 +228,7 @@ useEffect(()=>{
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={false}/>
+        <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={false} />
       </div>}
     </div>
   );

@@ -46,6 +46,16 @@ export default function ProjectDetails({ id }) {
         }
     };
 
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
+    };
+
     useEffect(() => {
         const handleResize = () => {
             setIsLargeScreen(window.innerWidth >= 600);
@@ -82,6 +92,7 @@ export default function ProjectDetails({ id }) {
 
 
     useEffect(() => {
+        const token = getCookieToken();
         setLoading(true)
         const fetchPojectData = async () => {
             try {
@@ -103,6 +114,7 @@ export default function ProjectDetails({ id }) {
                 setLoading(false);
             }
         }
+        if(token)
         fetchPojectData()
     }, [])
 

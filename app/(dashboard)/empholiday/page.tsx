@@ -47,6 +47,16 @@ export default function Page() {
         }
     };
 
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
+    };
+
     const handleFormSubmit = async () => {
         if (!selectedEmployeeId) {
             toast.error("Please select an employee");
@@ -89,6 +99,7 @@ export default function Page() {
     };
 
     useEffect(() => {
+        const token = getCookieToken();
         const fetchData = async () => {
             try {
                 setLoading(true);
@@ -116,7 +127,9 @@ export default function Page() {
                 setLoading(false);
             }
         };
-        fetchData();
+        if (token) {
+            fetchData();
+        }
     }, []);
 
     return (

@@ -20,14 +20,14 @@ export default function ProtectedPageWrapper({ children }: { children: React.Rea
     useEffect(() => {
         const token = getCookieToken();
         if (!token) {
-            router.replace("/login");
+            router.push("/login");
             return;
         }
 
         const interval = setInterval(() => {
             const token = getCookieToken();
             if (!token) {
-                router.replace("/login");
+                router.push("/login");
             }
         }, 3000);
 

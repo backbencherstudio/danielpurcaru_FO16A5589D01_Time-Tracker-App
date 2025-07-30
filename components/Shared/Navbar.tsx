@@ -83,7 +83,19 @@ export default function Navbar() {
     ];
 
 
+    // token extract helper
+    const getCookieToken = () => {
+        if (typeof document === "undefined") return null;
+
+        const cookieString = document.cookie
+            .split("; ")
+            .find((cookie) => cookie.startsWith("empdashtoken="));
+        return cookieString?.split("=")[1] || null;
+    };
+
+
     useEffect(() => {
+        const token = getCookieToken();
         const fetchEmpData = async () => {
             try {
                 const res = await UserService?.getEmpLoanData();
@@ -104,11 +116,15 @@ export default function Navbar() {
                 // setLoading(false);
             }
         }
-        fetchEmpData()
+
+        if (token) {
+            fetchEmpData()
+        }
     }, [])
 
 
     useEffect(() => {
+        const token = getCookieToken();
         const getProfileInfo = async () => {
             try {
                 const res = await UserService?.getProfile();
@@ -127,10 +143,12 @@ export default function Navbar() {
                 console.error("Fetch error:", error);
             }
         }
-        getProfileInfo();
+
+        if (token) {
+            getProfileInfo();
+        }
     }, [])
 
-    console.log("Admin info : ", adminInfo)
 
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
