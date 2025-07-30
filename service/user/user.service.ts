@@ -385,7 +385,7 @@ export const UserService = {
   },
 
 
-  getEvents: async (context: any = null) => {
+  getEvents: async (month:number,context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -395,7 +395,7 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/academic-calendar`, config);
+    return await Fetch.get(`/academic-calendar?month=${month}`, config);
   },
   createEvent: async (eventData: { title: string, start_date: string, end_date: string, event_type: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
