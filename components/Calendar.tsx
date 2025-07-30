@@ -174,30 +174,30 @@ export default function AcademicCalendar() {
     return date.toISOString().split('T')[0]
   }
 
-  // const fetchProjectData = useCallback(async () => {
-  //   setLoading(true)
-  //     let month = currentMonth;
-  //     if(month === 0){
-  //       month = 12;
-  //     }
-  //   try {
-  //     const res = await UserService.getEvents(month)
-  //     if (res?.data?.success) {
-  //       console.log(res.data.data)
-  //       setEvents(res.data.data)
-  //     } else {
-  //       toast.error(res?.response?.data?.message || "Failed to fetch events")
-  //     }
-  //   } catch (error: any) {
-  //     toast.error(
-  //       error.response?.data?.message ||
-  //       error.message ||
-  //       "An error occurred while fetching events"
-  //     )
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }, [currentMonth])
+  const fetchProjectData = useCallback(async () => {
+    setLoading(true)
+      let month = currentMonth;
+      if(month === 0){
+        month = 12;
+      }
+    try {
+      const res = await UserService.getEvents(month)
+      if (res?.data?.success) {
+        console.log(res.data.data)
+        setEvents(res.data.data)
+      } else {
+        toast.error(res?.response?.data?.message || "Failed to fetch events")
+      }
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while fetching events"
+      )
+    } finally {
+      setLoading(false)
+    }
+  }, [currentMonth])
 
 
   // token extract helper
@@ -209,38 +209,6 @@ export default function AcademicCalendar() {
       .find((cookie) => cookie.startsWith("empdashtoken="));
     return cookieString?.split("=")[1] || null;
   };
-
-  const fetchProjectData = useCallback(async () => {
-    setLoading(true);
-    let month = currentMonth;
-    if (month === 0) {
-      month = 12;
-    }
-
-    try {
-      const response = await fetch(`https://nec-kelly-skins-settlement.trycloudflare.com/api/academic-calendar?month=${month}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const res = await response.json();
-
-      if (res?.success) {
-        console.log(res.data);
-        setEvents(res.data);
-      } else {
-        toast.error(res?.message || "Failed to fetch events");
-      }
-    } catch (error: any) {
-      toast.error(
-        error.message ||
-        "An error occurred while fetching events"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [currentMonth]);
 
   useEffect(() => {
     const token = getCookieToken();
