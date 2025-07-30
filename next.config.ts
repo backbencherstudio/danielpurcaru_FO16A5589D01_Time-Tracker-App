@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   poweredByHeader: false,
   images: {
-    domains: ['nec-kelly-skins-settlement.trycloudflare.com'], // Add your image source domain here
+    domains: ['danielpurcarupro.signalsmind.com'], // Add your image source domain here
   },
 };
 
