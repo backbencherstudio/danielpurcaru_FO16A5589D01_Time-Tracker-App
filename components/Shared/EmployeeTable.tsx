@@ -216,7 +216,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                                     </svg>
                                 </div>
                             </th>
-                            <th className="py-4 px-4">
+                            {/* <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>User Name</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer" onClick={() => handleSorting("name")}>
@@ -228,7 +228,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                                         </g>
                                     </svg>
                                 </div>
-                            </th>
+                            </th> */}
                             {/* <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Email</span>
@@ -310,7 +310,7 @@ export default function EmployeeTable({ empData, empDataSaved, handleEmpDataSave
                                     </div>
                                     <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
-                                <td className="p-4 text-nowrap">{emp?.username}</td>
+                                {/* <td className="p-4 text-nowrap">{emp?.username}</td> */}
                                 {/* <td className="p-4 text-nowrap">{emp?.email}</td> */}
                                 <td className="p-4 text-nowrap">{emp?.employee_role}</td>
                                 <td className="text-center p-4">${emp?.hourly_rate}</td>
