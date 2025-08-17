@@ -122,6 +122,8 @@ export const UserService = {
   },
   getAttendanceReport: async (params: SummaryParams, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const month = new Date().getMonth();
+    console.log(month);
 
     const config: GetSummaryConfig = {
       headers: {
@@ -136,7 +138,7 @@ export const UserService = {
       href: params.href
     }).toString();
 
-    return await Fetch.get(`/dashboard/attendance-report?start=${"07"}&${queryParams}`, config);
+    return await Fetch.get(`/dashboard/attendance-report?start=${month + 1}&${queryParams}`, config);
   },
   getEmpData: async (limit?: number, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
