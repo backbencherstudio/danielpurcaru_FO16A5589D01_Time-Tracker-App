@@ -411,7 +411,7 @@ export const UserService = {
       title:eventData.title,
       start_date:eventData.start_date,
       event_type: eventData.event_type,
-      end_date: eventData.end_date?eventData.end_date:eventData.startDate
+      end_date: eventData.end_date?eventData.end_date:eventData.start_date
     }
     const config = {
       method: 'INSERT',
