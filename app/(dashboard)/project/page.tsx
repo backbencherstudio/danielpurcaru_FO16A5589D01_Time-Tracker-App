@@ -18,6 +18,7 @@ interface Project {
   name: string;
   assignees: Array<{ user: { avatarUrl: string } }>;
   start_date: string;
+  end_date:string;
   priority: string;
   price: number;
   status: number;
@@ -88,6 +89,7 @@ export default function ProjectManagementPage() {
     setLoading(true);
     try {
       const res = await UserService.getProjectData();
+      console.log("Project data : ",res)
       if (res?.data?.success) {
         setData(res.data.data);
       } else {
@@ -268,12 +270,12 @@ export default function ProjectManagementPage() {
                   <SortIcon onClick={() => requestSort('name')} />
                 </div>
               </th>
-              <th className="p-4 text-left">
+              {/* <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>Assignees</span>
                   <SortIcon onClick={() => { }} />
                 </div>
-              </th>
+              </th> */}
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 text-nowrap font-medium text-sm">
                   <span>Due Date</span>
@@ -319,7 +321,7 @@ export default function ProjectManagementPage() {
               </tr>
             ) : (
               currentItems.map((row, index) => {
-                const startDate = new Date(row.start_date).toLocaleDateString();
+                const endDate = new Date(row.end_date).toLocaleDateString();
                 const priority = row.priority.charAt(0).toUpperCase() + row.priority.slice(1).toLowerCase();
                 const statusText = row.status === 1 ? "In Progress" : "Completed";
                 const statusClass = row.status === 1 ? 'bg-sky-100' : 'bg-green-50';
@@ -328,7 +330,7 @@ export default function ProjectManagementPage() {
                   <tr key={row.id} className="bg-white hover:bg-gray-50 border-b">
                     <td className="p-4">{index + 1 + (currentPage - 1) * itemsPerPage}</td>
                     <td className="p-4">{row.name}</td>
-                    <td className="p-4">
+                    {/* <td className="p-4">
                       <div className="flex -space-x-3">
                         {row.assignees.slice(0, 3).map((assignee, idx) => (
                           <div key={idx} className="relative">
@@ -347,8 +349,8 @@ export default function ProjectManagementPage() {
                           </div>
                         )}
                       </div>
-                    </td>
-                    <td className="p-4">{startDate}</td>
+                    </td> */}
+                    <td className="p-4">{endDate}</td>
                     <td className="p-4">{priority}</td>
                     <td className="p-4">${row.price}</td>
                     <td className="p-4 text-nowrap">

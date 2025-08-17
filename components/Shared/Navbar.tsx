@@ -178,7 +178,7 @@ export default function Navbar() {
 
                 <div className="flex md:gap-[12px]">
                     <div>
-                        <Image src={avatar || defaultAvatar} alt="Pic" className="rounded-full" width={30} height={30} />
+                        <Image src={avatar || defaultAvatar} alt="Pic" className="rounded-full w-[30px] h-[30px] object-cover" width={500} height={500} />
                     </div>
                     <div className="hidden md:block">
                         <h3 className="text-[14px] text-[#1D1F2C] font-semibold">{adminInfo?.name || "No-name"}</h3>
