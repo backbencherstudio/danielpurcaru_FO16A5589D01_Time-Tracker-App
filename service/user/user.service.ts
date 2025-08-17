@@ -407,12 +407,6 @@ export const UserService = {
   },
   createEvent: async (eventData: { title: string, start_date: string, end_date: string, event_type: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
-    const data = {
-      title:eventData.title,
-      start_date:eventData.start_date,
-      event_type: eventData.event_type,
-      end_date: eventData.end_date?eventData.end_date:eventData.start_date
-    }
     const config = {
       method: 'INSERT',
       headers: {
@@ -420,7 +414,7 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    return await Fetch.post(`/academic-calendar`, data, config);
+    return await Fetch.post(`/academic-calendar`, eventData, config);
   },
   updateEvent: async (eventId: string, eventData: { title: string, start_date: string, end_date: string, event_type: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });

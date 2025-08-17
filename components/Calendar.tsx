@@ -77,6 +77,14 @@ export default function AcademicCalendar() {
     setDialogOpen(true)
   }
 
+  const formatDateForAPI = (dateString: string): string => {
+    if (!dateString) return '';
+    // Create a Date object from the input string (which is in YYYY-MM-DD format)
+    const date = new Date(dateString);
+    // Convert to ISO string and return
+    return date.toISOString();
+  };
+
   const handleEventClick = (arg: { event: { id: string } }) => {
     const event = events.events.find(e => e.id === arg.event.id)
     if (event) {
@@ -90,13 +98,12 @@ export default function AcademicCalendar() {
   }
 
   const handleSaveEvent = async () => {
-    console.log("Event is created...")
     try {
       const newEvent = {
         title: eventTitle,
         event_type: eventType,
-        start_date: selectedDate,
-        end_date: endDate || null
+        start_date: formatDateForAPI(selectedDate),
+        end_date: formatDateForAPI(endDate) || formatDateForAPI(selectedDate)
       }
 
       const response = await UserService.createEvent(newEvent)
@@ -124,8 +131,8 @@ export default function AcademicCalendar() {
       const updatedEvent = {
         title: eventTitle,
         event_type: eventType,
-        start_date: selectedDate,
-        end_date: endDate || null
+        start_date: formatDateForAPI(selectedDate),
+        end_date: formatDateForAPI(endDate) || formatDateForAPI(selectedDate)
       }
 
       const response = await UserService.updateEvent(selectedEventId, updatedEvent)
@@ -163,23 +170,23 @@ export default function AcademicCalendar() {
       case 'HOLIDAY': return '#42f56f'
       case 'SEMINAR': return '#f5a742'
       case 'EXAM': return '#f54242'
-      default: return '#4287f5' // OFF_DAY
+      default: return '#4287f5'
     }
   }
 
   const formatCalendarEndDate = (dateString?: string | null): string | undefined => {
     if (!dateString) return undefined
     const date = new Date(dateString)
-    date.setDate(date.getDate() + 1) // Add one day to make end date inclusive
+    date.setDate(date.getDate() + 1)
     return date.toISOString().split('T')[0]
   }
 
   const fetchProjectData = useCallback(async () => {
     setLoading(true)
-      let month = currentMonth;
-      if(month === 0){
-        month = 12;
-      }
+    let month = currentMonth;
+    if (month === 0) {
+      month = 12;
+    }
     try {
       const res = await UserService.getEvents(month)
       if (res?.data?.success) {
