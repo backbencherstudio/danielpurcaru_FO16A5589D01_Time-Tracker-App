@@ -261,13 +261,13 @@ export default function ProjectManagementPage() {
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>SL</span>
-                  <SortIcon onClick={() => requestSort('id')} />
+                  {/* <SortIcon onClick={() => requestSort('id')} /> */}
                 </div>
               </th>
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 text-nowrap font-medium text-sm">
                   <span>Project Name</span>
-                  <SortIcon onClick={() => requestSort('name')} />
+                  {/* <SortIcon onClick={() => requestSort('name')} /> */}
                 </div>
               </th>
               {/* <th className="p-4 text-left">
@@ -279,25 +279,25 @@ export default function ProjectManagementPage() {
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 text-nowrap font-medium text-sm">
                   <span>Due Date</span>
-                  <SortIcon onClick={() => requestSort('start_date')} />
+                  {/* <SortIcon onClick={() => requestSort('start_date')} /> */}
                 </div>
               </th>
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>Priority</span>
-                  <SortIcon onClick={() => requestSort('priority')} />
+                  {/* <SortIcon onClick={() => requestSort('priority')} /> */}
                 </div>
               </th>
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>Price</span>
-                  <SortIcon onClick={() => requestSort('price')} />
+                  {/* <SortIcon onClick={() => requestSort('price')} /> */}
                 </div>
               </th>
               <th className="p-4 text-left">
                 <div className="flex items-center justify-between gap-2 font-medium text-sm">
                   <span>Status</span>
-                  <SortIcon onClick={() => requestSort('status')} />
+                  {/* <SortIcon onClick={() => requestSort('status')} /> */}
                 </div>
               </th>
               <th className="p-4 text-center font-medium text-sm">

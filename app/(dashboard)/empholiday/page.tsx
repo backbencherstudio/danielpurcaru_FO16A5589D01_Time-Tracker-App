@@ -167,7 +167,7 @@ export default function Page() {
                             <tr className="rounded-xl">
                                 <th className="py-4 px-4 flex justify-between gap-3">
                                     <span>SL</span>
-                                    <button>
+                                    {/* <button>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                             <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                             <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -176,12 +176,12 @@ export default function Page() {
                                                 <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                             </g>
                                         </svg>
-                                    </button>
+                                    </button> */}
                                 </th>
                                 <th className="py-4 text-start px-4">
                                     <div className="flex items-center justify-between">
                                         <span>Name</span>
-                                        <button>
+                                        {/* <button>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                 <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -190,13 +190,13 @@ export default function Page() {
                                                     <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 </g>
                                             </svg>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </th>
                                 <th className="py-4 text-start px-4">
                                     <div className="flex justify-between items-center">
                                         <span>From</span>
-                                        <button>
+                                        {/* <button>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                 <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -205,13 +205,13 @@ export default function Page() {
                                                     <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 </g>
                                             </svg>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </th>
                                 <th className="py-4 text-start px-4">
                                     <div className="flex items-center justify-between">
                                         <span>To</span>
-                                        <button>
+                                        {/* <button>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                 <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -220,7 +220,7 @@ export default function Page() {
                                                     <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                                 </g>
                                             </svg>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </th>
                                 <th className="py-4 text-center px-4">Total</th>

@@ -210,14 +210,14 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
                             <th className="py-4 px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>SL</span>
-                                    {getSortIcon('id')}
+                                    {/* {getSortIcon('id')} */}
                                 </div>
                             </th>
                             <th className="py-4 text-start px-4">
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Employee Name</span>
                                     <div onClick={() => requestSort('user')}>
-                                        {getSortIcon('user')}
+                                        {/* {getSortIcon('user')} */}
                                     </div>
                                 </div>
                             </th>
@@ -225,7 +225,7 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Date</span>
                                     <div onClick={() => requestSort('created_at')}>
-                                        {getSortIcon('created_at')}
+                                        {/* {getSortIcon('created_at')} */}
                                     </div>
                                 </div>
                             </th>
@@ -233,7 +233,7 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
                                 <div className="flex items-center justify-between gap-2">
                                     <span>Price</span>
                                     <div onClick={() => requestSort('loan_amount')}>
-                                        {getSortIcon('loan_amount')}
+                                        {/* {getSortIcon('loan_amount')} */}
                                     </div>
                                 </div>
                             </th>
