@@ -132,6 +132,14 @@ export default function Page() {
         }
     }, []);
 
+    if (loading) {
+        return (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row w-full justify-between">
@@ -153,11 +161,7 @@ export default function Page() {
             </div>
 
             <div className="bg-white rounded-xl p-5 overflow-x-auto">
-                {loading && !empHolidays.length ? (
-                    <div className="flex justify-center items-center h-32">
-                        <p>Loading holidays...</p>
-                    </div>
-                ) : empHolidays.length === 0 ? (
+                {empHolidays.length === 0 ? (
                     <div className="flex justify-center items-center h-32">
                         <p>No holidays found</p>
                     </div>

@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form';
 interface Employee {
   id: string;
   name: string;
-  // Add other employee properties as needed
 }
 
 interface ProjectFormData {
@@ -85,7 +84,7 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
         address:data.address,
         start_date:data.start_date,
         end_date:data.end_date,
-        price:parseInt(data.price),
+        price:Number(parseFloat(data.price).toFixed(2)),
         priority:priority.toUpperCase(),
         assignees:assignMember
     }
@@ -184,7 +183,7 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
             </label>
             <input
               id="price"
-              type="number"
+              type="text"
               placeholder="$1000"
               className="w-full px-3 py-2 border border-[#E9E9EA] rounded-md bg-[#F7F8F9] text-[#1D1F2C]"
               {...register("price", { required: "Set a price..." })}

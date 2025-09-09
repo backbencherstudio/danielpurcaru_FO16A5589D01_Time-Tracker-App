@@ -1,17 +1,41 @@
 'use client'
 
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from '../ui/dialog';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid'; // Importing Heroicons for eye icon
 import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
 import { Toaster } from 'react-hot-toast';
+import { EmpDataContext } from '@/app/(dashboard)/employees/page';
 
-export default function EditEmployeeDialog({ isOpen, handleDialogToggle,empDataSaved, empId, data }) {
-    const [empName, setEmpName] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.name);
-    const [empRole, setEmpRole] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.employee_role);
-    const [empHourlyRate, setEmpHourlyRate] = useState(data?.find((emp: typeof data) => emp?.id === empId)?.hourly_rate);
+interface Employee {
+    id: string;
+    first_name: string;
+    last_name: string;
+    name: string;
+    employee_role: string;
+    hourly_rate: string;
+    recorded_hours: number;
+    earnings: string,
+    avatarUrl: string;
+    username: string;
+    email:string;
+}
+
+
+type propType={
+    isOpen: boolean;
+    handleDialogToggle: ()=> void;
+    empId: string;
+    data: Employee[];
+}
+
+export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, data }:propType) {
+    const {fetchEmpData,handleEmpDataSaved} = useContext(EmpDataContext);
+    const [empName, setEmpName] = useState(data?.find((emp: Employee) => emp?.id === empId)?.name);
+    const [empRole, setEmpRole] = useState(data?.find((emp: Employee) => emp?.id === empId)?.employee_role);
+    const [empHourlyRate, setEmpHourlyRate] = useState(data?.find((emp: Employee) => emp?.id === empId)?.hourly_rate);
     const [empPassword, setEmpPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
     const [loading, setLoading] = useState(false);
@@ -31,7 +55,8 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle,empDataS
             if (res?.data?.success) {
                 toast.success("Employee data saved...");
                 handleDialogToggle()
-                empDataSaved()
+                handleEmpDataSaved()
+                fetchEmpData();
             }
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Registration failed");

@@ -344,6 +344,18 @@ export const UserService = {
   },
 
 
+  updateProject: async({data,id},context=null)=>{
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken}`,
+      }
+    }
+    return await Fetch.patch(`/project/${id}`,data,config);
+  },
+
+
   getSingleProjectData: async (id: string, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
