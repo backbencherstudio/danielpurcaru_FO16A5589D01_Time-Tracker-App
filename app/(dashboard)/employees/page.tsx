@@ -9,23 +9,11 @@ import sanvannah from "@/public/images/Employee/sanvannah.png";
 import theresa from "@/public/images/Employee/theresa.png";
 import { Plus } from "lucide-react";
 import Image from "next/image";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { UserService } from "@/service/user/user.service";
 import toast, { Toaster } from "react-hot-toast";
-
-
-type EmpDataContextType = {
-    fetchEmpData: () => void;
-    handleEmpDataSaved: () => void;
-    handleLoading: (st: boolean) => void;
-};
-
-export const EmpDataContext = createContext<EmpDataContextType>({
-    fetchEmpData: () => { },
-    handleEmpDataSaved: () => { },
-    handleLoading: () => {}
-});
+import { EmpDataContext } from "@/context/EmpDataContext";
 
 
 
