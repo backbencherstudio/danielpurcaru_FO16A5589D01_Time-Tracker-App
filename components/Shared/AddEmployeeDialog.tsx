@@ -8,10 +8,10 @@ import prof from "@/public/images/profileIcon.png";
 import { StaticImageData } from 'next/image';
 import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
-import { EmpDataContext } from '@/app/(dashboard)/employees/page';
+import { useEmpData } from '@/context/EmpDataContext';
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
-    const {handleLoading,fetchEmpData} = useContext(EmpDataContext);
+    const {handleLoading,fetchEmpData} = useEmpData();
     const [avatar, setAvatar] = useState<string | StaticImageData>(prof);
     const [loading, setLoading] = useState(false);
 

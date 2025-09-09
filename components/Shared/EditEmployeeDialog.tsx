@@ -7,7 +7,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid'; // Importing 
 import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
 import { Toaster } from 'react-hot-toast';
-import { EmpDataContext } from '@/app/(dashboard)/employees/page';
+import { useEmpData } from '@/context/EmpDataContext';
 
 interface Employee {
     id: string;
@@ -32,7 +32,7 @@ type propType={
 }
 
 export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, data }:propType) {
-    const {fetchEmpData,handleEmpDataSaved} = useContext(EmpDataContext);
+    const {fetchEmpData,handleEmpDataSaved} = useEmpData();
     const [empName, setEmpName] = useState(data?.find((emp: Employee) => emp?.id === empId)?.name);
     const [empRole, setEmpRole] = useState(data?.find((emp: Employee) => emp?.id === empId)?.employee_role);
     const [empHourlyRate, setEmpHourlyRate] = useState(data?.find((emp: Employee) => emp?.id === empId)?.hourly_rate);
