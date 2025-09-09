@@ -142,10 +142,10 @@ export default function page() {
                 </div>
                 {/* Buttons for Download and Add New */}
                 <div className="flex gap-5">
-                    <button className="w-fit sm:w-44 p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
+                    {/* <button className="w-fit sm:w-44 p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
                         <Image className="w-3 h-4" src={down} alt="Download" />
                         <span className="text-sky-300">Download</span>
-                    </button>
+                    </button> */}
                     <button onClick={() => setIsModalOpen(true)} className="w-fit   p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl flex justify-center items-center gap-1">
                         <Plus className="text-white" />
                         <span className="text-white text-nowrap">Add New Employee</span>
