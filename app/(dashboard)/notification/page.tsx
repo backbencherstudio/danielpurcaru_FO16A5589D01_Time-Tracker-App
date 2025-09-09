@@ -56,6 +56,7 @@ export default function Page() {
 
   const [empLoanData, setEmpLoanData] = useState<loanData[]>();
   const [getLoan, setGetLoan] = useState(true);
+  const [loading,setLoading] = useState(false);
 
   // token extract helper
   const getCookieToken = () => {
@@ -68,6 +69,7 @@ export default function Page() {
   };
 
   const handleEmpLoan = async (id: string, status: boolean) => {
+    setLoading(true);
     try {
       const res = await UserService?.updateEmpLoan(id, { loan_status: status ? "APPROVED" : "REJECTED" });
       if (res?.data?.success) {
@@ -84,13 +86,14 @@ export default function Page() {
       );
       console.error("Fetch error:", error);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     const token = getCookieToken();
     const fetchEmpData = async () => {
+      setLoading(true);
       try {
         const res = await UserService?.getEmpLoanData();
         if (res?.data?.success) {
@@ -107,12 +110,21 @@ export default function Page() {
         );
         console.error("Fetch error:", error);
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     }
     if (token)
       fetchEmpData()
   }, [getLoan])
+
+  if (loading) {
+    return (
+      <div className='w-full h-full flex items-center justify-center'>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-5 bg-gradient-to-l from-white/60 to-white rounded-2xl">
       <div className="flex flex-col gap-8">

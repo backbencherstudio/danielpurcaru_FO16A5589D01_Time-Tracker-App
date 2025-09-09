@@ -69,16 +69,16 @@ export default function Home() {
 
     const fetchSummeryData = async () => {
       try {
-        if(token){
+        if (token) {
           const res = await UserService?.getSummary({
-          title: "Home",
-          href: "/"
-        });
-        if (res?.data?.success) {
-          setCardData(res?.data?.data)
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
-        }
+            title: "Home",
+            href: "/"
+          });
+          if (res?.data?.success) {
+            setCardData(res?.data?.data)
+          } else {
+            toast.error(res?.response?.data?.message || "Failed to fetch data");
+          }
         }
       } catch (error: any) {
         toast.error(
@@ -191,10 +191,17 @@ export default function Home() {
     setEmpDataSaved(prev => !prev)
   }
 
+  if (loading) {
+    return (
+      <div className='w-full h-full flex items-center justify-center'>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 w-full h-full">
       <Toaster position="top-right" />
-        {loading && <div className="text-lg font-medium min-h-[calc(100vw - 90px)] w-full flex items-center justify-center">Loading...</div>}
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
       </div>
@@ -228,7 +235,7 @@ export default function Home() {
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={false} />
+        <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={false} />
       </div>}
     </div>
   );

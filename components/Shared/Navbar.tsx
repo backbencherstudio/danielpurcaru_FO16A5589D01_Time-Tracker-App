@@ -12,7 +12,7 @@ import Image from "next/image";
 import defaultAvatar from "@/public/avatar.png"
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from "./LanguageSwitcher";
-
+import Link from "next/link";
 
 
 interface loanData {
@@ -153,9 +153,9 @@ export default function Navbar() {
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
 
-            <h3 className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
-                Company Name
-            </h3>
+            <Link href="/" className="text-nowrap text-[#82C8E5] text-xl sm:text-[24px] font-semibold py-[15px]">
+                C.D.C.G
+            </Link>
             <div className="flex md:gap-[32px] gap-3 items-center">
                 <LanguageSwitcher />
                 {/* notification  */}

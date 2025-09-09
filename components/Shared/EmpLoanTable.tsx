@@ -19,9 +19,11 @@ interface EmployeeLoan {
 interface EmpLoanTableProps {
     empData: EmployeeLoan[];
     isLoading: boolean;
+    handleLoading: (st:boolean)=> void;
+    fetchEmpData: ()=> void;
 }
 
-const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
+const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoanTableProps) => {
     const [searchQuery, setSearchQuery] = useState('')
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
@@ -82,6 +84,7 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
     // Delete function
     const handleDelete = async () => {
         if (!loanToDelete) return
+        handleLoading(true);
         setIsDeleting(true)
         try {
             const response = await UserService.deleteEmpLoadData(loanToDelete)
@@ -89,7 +92,7 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
                 setDeleteMessage({ text: 'Loan deleted successfully', isError: false })
                 // Note: In server-side pagination, we should refresh the data instead of local filtering
                 closeDeleteModal()
-                // You might want to add a callback prop to notify parent to refresh data
+                fetchEmpData();
             } else {
                 setDeleteMessage({
                     text: response?.response?.data?.message || 'Failed to delete loan',
@@ -104,6 +107,7 @@ const EmpLoanTable = ({ empData, isLoading }: EmpLoanTableProps) => {
             })
         } finally {
             setIsDeleting(false)
+            handleLoading(false);
         }
     }
 
