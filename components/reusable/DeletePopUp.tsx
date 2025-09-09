@@ -55,7 +55,10 @@ export default function DeletePopUp({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to delete this loan? This action cannot be undone.
+                      Are you sure you want to delete this loan? 
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      This action cannot be undone.
                     </p>
                   </div>
 

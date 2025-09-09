@@ -123,6 +123,7 @@ export default function Page() {
     };
 
     const handleSaveData = async (id: string) => {
+        setLoading(true);
         try {
             const res = await UserService?.updateAttendance(id, {
                 hours: currentHour,
@@ -141,6 +142,7 @@ export default function Page() {
                 "An error occurred while updating attendance"
             );
         } finally {
+            setWorkHourEditor(false);
             setLoading(false);
         }
     }
@@ -205,6 +207,14 @@ export default function Page() {
     };
 
     const visiblePages = useMemo(() => getVisiblePageNumbers(), [currentPage, totalPages]);
+
+    if (loading) {
+        return (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">
@@ -328,7 +338,7 @@ export default function Page() {
                                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
                                 className="border rounded-md px-2 py-1 text-[#1D1F2C]"
                             >
-                                {[5, 10, 20,50].map((number) => (
+                                {[5, 10, 20, 50].map((number) => (
                                     <option key={number} value={number}>
                                         {number}
                                     </option>

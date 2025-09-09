@@ -148,10 +148,17 @@ export default function page() {
         }
     };
 
+    if (loading) {
+        return (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+            </div>
+        );
+    }
+
     return (
         <div className='p-8 bg-white rounded-2xl outline-1 outline-offset-[-1px] outline-indigo-50  flex flex-col justify-center  gap-12'>
-            {loading && <div className='font-semibold text-xl'>Loading...</div>}
-            {!loading && <form className=' flex flex-col gap-8' onSubmit={handleSubmit(onSubmit)}>
+            <form className=' flex flex-col gap-8' onSubmit={handleSubmit(onSubmit)}>
                 <div className="w-20 h-20 bg-slate-100 rounded-full relative" >
                     {(avatar || adminInfo.avatar_url) && <Image
                         src={avatar[0] instanceof File ? URL.createObjectURL(avatar[0]) : adminInfo.avatar_url}
@@ -366,7 +373,7 @@ export default function page() {
                     Save Changes
                 </button>
 
-            </form>}
+            </form>
         </div>
     )
 }

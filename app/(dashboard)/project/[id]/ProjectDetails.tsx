@@ -33,8 +33,8 @@ export default function ProjectDetails({ id }) {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [pageLeft, setPageLeft] = useState<number[]>([]);
     const [pageRight, setPageRight] = useState<number[]>([]);
-    const [projectData,setProjectData] = useState(null)
-    const [loading,setLoading] = useState(false)
+    const [projectData, setProjectData] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     // Calculate total pages based on employee data length
     const totalPages = Math.ceil(projectData?.assignees?.length / itemsPerPage);
@@ -114,9 +114,17 @@ export default function ProjectDetails({ id }) {
                 setLoading(false);
             }
         }
-        if(token)
-        fetchPojectData()
+        if (token)
+            fetchPojectData()
     }, [])
+
+    if (loading) {
+        return (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -130,7 +138,7 @@ export default function ProjectDetails({ id }) {
                     <div className='flex w-full mt-4 gap-6'>
                         <div className=' w-full'><ProjectDetailsCard title={'Total Hours'} value={projectData?.totalHours} isNumber={false} /></div>
                         <div className=' w-full'><ProjectDetailsCard title={'Total Cost'} value={`$${projectData?.totalCost}`} isNumber={true} /></div>
-                        <div className=' w-full'><ProjectDetailsCard title={'Project Status'} value={projectData?.status === 1?"Active":"Completed"} isNumber={false} /></div>
+                        <div className=' w-full'><ProjectDetailsCard title={'Project Status'} value={projectData?.status === 1 ? "Active" : "Completed"} isNumber={false} /></div>
                     </div>
                 </div>
 
