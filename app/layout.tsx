@@ -6,7 +6,7 @@ import ProtectedPageWrapper from "@/components/ProtectedPageWrapper/ProtectedPag
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: AppConfig().app.name,
+  title: "C.D.C.G",
   description: AppConfig().app.slogan,
 };
 
