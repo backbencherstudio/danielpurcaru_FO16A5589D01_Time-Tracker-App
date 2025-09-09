@@ -12,19 +12,21 @@ import down from '@/public/icons/file-download.svg';
 import DeletePopUp from '@/components/reusable/DeletePopUp';
 import { Toaster } from 'react-hot-toast';
 import avatar from "@/public/avatar.png"
+import { editIcon } from '@/public/icons/Iconst';
+import EditProjects from '@/components/allforms/EditProjects';
 
 interface Project {
   id: string;
   name: string;
-  assignees: Array<{ user: { avatarUrl: string } }>;
+  assignees: Array<{ user: { id: string } }>;
   start_date: string;
-  end_date:string;
+  end_date: string;
   priority: string;
   price: number;
   status: number;
 }
 
-const ITEMS_PER_PAGE_OPTIONS = [5,10,20,50];
+const ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
 
 export default function ProjectManagementPage() {
   const [data, setData] = useState<Project[]>([]);
@@ -35,7 +37,8 @@ export default function ProjectManagementPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' } | null>(null);
-
+  const [selectedProject,setSelectedProject] = useState<Project>()
+  const [editing,setEditing] = useState(false);
   const totalItems = data.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -89,9 +92,10 @@ export default function ProjectManagementPage() {
     setLoading(true);
     try {
       const res = await UserService.getProjectData();
-      console.log("Project data : ",res)
+      console.log("Project data : ", res)
       if (res?.data?.success) {
         setData(res.data.data);
+        setSelectedProject(res?.data?.data[0]);
       } else {
         toast.error(res?.response?.data?.message || "Failed to fetch data");
       }
@@ -221,6 +225,14 @@ export default function ProjectManagementPage() {
     </svg>
   );
 
+  if (loading) {
+    return (
+      <div className='w-full h-full flex items-center justify-center'>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-5 bg-gradient-to-l from-white/60 rounded-2xl flex flex-col gap-6">
       <Toaster position="top-right" />
@@ -307,13 +319,7 @@ export default function ProjectManagementPage() {
           </thead>
 
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={8} className="py-8 text-center text-gray-500">
-                  Loading projects...
-                </td>
-              </tr>
-            ) : currentItems.length === 0 ? (
+            {currentItems.length === 0 ? (
               <tr>
                 <td colSpan={8} className="py-8 text-center text-gray-500">
                   No projects found
@@ -352,7 +358,7 @@ export default function ProjectManagementPage() {
                     </td> */}
                     <td className="p-4">{endDate}</td>
                     <td className="p-4">{priority}</td>
-                    <td className="p-4">${row.price}</td>
+                    <td className="p-4">${Number(row.price).toFixed(2)}</td>
                     <td className="p-4 text-nowrap">
                       <div className={`px-2 py-1 flex justify-center items-center text-teal-600 ${statusClass} rounded-lg text-[10px] font-medium`}>
                         {statusText}
@@ -364,15 +370,21 @@ export default function ProjectManagementPage() {
                         className="bg-sky-300 rounded-lg p-2 text-white hover:bg-sky-400 transition-colors"
                         aria-label="View project"
                       >
-                        <Eye size={16} />
+                        <Eye size={20} />
                       </Link>
+                      <button
+                      onClick={()=> {setSelectedProject(row);setEditing(true)}}
+                        className="bg-[#82C8E5] hover:bg-sky-400 w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"
+                      >
+                        {editIcon}
+                      </button>
                       <button
                         onClick={() => { setProjectToDelete(row.id); setIsDeleteModalOpen(true); }}
                         disabled={loading}
-                        className="bg-red-500 rounded-lg p-2 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                        className="bg-red-500 rounded-lg p-2 text-white hover:bg-red-600 transition-colors disabled:opacity-50 cursor-pointer"
                         aria-label="Delete project"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={20} />
                       </button>
                     </td>
                   </tr>
@@ -432,6 +444,9 @@ export default function ProjectManagementPage() {
           }}
         />
       )}
+      {editing &&
+        <EditProjects project={selectedProject} onClose={()=>{setEditing(false)}} onUpdate={()=>{fetchProjectData()}}/>
+      }
     </div>
   );
 }

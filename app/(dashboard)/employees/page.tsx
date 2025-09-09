@@ -9,10 +9,25 @@ import sanvannah from "@/public/images/Employee/sanvannah.png";
 import theresa from "@/public/images/Employee/theresa.png";
 import { Plus } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { UserService } from "@/service/user/user.service";
 import toast, { Toaster } from "react-hot-toast";
+
+
+type EmpDataContextType = {
+    fetchEmpData: () => void;
+    handleEmpDataSaved: () => void;
+    handleLoading: (st: boolean) => void;
+};
+
+export const EmpDataContext = createContext<EmpDataContextType>({
+    fetchEmpData: () => { },
+    handleEmpDataSaved: () => { },
+    handleLoading: () => {}
+});
+
+
 
 export default function page() {
     const [empData, setEmpData] = useState([])
@@ -22,7 +37,7 @@ export default function page() {
     const [pageLeft, setPageLeft] = useState([]);
     const [pageRight, setPageRight] = useState([]);
     const [isLargeScreen, setIsLargeScreen] = useState(2);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [empDataSaved, setEmpDataSaved] = useState(false);
     const handlePageChange = async (pageNumber) => {
@@ -35,6 +50,11 @@ export default function page() {
             // setPageLoading(false);
         }
     };
+
+
+    const handleLoading = (state: boolean) => {
+        setLoading(state);
+    }
 
 
     // token extract helper
@@ -59,27 +79,29 @@ export default function page() {
     }, []);
 
 
+    const fetchEmpData = async () => {
+        setLoading(true);
+        try {
+            const res = await UserService?.getAllEmpData();
+            if (res?.data?.success) {
+                setEmpData(res.data.data)
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to fetch data");
+            }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data"
+            );
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         const token = getCookieToken();
-        const fetchEmpData = async () => {
-            try {
-                const res = await UserService?.getAllEmpData();
-                if (res?.data?.success) {
-                    setEmpData(res.data.data)
-                } else {
-                    toast.error(res?.response?.data?.message || "Failed to fetch data");
-                }
-            } catch (error: any) {
-                toast.error(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "An error occurred while fetching data"
-                );
-                console.error("Fetch error:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
         if (token) {
             fetchEmpData()
         }
@@ -114,6 +136,14 @@ export default function page() {
         setEmpDataSaved(prev => !prev)
     }
 
+    if (loading) {
+        return (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white rounded-lg p-5">
             <Toaster position="top-right" />
@@ -134,8 +164,10 @@ export default function page() {
                     </button>
                 </div>
             </div>
-            <EmployeeTable empData={empData} empDataSaved={empDataSaved} handleEmpDataSaved={handleEmpDataSaved} showPage={true} />
-            {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
+            <EmpDataContext.Provider value={{ fetchEmpData, handleEmpDataSaved,handleLoading }}>
+                <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={true} />
+                {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
+            </EmpDataContext.Provider>
         </div>
     );
 }

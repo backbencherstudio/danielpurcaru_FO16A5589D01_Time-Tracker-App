@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from '../ui/dialog';
 import { useForm } from 'react-hook-form';
@@ -8,8 +8,10 @@ import prof from "@/public/images/profileIcon.png";
 import { StaticImageData } from 'next/image';
 import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
+import { EmpDataContext } from '@/app/(dashboard)/employees/page';
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
+    const {handleLoading,fetchEmpData} = useContext(EmpDataContext);
     const [avatar, setAvatar] = useState<string | StaticImageData>(prof);
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +26,7 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
     };
 
     const onSubmit = async (data: any) => {
+        handleLoading(true);
         const empData = {
             ...(data.avatar && { file: data.avatar }),
             first_name: data.firstName,
@@ -32,7 +35,7 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
             email: data.email,
             phone_number: data.phone,
             physical_number: data.physicalNumber,
-            hourly_rate: parseInt(data.hourlyRate),
+            hourly_rate: parseFloat(data.hourlyRate),
             employee_role: data.role,
             address: data.address,
         }
@@ -49,6 +52,8 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
             console.log(error);
         } finally {
             setLoading(false);
+            handleLoading(false);
+            fetchEmpData();
         }
         handleDialogToggle();
     };
@@ -119,7 +124,7 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                             <div className="flex-1">
                                 <label className="text-sm font-medium">Password</label>
                                 <input
-                                    type="password"
+                                    type="text"
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter Password"
                                     {...register("password", { required: "Password is required" })}
