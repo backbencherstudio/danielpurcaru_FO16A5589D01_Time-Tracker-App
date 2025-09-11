@@ -223,15 +223,13 @@ export default function AcademicCalendar() {
       fetchProjectData()
   }, [fetchProjectData, currentMonth])
 
-  // console.log("Events : ", events);
-
-  if (loading) {
-    return (
-      <div className='w-full h-full flex items-center justify-center'>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className='w-full h-full flex items-center justify-center'>
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-[#82C8E5]"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="calendar-container bg-white p-4 rounded-lg shadow">
