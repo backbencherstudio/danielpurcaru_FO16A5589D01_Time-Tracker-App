@@ -469,7 +469,7 @@ export const UserService = {
     return await Fetch.post(`/attendance/check-absence`, {}, config);
   },
 
-  updateAttendance: async (id: string, data: { hours: number, attendance_status: string }, context: any = null) => {
+  updateAttendance: async (id: string, data: { hours: number,project_id:string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -494,6 +494,19 @@ export const UserService = {
     };
 
     return await Fetch.patch(`/employee-loan/${id}`, data, config);
+  },
+
+  deleteEmployee: async (id:string,context = null)=>{
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.delete(`/employee/${id}`, config);
   },
 
 

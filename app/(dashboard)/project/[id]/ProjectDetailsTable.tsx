@@ -30,7 +30,7 @@ const ProjectDetailsTable = ({ projectData }: any) => {
                                 </td>
                                 <td className=" p-4">{emp?.role}</td>
                                 <td className=" p-4">{emp?.hours}</td>
-                                <td className=" p-4">{emp?.cost}</td>
+                                <td className=" p-4">{emp?.cost.toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>

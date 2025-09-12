@@ -10,7 +10,7 @@ export default function ProjectDetailsCard({ title, value,isNumber }) {
     let totalValue: string = value;
     if (isNumber) {
         if (value.toString().length >= 7) {
-            totalValue = `${value.toString().slice(0, 2)},${value.toString().slice(2, 4)},${value.toString().slice(4)}`
+            totalValue = `${value.toString()}`
 
         }
         else if (value.toString().length === 6) {

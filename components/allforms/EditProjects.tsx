@@ -25,7 +25,7 @@ interface Employee {
 type propType = {
     project: Project;
     onClose: () => void;
-    onUpdate: (data: Project) => void;
+    onUpdate: () => void;
 }
 
 export default function EditProjects({ project, onClose, onUpdate }: propType) {
@@ -100,6 +100,7 @@ export default function EditProjects({ project, onClose, onUpdate }: propType) {
             console.error("Failed to update project:", error);
         } finally {
             setIsSubmitting(false);
+            onUpdate()
         }
     };
 
