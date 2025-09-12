@@ -5,9 +5,12 @@ import { useState, useMemo } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import EditEmployeeDialog from './EditEmployeeDialog'
 import { useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import avatar from '@/public/avatar.png'
 import { editIcon } from "@/public/icons/Iconst";
+import { Trash2 } from "lucide-react";
+import DeletePopUp from "../reusable/DeletePopUp";
+import { UserService } from "@/service/user/user.service";
 
 interface Employee {
     id: string;
@@ -20,16 +23,17 @@ interface Employee {
     earnings: string,
     avatarUrl: string;
     username: string;
-    email:string;
+    email: string;
 }
 
 interface EmployeeTableProps {
     empData: Employee[];
     empDataSaved: boolean;
     showPage: boolean;
+    onUpdate: ()=> void;
 }
 
-export default function EmployeeTable({ empData, empDataSaved, showPage }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, showPage,onUpdate }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
@@ -38,6 +42,9 @@ export default function EmployeeTable({ empData, empDataSaved, showPage }: Emplo
     const [selectedEmpId, setSelectedEmpId] = useState("");
     const [sortOrder, setSortOrder] = useState('asc');
     const [employeeData, setEmployeeData] = useState(empData);
+    const [loading, setLoading] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedEmp, setSelectedEmp] = useState<string>()
 
 
     useEffect(() => {
@@ -137,12 +144,49 @@ export default function EmployeeTable({ empData, empDataSaved, showPage }: Emplo
         return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
     };
 
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setSelectedEmp(null);
+    };
+
+    const handleDeleteEmployee = async () => {
+        if (!selectedEmp) return;
+
+        try {
+            setLoading(true);
+            const res = await UserService.deleteEmployee(selectedEmp);
+            if (res?.data?.success) {
+                toast.success("Employee deleted successfully");
+                setCurrentPage(1);
+                onUpdate();
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to delete employee");
+            }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while deleting employee"
+            );
+        } finally {
+            closeDeleteModal();
+            setLoading(false);
+        }
+    };
+
     const visiblePages = getVisiblePageNumbers();
 
     console.log("Current entries : ", currentEntries)
     return (
         <div className="space-y-6 bg-white">
             <Toaster position="top-right" />
+            <DeletePopUp
+                isDeleteModalOpen={isDeleteModalOpen}
+                closeDeleteModal={closeDeleteModal}
+                isDeleting={loading}
+                handleDelete={handleDeleteEmployee}
+                title={(employeeData.find(emp => emp.id === selectedEmp)?.name || 'Project')}
+            />
             {/* Search and Filter Section */}
             <div className="flex gap-4 flex-wrap">
                 {/* Search Bar */}
@@ -299,14 +343,14 @@ export default function EmployeeTable({ empData, empDataSaved, showPage }: Emplo
                     </thead>
 
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium ">
-                        {currentEntries.map((emp,index) => (
+                        {currentEntries.map((emp, index) => (
                             <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA] ">
                                 <td className="p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
                                     <div className="w-6 h-6">
                                         {emp?.avatarUrl && (
-                                        <Image src={emp?.avatarUrl ? emp?.avatarUrl : avatar} alt={`${emp?.name}'s avatar`} width={24} height={24} className="w-[24px] h-[24px] rounded-full object-cover" />
-                                    )}
+                                            <Image src={emp?.avatarUrl ? emp?.avatarUrl : avatar} alt={`${emp?.name}'s avatar`} width={24} height={24} className="w-[24px] h-[24px] rounded-full object-cover" />
+                                        )}
                                     </div>
                                     <h3 className="text-nowrap">{emp?.name}</h3>
                                 </td>
@@ -316,12 +360,20 @@ export default function EmployeeTable({ empData, empDataSaved, showPage }: Emplo
                                 <td className="text-center p-4">${emp?.hourly_rate}</td>
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>
                                 <td className="text-center p-4">${(emp?.recorded_hours * parseFloat(emp?.hourly_rate)).toFixed(2)}</td>
-                                <td className="flex items-center justify-center p-4">
+                                <td className="flex items-center justify-center p-4 space-x-2">
                                     <button
                                         onClick={() => { setIsModalOpen(true); setSelectedEmpId(emp?.id) }}
                                         className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"
                                     >
                                         {editIcon}
+                                    </button>
+                                    <button
+                                        onClick={() => { setSelectedEmp(emp?.id); setIsDeleteModalOpen(true); }}
+                                        disabled={loading}
+                                        className="bg-red-500 rounded-lg p-2 text-white hover:bg-red-600 transition-colors disabled:opacity-50 cursor-pointer"
+                                        aria-label="Delete project"
+                                    >
+                                        <Trash2 size={20} />
                                     </button>
                                 </td>
                             </tr>
@@ -381,7 +433,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage }: Emplo
                                 onChange={handleItemsPerPageChange}
                                 className="border rounded-md px-2 py-1 text-[#1D1F2C]"
                             >
-                                {[5, 10, 20,50].map((number) => (
+                                {[5, 10, 20, 50].map((number) => (
                                     <option key={number} value={number}>
                                         {number}
                                     </option>

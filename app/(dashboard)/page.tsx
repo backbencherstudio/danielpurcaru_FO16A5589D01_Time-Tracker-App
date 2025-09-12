@@ -63,6 +63,31 @@ export default function Home() {
   }, [])
 
 
+  const fetchEmpData = async () => {
+      const token = getCookieToken();
+      try {
+        if (token) {
+          const res = await UserService?.getEmpData(5);
+          if (res?.data?.success) {
+            // console.log("Response:", res.data.data);
+            setEmpData(res.data.data)
+          } else {
+            toast.error(res?.response?.data?.message || "Failed to fetch data");
+          }
+        }
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred while fetching data"
+        );
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+
   useEffect(() => {
     const token = getCookieToken();
     setLoading(true);
@@ -129,29 +154,6 @@ export default function Home() {
           });
           if (res?.data?.success) {
             setChartData(res.data.data)
-          } else {
-            toast.error(res?.response?.data?.message || "Failed to fetch data");
-          }
-        }
-      } catch (error: any) {
-        toast.error(
-          error.response?.data?.message ||
-          error.message ||
-          "An error occurred while fetching data"
-        );
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    const fetchEmpData = async () => {
-      const token = getCookieToken();
-      try {
-        if (token) {
-          const res = await UserService?.getEmpData(5);
-          if (res?.data?.success) {
-            // console.log("Response:", res.data.data);
-            setEmpData(res.data.data)
           } else {
             toast.error(res?.response?.data?.message || "Failed to fetch data");
           }
@@ -235,7 +237,7 @@ export default function Home() {
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={false} />
+        <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={false} onUpdate={fetchEmpData}/>
       </div>}
     </div>
   );

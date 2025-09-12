@@ -4,6 +4,14 @@ import { useCallback, useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "react-toastify";
 import { FaCheck } from "react-icons/fa6";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 interface AttendanceDay {
     hours?: number;
@@ -23,6 +31,11 @@ interface UpdateWorkHour {
     id: string;
     index: number;
     workHour: number;
+}
+
+type ProjectType = {
+    name: string;
+    id: string;
 }
 
 // Custom hook for detecting clicks outside an element
@@ -57,6 +70,9 @@ export default function Page() {
     const [currentHour, setCurrentHour] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [editorPosition, setEditorPosition] = useState({ top: 0, left: 0 });
+    const [projects, setProjects] = useState<ProjectType[]>()
+    const [selectedProject, setSelectedProject] = useState<string>();
+    const [isOpen, setIsOpen] = useState(false);
 
     const editorRef = useRef<HTMLDivElement>(null);
 
@@ -101,6 +117,46 @@ export default function Page() {
         fetchEmpData();
     }, [selectedMonth]);
 
+    const fetchProjectData = async () => {
+        setLoading(true);
+        try {
+            const res = await UserService.getProjectData();
+            if (res?.data?.success && Array.isArray(res?.data?.data)) {
+                const projectList = res?.data?.data?.map((project) => ({
+                    name: project?.name,
+                    id: project?.id,
+                }));
+                console.log("Projects : ",projectList);
+                setProjects(projectList);
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to fetch data");
+            }
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data";
+            toast.error(errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProjectData();
+    }, []);
+
+    useEffect(() => {
+        setSelectedProject('');
+    }, [WorkHourEditor])
+
+    const handleSelectChange = (id: string) => {
+        console.log("Selected id : ",id);
+        setSelectedProject(id);
+        setIsOpen(false);
+    }
+
+
     const handleWorkHour = (empId: string, dayIndex: number, operator: "+" | "-") => {
         setAttendanceData(prev => prev.map(employee => {
             if (employee.user.id !== empId) return employee;
@@ -127,7 +183,8 @@ export default function Page() {
         try {
             const res = await UserService?.updateAttendance(id, {
                 hours: currentHour,
-                attendance_status: currentHour === 0 ? "ABSENT" : "PRESENT"
+                // attendance_status: currentHour === 0 ? "ABSENT" : "PRESENT",
+                project_id: selectedProject
             });
             if (res?.data?.success) {
                 toast.success("Attendance updated successfully");
@@ -352,7 +409,7 @@ export default function Page() {
                 {WorkHourEditor && (
                     <div
                         ref={editorRef}
-                        className="fixed z-50 p-3 space-y-3 bg-white rounded-lg shadow-lg border border-[#ECEFF3]"
+                        className="fixed z-50 p-3 space-y-3 bg-white rounded-lg shadow-lg border border-[#ECEFF3] w-full max-w-[224px]"
                         style={{
                             top: `${editorPosition.top}px`,
                             left: `${editorPosition.left}px`,
@@ -369,26 +426,52 @@ export default function Page() {
                                 }}
                             />
                         </div>
-                        <div className="flex gap-2 items-center">
+                        <div className="relative w-full max-w-[200px]">
                             <button
-                                className="w-8 h-8 flex items-center justify-center border border-[#E8ECF4] rounded-sm"
-                                onClick={() => updateWorkHour && handleWorkHour(updateWorkHour.emp, updateWorkHour.index, "-")}
+                                onClick={() => setIsOpen(prev => !prev)}
+                                className="w-full bg-white border rounded p-2 text-left truncate"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="2" viewBox="0 0 14 2" fill="none">
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M13.75 1C13.75 1.41421 13.4142 1.75 13 1.75L1 1.75C0.585786 1.75 0.25 1.41421 0.25 1C0.25 0.585786 0.585786 0.25 1 0.25L13 0.25C13.4142 0.25 13.75 0.585786 13.75 1Z" fill="#1D1F2C" />
-                                </svg>
+                                {(selectedProject && projects.filter(item => item.id === selectedProject)?.[0]?.name) || 'Select a project'}
                             </button>
-                            <div className="select-none border border-[#E8ECF4] rounded-sm flex items-center text-[#4A4C56] font-medium justify-center px-4 bg-[#F7F8F9] h-8">
-                                {currentHour}hr
+
+                            {isOpen && (
+                                <div className="absolute w-full bg-white border rounded mt-1 shadow-lg">
+                                    {projects?.map((project) => (
+                                        <div
+                                            key={project?.id}
+                                            className="truncate px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                            onClick={() => handleSelectChange(project.id)}
+                                            title={project.name}
+                                        >
+                                            {project?.name}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-full flex justify-center">
+                            <div className="flex gap-2 items-center">
+                                <button
+                                    className="w-8 h-8 flex items-center justify-center border border-[#E8ECF4] rounded-sm"
+                                    onClick={() => updateWorkHour && handleWorkHour(updateWorkHour.emp, updateWorkHour.index, "-")}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="2" viewBox="0 0 14 2" fill="none">
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M13.75 1C13.75 1.41421 13.4142 1.75 13 1.75L1 1.75C0.585786 1.75 0.25 1.41421 0.25 1C0.25 0.585786 0.585786 0.25 1 0.25L13 0.25C13.4142 0.25 13.75 0.585786 13.75 1Z" fill="#1D1F2C" />
+                                    </svg>
+                                </button>
+                                <div className="select-none border border-[#E8ECF4] rounded-sm flex items-center text-[#4A4C56] font-medium justify-center px-4 bg-[#F7F8F9] h-8">
+                                    {currentHour}hr
+                                </div>
+                                <button
+                                    className="w-8 h-8 flex items-center justify-center border border-[#E8ECF4] rounded-sm bg-[#82C8E5]"
+                                    onClick={() => updateWorkHour && handleWorkHour(updateWorkHour.emp, updateWorkHour.index, "+")}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M7.75 1C7.75 0.585786 7.41421 0.25 7 0.25C6.58579 0.25 6.25 0.585786 6.25 1V6.25H1C0.585786 6.25 0.25 6.58579 0.25 7C0.25 7.41421 0.585786 7.75 1 7.75H6.25V13C6.25 13.4142 6.58579 13.75 7 13.75C7.41421 13.75 7.75 13.4142 7.75 13V7.75H13C13.4142 7.75 13.75 7.41421 13.75 7C13.75 6.58579 13.4142 6.25 13 6.25H7.75V1Z" fill="white" />
+                                    </svg>
+                                </button>
                             </div>
-                            <button
-                                className="w-8 h-8 flex items-center justify-center border border-[#E8ECF4] rounded-sm bg-[#82C8E5]"
-                                onClick={() => updateWorkHour && handleWorkHour(updateWorkHour.emp, updateWorkHour.index, "+")}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M7.75 1C7.75 0.585786 7.41421 0.25 7 0.25C6.58579 0.25 6.25 0.585786 6.25 1V6.25H1C0.585786 6.25 0.25 6.58579 0.25 7C0.25 7.41421 0.585786 7.75 1 7.75H6.25V13C6.25 13.4142 6.58579 13.75 7 13.75C7.41421 13.75 7.75 13.4142 7.75 13V7.75H13C13.4142 7.75 13.75 7.41421 13.75 7C13.75 6.58579 13.4142 6.25 13 6.25H7.75V1Z" fill="white" />
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 )}

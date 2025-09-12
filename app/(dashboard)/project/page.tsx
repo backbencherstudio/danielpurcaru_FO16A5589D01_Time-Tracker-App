@@ -251,10 +251,10 @@ export default function ProjectManagementPage() {
           <p className="text-zinc-500 text-base">Manage your Projects</p>
         </div>
         <div className="flex gap-3 sm:gap-5 w-full sm:w-auto">
-          <button className="w-full sm:w-44 p-3 sm:p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
+          {/* <button className="w-full sm:w-44 p-3 sm:p-4 rounded-xl flex justify-center items-center outline-1 hover:bg-gray-100">
             <Image className="w-3 h-4" src={down} alt="Download" />
             <span className="text-sky-300 ml-2">Download</span>
-          </button>
+          </button> */}
           <button
             onClick={toggleModal}
             className="w-full sm:w-44 p-3 sm:p-4 bg-sky-300 hover:bg-sky-300/70 rounded-xl flex justify-center items-center gap-1"
@@ -445,7 +445,7 @@ export default function ProjectManagementPage() {
         />
       )}
       {editing &&
-        <EditProjects project={selectedProject} onClose={()=>{setEditing(false)}} onUpdate={()=>{fetchProjectData()}}/>
+        <EditProjects project={selectedProject} onClose={()=>{setEditing(false)}} onUpdate={()=>{fetchProjectData();setEditing(false)}}/>
       }
     </div>
   );

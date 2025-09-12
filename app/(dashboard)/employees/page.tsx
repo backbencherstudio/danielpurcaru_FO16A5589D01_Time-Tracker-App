@@ -153,7 +153,7 @@ export default function page() {
                 </div>
             </div>
             <EmpDataContext.Provider value={{ fetchEmpData, handleEmpDataSaved,handleLoading }}>
-                <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={true} />
+                <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={true} onUpdate={fetchEmpData}/>
                 {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={setIsModalOpen} />}
             </EmpDataContext.Provider>
         </div>
