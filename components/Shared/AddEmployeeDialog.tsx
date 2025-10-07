@@ -127,7 +127,7 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                                     type="text"
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter Password"
-                                    {...register("password", { required: "Password is required" })}
+                                    {...register("password", { required: false })}
                                 />
                                 {errors.password && <p className="text-red-500 text-sm">{`${errors.password.message}`}</p>}
                             </div>
