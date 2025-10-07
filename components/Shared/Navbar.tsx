@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import defaultAvatar from "@/public/avatar.png"
-import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from "./LanguageSwitcher";
 import Link from "next/link";
 
@@ -33,10 +32,6 @@ interface userType {
 }
 
 export default function Navbar() {
-    const { t } = useTranslation();
-    const userName = "Jonathan"
-    const userMail = "demo@mail.com"
-    const profilePic = "/images/profileIcon.png";
     const [empLoanData, setEmpLoanData] = useState<loanData[]>()
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [avatar, setAvatar] = useState();
@@ -52,35 +47,6 @@ export default function Navbar() {
         zip_code: "",
         avatar_url: ""
     })
-    const handleLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    };
-
-    const notifications = [
-        {
-            imageSrc: Profilepic3,
-            name: "Kathryn Murphy",
-            message: "Kathryn Murphy has requested a payment of $150",
-            time: "Now",
-        },
-        {
-            imageSrc: Profilepic,
-            name: "Leslie Alexander",
-            message: "Leslie Alexander has requested a payment of $150",
-            time: "1pm",
-        },
-        {
-            imageSrc: Profilepic2,
-            name: "Leslie Murphy",
-            message: "Leslie Murphy has requested a payment of $150",
-            time: "1pm",
-        },
-        {
-            imageSrc: Profilepic3,
-            name: "Kathryn Murphy",
-            message: "Kathryn Murphy has requested a payment of $150",
-            time: "1pm",
-        },
-    ];
 
 
     // token extract helper
