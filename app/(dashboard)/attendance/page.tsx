@@ -16,6 +16,7 @@ import {
 interface AttendanceDay {
     hours?: number;
     id?: string;
+    project_id?: string;
 }
 
 interface EmployeeAttendance {
@@ -126,7 +127,6 @@ export default function Page() {
                     name: project?.name,
                     id: project?.id,
                 }));
-                console.log("Projects : ",projectList);
                 setProjects(projectList);
             } else {
                 toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -146,12 +146,7 @@ export default function Page() {
         fetchProjectData();
     }, []);
 
-    useEffect(() => {
-        setSelectedProject('');
-    }, [WorkHourEditor])
-
     const handleSelectChange = (id: string) => {
-        console.log("Selected id : ",id);
         setSelectedProject(id);
         setIsOpen(false);
     }
@@ -225,6 +220,7 @@ export default function Page() {
             workHour: workHour?.hours || 0
         });
 
+        setSelectedProject(workHour?.project_id);
         setCurrentHour(workHour?.hours || 0);
         setWorkHourEditor(true);
     };
@@ -240,6 +236,7 @@ export default function Page() {
     const totalItems = filteredAttendanceData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const currentEntries = useMemo(() => {
+        console.log(filteredAttendanceData);
         const lastIndex = currentPage * itemsPerPage;
         const firstIndex = lastIndex - itemsPerPage;
         return filteredAttendanceData.slice(firstIndex, lastIndex);
@@ -247,7 +244,7 @@ export default function Page() {
 
     const handleMonthChange = (month: number) => {
         setSelectedMonth(month);
-        setCurrentPage(1); // Reset to first page when changing months
+        setCurrentPage(1);
     };
 
     const handlePageChange = (pageNumber: number) => {
@@ -269,6 +266,10 @@ export default function Page() {
     };
 
     const visiblePages = useMemo(() => getVisiblePageNumbers(), [currentPage, totalPages]);
+
+    useEffect(()=>{
+        console.log("Selected project : ",selectedProject);
+    },[selectedProject])
 
     if (loading) {
         return (
