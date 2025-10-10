@@ -1,7 +1,7 @@
 'use client'
 import { UserService } from "@/service/user/user.service";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import { toast } from "react-toastify";
+import toast,{Toaster} from "react-hot-toast";
 import { FaCheck } from "react-icons/fa6";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import {
@@ -71,7 +71,7 @@ export default function Page() {
     const [searchTerm, setSearchTerm] = useState("");
     const [editorPosition, setEditorPosition] = useState({ top: 0, left: 0 });
     const [projects, setProjects] = useState<ProjectType[]>()
-    const [selectedProject, setSelectedProject] = useState<string>();
+    const [selectedProject, setSelectedProject] = useState<string>('');
     const [isOpen, setIsOpen] = useState(false);
 
     const editorRef = useRef<HTMLDivElement>(null);
@@ -179,8 +179,12 @@ export default function Page() {
     };
 
     const handleSaveData = async (id: string) => {
-        setLoading(true);
+        if(selectedProject === ''){
+            toast.error("Select a project first.");
+            return;
+        }
         try {
+            setLoading(true);
             const res = await UserService?.updateAttendance(id, {
                 hours: currentHour,
                 // attendance_status: currentHour === 0 ? "ABSENT" : "PRESENT",
@@ -189,6 +193,7 @@ export default function Page() {
             if (res?.data?.success) {
                 toast.success("Attendance updated successfully");
                 setWorkHourEditor(false);
+                setSelectedProject('');
             } else {
                 toast.error(res?.response?.data?.message || "Failed to update attendance");
             }
@@ -276,6 +281,7 @@ export default function Page() {
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">
             {/* Header and Filters */}
+            <Toaster position="top-right"/>
             <div className="flex items-center">
                 <h3 className="flex-1 text-[#1D1F2C] text-[24px] font-semibold">Attendance</h3>
                 <div className="flex gap-5">
