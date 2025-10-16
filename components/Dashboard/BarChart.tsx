@@ -49,7 +49,7 @@ const BarChart = ({ newData }) => {
                             tick={{ fontSize: 12, fill: '#687588' }}
                         />
                         <Tooltip />
-                        <Bar dataKey="present" label="false" fill="#82C8E5" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="present" label={false} fill="#82C8E5" radius={[8, 8, 0, 0]} />
                         <Bar dataKey="absent" fill="#F4C700" radius={[8, 8, 0, 0]} />
                     </BChart>
                 </ResponsiveContainer>
