@@ -8,9 +8,10 @@ import { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import avatar from '@/public/avatar.png'
 import { editIcon } from "@/public/icons/Iconst";
-import { Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import DeletePopUp from "../reusable/DeletePopUp";
 import { UserService } from "@/service/user/user.service";
+import Link from "next/link";
 
 interface Employee {
     id: string;
@@ -30,10 +31,10 @@ interface EmployeeTableProps {
     empData: Employee[];
     empDataSaved: boolean;
     showPage: boolean;
-    onUpdate: ()=> void;
+    onUpdate: () => void;
 }
 
-export default function EmployeeTable({ empData, empDataSaved, showPage,onUpdate }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
@@ -175,8 +176,6 @@ export default function EmployeeTable({ empData, empDataSaved, showPage,onUpdate
     };
 
     const visiblePages = getVisiblePageNumbers();
-
-    console.log("Current entries : ", currentEntries)
     return (
         <div className="space-y-6 bg-white">
             <Toaster position="top-right" />
@@ -361,6 +360,13 @@ export default function EmployeeTable({ empData, empDataSaved, showPage,onUpdate
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>
                                 <td className="text-center p-4">${(emp?.recorded_hours * parseFloat(emp?.hourly_rate)).toFixed(2)}</td>
                                 <td className="flex items-center justify-center p-4 space-x-2">
+                                    <Link
+                                        href={`/employees/${emp?.id}`}
+                                        className="bg-sky-300 rounded-lg p-2 text-white hover:bg-sky-400 transition-colors"
+                                        aria-label="View project"
+                                    >
+                                        <Eye size={20} />
+                                    </Link>
                                     <button
                                         onClick={() => { setIsModalOpen(true); setSelectedEmpId(emp?.id) }}
                                         className="bg-[#82C8E5] w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"

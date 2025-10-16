@@ -55,7 +55,6 @@ interface userType {
 export default function Page() {
 
   const [empLoanData, setEmpLoanData] = useState<loanData[]>();
-  const [getLoan, setGetLoan] = useState(true);
   const [loading,setLoading] = useState(false);
 
   // token extract helper
@@ -68,27 +67,7 @@ export default function Page() {
     return cookieString?.split("=")[1] || null;
   };
 
-  const handleEmpLoan = async (id: string, status: boolean) => {
-    setLoading(true);
-    try {
-      const res = await UserService?.updateEmpLoan(id, { loan_status: status ? "APPROVED" : "REJECTED" });
-      if (res?.data?.success) {
-        console.log("Response load :", res.data.data);
-        setGetLoan(prev => !prev)
-      } else {
-        toast.error(res?.response?.data?.message || "Failed to fetch data");
-      }
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-        error.message ||
-        "An error occurred while fetching data"
-      );
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  
 
   useEffect(() => {
     const token = getCookieToken();
@@ -115,7 +94,7 @@ export default function Page() {
     }
     if (token)
       fetchEmpData()
-  }, [getLoan])
+  }, [])
 
   if (loading) {
     return (
@@ -144,7 +123,7 @@ export default function Page() {
             imageSrc={notification?.user?.avatarUrl}
             name={notification?.user?.name}
             id={notification?.id}
-            handleEmpLoan={handleEmpLoan}
+            // handleEmpLoan={handleEmpLoan}
             message={`${notification?.user?.name}  has requested a payment of $ ${notification?.loan_amount}`}
           />
         ))}

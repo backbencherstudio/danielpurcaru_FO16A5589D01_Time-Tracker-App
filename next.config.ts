@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   poweredByHeader: false,
   images: {
-    domains: ['server.cdcg.pt'], // Add your image source domain here
+    domains: ['server.cdcg.pt'],
   },
 };
 

@@ -14,16 +14,18 @@ interface EmployeeLoan {
     };
     created_at: string;
     loan_amount: number;
+    loan_status: string;
 }
 
 interface EmpLoanTableProps {
     empData: EmployeeLoan[];
     isLoading: boolean;
-    handleLoading: (st:boolean)=> void;
-    fetchEmpData: ()=> void;
+    handleLoading: (st: boolean) => void;
+    fetchEmpData: () => void;
+    handleEmpLoan: (id:string,status:boolean)=> void;
 }
 
-const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoanTableProps) => {
+const EmpLoanTable = ({ empData, isLoading, handleLoading, fetchEmpData,handleEmpLoan }: EmpLoanTableProps) => {
     const [searchQuery, setSearchQuery] = useState('')
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [loanToDelete, setLoanToDelete] = useState<string | null>(null)
@@ -39,7 +41,7 @@ const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoan
     // Apply sorting
     const sortedData = [...filteredData].sort((a, b) => {
         if (!sortConfig) return 0
-        
+
         const key = sortConfig.key
         let aValue, bValue
 
@@ -126,40 +128,40 @@ const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoan
         }
         return (
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
-                <path 
-                    d="M6.00682 13.6662L2.66016 10.3262" 
-                    stroke="#4A4C56" 
-                    strokeWidth="1.6" 
-                    strokeMiterlimit="10" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
+                <path
+                    d="M6.00682 13.6662L2.66016 10.3262"
+                    stroke="#4A4C56"
+                    strokeWidth="1.6"
+                    strokeMiterlimit="10"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     opacity={sortConfig.direction === 'desc' ? 1 : 0.4}
                 />
-                <path 
-                    d="M6.00586 2.33398V13.6673" 
-                    stroke="#4A4C56" 
-                    strokeWidth="1.6" 
-                    strokeMiterlimit="10" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
+                <path
+                    d="M6.00586 2.33398V13.6673"
+                    stroke="#4A4C56"
+                    strokeWidth="1.6"
+                    strokeMiterlimit="10"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     opacity={sortConfig.direction === 'desc' ? 1 : 0.4}
                 />
-                <path 
-                    d="M9.99414 2.33398L13.3408 5.67398" 
-                    stroke="#4A4C56" 
-                    strokeWidth="1.6" 
-                    strokeMiterlimit="10" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
+                <path
+                    d="M9.99414 2.33398L13.3408 5.67398"
+                    stroke="#4A4C56"
+                    strokeWidth="1.6"
+                    strokeMiterlimit="10"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     opacity={sortConfig.direction === 'asc' ? 1 : 0.4}
                 />
-                <path 
-                    d="M9.99414 13.6673V2.33398" 
-                    stroke="#4A4C56" 
-                    strokeWidth="1.6" 
-                    strokeMiterlimit="10" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
+                <path
+                    d="M9.99414 13.6673V2.33398"
+                    stroke="#4A4C56"
+                    strokeWidth="1.6"
+                    strokeMiterlimit="10"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     opacity={sortConfig.direction === 'asc' ? 1 : 0.4}
                 />
             </svg>
@@ -168,12 +170,12 @@ const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoan
 
     return (
         <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
-            <DeletePopUp 
-                isDeleteModalOpen={isDeleteModalOpen} 
-                closeDeleteModal={closeDeleteModal} 
-                isDeleting={isDeleting} 
-                handleDelete={handleDelete} 
-                title={(empData.find(emp => emp.id === loanToDelete)?.user?.name + "'s Loan" || 'Loan')} 
+            <DeletePopUp
+                isDeleteModalOpen={isDeleteModalOpen}
+                closeDeleteModal={closeDeleteModal}
+                isDeleting={isDeleting}
+                handleDelete={handleDelete}
+                title={(empData.find(emp => emp.id === loanToDelete)?.user?.name + "'s Loan" || 'Loan')}
             />
 
             {/* Search and Filter Section */}
@@ -241,6 +243,14 @@ const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoan
                                     </div>
                                 </div>
                             </th>
+                            <th className="py-4 px-4 text-start">
+                                <div className="flex items-center justify-between gap-2">
+                                    <span>Status</span>
+                                    <div onClick={() => requestSort('loan_amount')}>
+                                        {/* {getSortIcon('loan_amount')} */}
+                                    </div>
+                                </div>
+                            </th>
                             <th className="py-4 px-4">Action</th>
                         </tr>
                     </thead>
@@ -275,7 +285,25 @@ const EmpLoanTable = ({ empData, isLoading,handleLoading,fetchEmpData }: EmpLoan
                                         {emp.created_at ? new Date(emp.created_at).toISOString().split('T')[0] : '-'}
                                     </td>
                                     <td className="p-4">${emp.loan_amount}</td>
-                                    <td className="flex items-center justify-center p-4">
+                                    <td className={`p-4 ${emp?.loan_status === 'REJECTED' ? "text-red-400" : emp?.loan_status === 'PENDING' ? "text-blue-400" : "text-green-500"}`}>{emp?.loan_status}</td>
+                                    <td className="flex items-center justify-center p-4 space-x-2.5">
+                                        {emp?.loan_status === "PENDING"&&<div className="flex w-full sm:w-fit justify-start gap-2.5">
+                                            <button className="px-2.5 py-1.5 flex gap-2.5 bg-red-400 hover:bg-red-400/90 rounded-sm cursor-pointer" onClick={() => handleEmpLoan(emp?.id, false)}>
+                                                <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M10.5001 18.3332C15.0834 18.3332 18.8334 14.5832 18.8334 9.99984C18.8334 5.4165 15.0834 1.6665 10.5001 1.6665C5.91675 1.6665 2.16675 5.4165 2.16675 9.99984C2.16675 14.5832 5.91675 18.3332 10.5001 18.3332Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    <path d="M8.1416 12.3583L12.8583 7.6416" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    <path d="M12.8583 12.3583L8.1416 7.6416" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                                {/* <div className="text-white text-sm font-normal font-['Urbanist'] leading-snug">Reject</div> */}
+                                            </button>
+                                            <button className="px-2.5 py-1.5 flex gap-2.5 bg-sky-300 hover:bg-sky-300/90 rounded-sm cursor-pointer" onClick={() => handleEmpLoan(emp?.id, true)}>
+                                                <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M10.5001 18.3332C15.0834 18.3332 18.8334 14.5832 18.8334 9.99984C18.8334 5.4165 15.0834 1.6665 10.5001 1.6665C5.91675 1.6665 2.16675 5.4165 2.16675 9.99984C2.16675 14.5832 5.91675 18.3332 10.5001 18.3332Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    <path d="M6.95825 9.99993L9.31659 12.3583L14.0416 7.6416" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                                {/* <div className="text-white text-sm font-normal font-['Urbanist'] leading-snug">Accept</div> */}
+                                            </button>
+                                        </div>}
                                         <div
                                             className="w-7 h-7 bg-red-600 rounded-sm flex justify-center items-center cursor-pointer hover:bg-red-700 transition-colors"
                                             onClick={() => openDeleteModal(emp.id)}

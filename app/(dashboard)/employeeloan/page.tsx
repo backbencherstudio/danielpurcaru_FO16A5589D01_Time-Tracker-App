@@ -21,7 +21,8 @@ interface ApiResponse {
 
 export default function Page() {
     const [empLoadData, setEmpLoadData] = useState<any[]>([]);
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [getLoan, setGetLoan] = useState(true);
     const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
         total: 0,
         page: 1,
@@ -80,6 +81,27 @@ export default function Page() {
         }
     };
 
+    const handleEmpLoan = async (id: string, status: boolean) => {
+        setLoading(true);
+        try {
+            const res = await UserService?.updateEmpLoan(id, { loan_status: status ? "APPROVED" : "REJECTED" });
+            if (res?.data?.success) {
+                setGetLoan(prev => !prev)
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to fetch data");
+            }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data"
+            );
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         const handleResize = () => {
             setIsLargeScreen(window.innerWidth >= 768);
@@ -92,9 +114,9 @@ export default function Page() {
 
     useEffect(() => {
         fetchEmpData();
-    }, []);
+    }, [getLoan]);
 
-    const handleLoading=(st:boolean)=>{
+    const handleLoading = (st: boolean) => {
         setIsLoading(st);
     }
 
@@ -115,6 +137,7 @@ export default function Page() {
                 isLoading={isLoading}
                 handleLoading={handleLoading}
                 fetchEmpData={fetchEmpData}
+                handleEmpLoan={handleEmpLoan}
             />
 
             {paginationMeta.total > 0 && (
@@ -124,8 +147,8 @@ export default function Page() {
                             onClick={() => handlePageChange(paginationMeta.page - 1)}
                             disabled={paginationMeta.page === 1 || isLoading}
                             className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${paginationMeta.page === 1 || isLoading
-                                    ? "text-gray-400 cursor-not-allowed"
-                                    : "text-[#1D1F2C] hover:bg-gray-100"
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-[#1D1F2C] hover:bg-gray-100"
                                 } border border-[#F6F8FA] rounded-lg`}
                         >
                             <MdKeyboardArrowLeft className="text-xl" />
@@ -137,8 +160,8 @@ export default function Page() {
                                 onClick={() => handlePageChange(number)}
                                 disabled={isLoading}
                                 className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${paginationMeta.page === number
-                                        ? "bg-[#F6F8FA]"
-                                        : "text-[#1D1F2C] hover:bg-gray-100"
+                                    ? "bg-[#F6F8FA]"
+                                    : "text-[#1D1F2C] hover:bg-gray-100"
                                     } rounded-lg`}
                             >
                                 {number}
@@ -149,8 +172,8 @@ export default function Page() {
                             onClick={() => handlePageChange(paginationMeta.page + 1)}
                             disabled={paginationMeta.page === paginationMeta.totalPages || isLoading}
                             className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${paginationMeta.page === paginationMeta.totalPages || isLoading
-                                    ? "text-gray-400 cursor-not-allowed"
-                                    : "text-[#1D1F2C] hover:bg-gray-100"
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-[#1D1F2C] hover:bg-gray-100"
                                 } border border-[#F6F8FA] rounded-lg`}
                         >
                             <MdKeyboardArrowRight className="text-xl" />

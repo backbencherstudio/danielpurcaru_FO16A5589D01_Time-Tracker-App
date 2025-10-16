@@ -74,11 +74,6 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
   };
 
   const handleFormSubmit = (data: ProjectFormData) => {
-    if (assignMember.length === 0) {
-      toast.error("Please assign at least one member");
-      return;
-    }
-
     const newProjectData={
         name: data.name,
         address:data.address,
@@ -86,7 +81,7 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
         end_date:data.end_date,
         price:Number(parseFloat(data.price).toFixed(2)),
         priority:priority.toUpperCase(),
-        assignees:assignMember
+        // assignees:assignMember
     }
 
     const addNewProject=async()=>{
@@ -135,45 +130,6 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
               {...register("name", { required: "Project name is required..." })}
             />
             {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
-          </div>
-
-          {/* Assigners */}
-          <div className='space-y-2 col-span-2'>
-            <label htmlFor="assignee" className="block text-sm font-medium text-[#1D1F2C]">
-              Assignee
-            </label>
-            <div className='w-full px-3 py-2 border border-[#E9E9EA] rounded-md bg-[#F7F8F9] text-[#1D1F2C]'>
-              <div className='flex flex-wrap gap-2 mb-2'>
-                {assignMember.map(memberId => {
-                  const member = empData.find(emp => emp.id === memberId);
-                  return member ? (
-                    <div key={memberId} className="flex items-center gap-1 py-1 px-2 bg-[#D8EEF7] rounded-full text-sm">
-                      {member.name}
-                      <button 
-                        type="button" 
-                        onClick={() => removeMember(memberId)}
-                        className="text-xs text-red-500"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-              <select
-                onChange={handleAssignMember}
-                value=""
-                className="w-full outline-none bg-transparent"
-                disabled={loading || empData.length === 0}
-              >
-                <option value="">Select a member</option>
-                {empData.map(emp => (
-                  <option key={emp.id} value={emp.id} disabled={assignMember.includes(emp.id)}>
-                    {emp.name}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
 
           {/* Price */}
@@ -248,7 +204,7 @@ export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess
             <button
               type="submit"
               className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              disabled={loading}
+              // disabled={loading}
             >
               {loading ? 'Adding...' : 'Add Project'}
             </button>

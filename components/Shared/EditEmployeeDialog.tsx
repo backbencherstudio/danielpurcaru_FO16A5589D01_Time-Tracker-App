@@ -1,7 +1,7 @@
 'use client'
 
-import { useState,useContext } from 'react';
-import Image from 'next/image';
+import { useState, useContext } from 'react';
+import Image, { StaticImageData } from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTrigger } from '../ui/dialog';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid'; // Importing Heroicons for eye icon
 import { UserService } from '@/service/user/user.service';
@@ -20,37 +20,40 @@ interface Employee {
     earnings: string,
     avatarUrl: string;
     username: string;
-    email:string;
+    email: string;
 }
 
 
-type propType={
+type propType = {
     isOpen: boolean;
-    handleDialogToggle: ()=> void;
+    handleDialogToggle: () => void;
     empId: string;
     data: Employee[];
 }
 
-export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, data }:propType) {
-    const {fetchEmpData,handleEmpDataSaved} = useEmpData();
+export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, data }: propType) {
+    const { fetchEmpData, handleEmpDataSaved } = useEmpData();
     const [empName, setEmpName] = useState(data?.find((emp: Employee) => emp?.id === empId)?.name);
     const [empRole, setEmpRole] = useState(data?.find((emp: Employee) => emp?.id === empId)?.employee_role);
     const [empHourlyRate, setEmpHourlyRate] = useState(data?.find((emp: Employee) => emp?.id === empId)?.hourly_rate);
     const [empPassword, setEmpPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
     const [loading, setLoading] = useState(false);
+    const [avatar, setAvatar] = useState<string>(data?.find(emp => emp.id === empId)?.avatarUrl);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const data = {
-            ...(empName && { name: empName }),
-            ...(empRole && { employee_role: empRole }),
-            ...(empHourlyRate && { hourly_rate: empHourlyRate }),
-            ...(empPassword && { password: empPassword }),
-        };
+        const fd = new FormData();
+
+        empName && fd.append('name', empName);
+        empRole && fd.append('employee_role', empRole);
+        empHourlyRate && fd.append('hourly_rate', empHourlyRate);
+        empPassword && fd.append('password', empPassword);
+        avatarFile && fd.append('file',avatarFile);
         try {
             setLoading(true)
-            const res = await UserService?.updateEmp(data, empId);
+            const res = await UserService?.updateEmp(fd, empId);
 
             if (res?.data?.success) {
                 toast.success("Employee data saved...");
@@ -66,6 +69,14 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
         }
     }
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = URL.createObjectURL(e.target.files[0]);
+            setAvatar(file);
+            setAvatarFile(e.target.files?.[0])
+        }
+    };
+
     return (
         <div className="p-6">
             <Toaster position="top-right" />
@@ -77,6 +88,18 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
 
                     {/* Employee Form Fields */}
                     <form className="space-y-6" onSubmit={handleFormSubmit}>
+                        <div className="flex w-[100px] aspect-square justify-center items-center border-dashed border-2 border-gray-400 rounded-full mb-6">
+                            <label htmlFor="img" className="text-gray-500 text-sm w-full h-full cursor-pointer flex justify-center items-center">
+                                <Image src={ avatar || data?.find(emp => emp.id === empId)?.avatarUrl} alt="Upload" width={500} height={500} className='w-full h-full rounded-full' />
+                            </label>
+                            <input
+                                type="file"
+                                name="img"
+                                id="img"
+                                onChange={handleFileChange}
+                                className="hidden"
+                            />
+                        </div>
                         <div className="flex sm:flex-row sm:space-x-6">
                             <div className="flex-1">
                                 <label className="text-sm font-medium">Full Name</label>

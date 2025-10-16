@@ -157,6 +157,18 @@ export const UserService = {
 
     return await Fetch.get(`/employee?${queryParams}`, config);
   },
+  getSingleEmpData: async (id:string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
+    return await Fetch.get(`/employee/${id}`, config);
+  },
   getAllEmpData: async (context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
@@ -222,17 +234,11 @@ export const UserService = {
 
 
 
-  updateEmp: async (data: {
-    name: string,
-    password: string,
-    employee_role: string,
-    hourly_rate: string
-  }, id: string, context: any = null) => {
+  updateEmp: async (data, id: string, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
     const config = {
       method: 'UPDATE',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${userToken}`,
       }
     }
@@ -325,7 +331,7 @@ export const UserService = {
 
   createNewProject: async (data: {
     address: string,
-    assignees: string[],
+    // assignees: string[],
     end_date: string,
     name: string,
     price: number,
@@ -510,179 +516,4 @@ export const UserService = {
   },
 
 
-
-
-  findOne: async (id: number, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/${id}`, _config);
-  },
-
-  findOneByUsername: async ({
-    username,
-    token = "",
-    context = null,
-  }: {
-    username: string;
-    token?: string;
-    context?: any;
-  }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token || CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/profile/${username}`, _config);
-  },
-
-  update: async (
-    {
-      fname,
-      lname,
-      date_of_birth,
-      city,
-      country,
-      organization,
-      recipient_name,
-      recipient_zip_code,
-      recipient_country,
-      recipient_state,
-      recipient_city,
-      recipient_address,
-      recipient_phone_number,
-    }: {
-      fname: string;
-      lname: string;
-      date_of_birth: string;
-      city: string;
-      country: string;
-      organization: string;
-      recipient_name: string;
-      recipient_zip_code: string;
-      recipient_country: string;
-      recipient_state: string;
-      recipient_city: string;
-      recipient_address: string;
-      recipient_phone_number: string;
-    },
-    context = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    const data = {
-      fname: fname,
-      lname: lname,
-      date_of_birth: date_of_birth,
-      city: city,
-      country: country,
-      organization: organization,
-      recipient_name: recipient_name,
-      recipient_zip_code: recipient_zip_code,
-      recipient_country: recipient_country,
-      recipient_state: recipient_state,
-      recipient_city: recipient_city,
-      recipient_address: recipient_address,
-      recipient_phone_number: recipient_phone_number,
-    };
-
-    return await Fetch.patch(`/user`, data, _config);
-  },
-
-  updateAvatar: async (data: any, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-        "content-type": "multipart/form-data",
-      },
-    };
-
-    return await Fetch.patch(`/user/avatar`, data, _config);
-  },
-
-  //
-  create: async (
-    {
-      fname,
-      lname,
-      username,
-      email,
-      role_id,
-    }: {
-      fname: string;
-      lname: string;
-      username: string;
-      email: string;
-      role_id: number;
-    },
-    context: any = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-    const data = {
-      fname: fname,
-      lname: lname,
-      username: username,
-      email: email,
-      role_id: role_id,
-    };
-
-    return await Fetch.post(`/user`, data, _config);
-  },
-
-  // TODO
-  confirm: async (
-    {
-      id,
-      token,
-      email,
-      password,
-    }: { id: number; token: string; email: string; password: string },
-    context: any = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    const data = {
-      id: id,
-      token: token,
-      email: email,
-      password: password,
-    };
-
-    return await Fetch.patch(`/user/${id}/password`, data, _config);
-  },
 };
