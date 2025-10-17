@@ -54,14 +54,14 @@ export default function AttendanceRecords({ attendance }: { attendance: Attendan
                     <Calendar className="h-5 w-5 text-blue-600" />
                     <h2 className="text-xl font-semibold">Attendance Records</h2>
                 </div>
-                <select
+                {/* <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as "date" | "status")}
                     className="text-sm border border-border rounded-md px-3 py-1 bg-background"
                 >
                     <option value="date">Sort by Date</option>
                     <option value="status">Sort by Status</option>
-                </select>
+                </select> */}
             </div>
 
             <div className="overflow-x-auto w-full pb-2" style={{ maxWidth: 'calc(100vw - 220px)' }}>
