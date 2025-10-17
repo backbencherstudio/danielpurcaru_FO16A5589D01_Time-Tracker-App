@@ -120,7 +120,6 @@ export default function page() {
 
 
     const handleEmpDataSaved = () => {
-        console.log("Emp update saved...")
         setEmpDataSaved(prev => !prev)
     }
 

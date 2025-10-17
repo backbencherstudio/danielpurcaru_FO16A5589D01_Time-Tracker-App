@@ -286,7 +286,7 @@ const EmpLoanTable = ({ empData, isLoading, handleLoading, fetchEmpData,handleEm
                                     </td>
                                     <td className="p-4">${emp.loan_amount}</td>
                                     <td className={`p-4 ${emp?.loan_status === 'REJECTED' ? "text-red-400" : emp?.loan_status === 'PENDING' ? "text-blue-400" : "text-green-500"}`}>{emp?.loan_status}</td>
-                                    <td className="flex items-center justify-center p-4 space-x-2.5">
+                                    <td className="flex items-center justify-end p-4 space-x-2.5">
                                         {emp?.loan_status === "PENDING"&&<div className="flex w-full sm:w-fit justify-start gap-2.5">
                                             <button className="px-2.5 py-1.5 flex gap-2.5 bg-red-400 hover:bg-red-400/90 rounded-sm cursor-pointer" onClick={() => handleEmpLoan(emp?.id, false)}>
                                                 <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">

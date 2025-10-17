@@ -95,7 +95,6 @@ export default function EditProjects({ project, onClose, onUpdate }: propType) {
                 status: Number(data.status)
             };
             const res = await UserService.updateProject({ data: updatedProject, id: project.id });
-            console.log(res);
         } catch (error) {
             console.error("Failed to update project:", error);
         } finally {
