@@ -148,7 +148,7 @@ export default function Page() {
     }, []);
 
     const handleSelectChange = (id: string) => {
-        setSelectedProject(id);
+        setSelectedProject(id || '');
         setIsOpen(false);
     }
 
@@ -175,6 +175,7 @@ export default function Page() {
     };
 
     const handleSaveData = async (id: string,user_id:string,date:string) => {
+        console.log("project id : ",selectedProject);
         if (selectedProject === '') {
             toast.error("Select a project first.");
             return;
@@ -227,7 +228,7 @@ export default function Page() {
             date
         });
 
-        setSelectedProject(workHour?.project_id);
+        setSelectedProject(workHour?.project_id || '');
         setCurrentHour(workHour?.hours || 0);
         setWorkHourEditor(true);
     };

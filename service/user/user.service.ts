@@ -526,6 +526,15 @@ export const UserService = {
     return await Fetch.delete(`/employee/${id}`, config);
   },
   createAttendace: async ({ user_id, project_id, date, hours }: { user_id: string; project_id: string, date: string, hours: number }) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context:null });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+
     const data = {
       user_id,
       project_id,
