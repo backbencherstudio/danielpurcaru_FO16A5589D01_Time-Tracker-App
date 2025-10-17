@@ -190,7 +190,6 @@ export default function AcademicCalendar() {
     try {
       const res = await UserService.getEvents(month)
       if (res?.data?.success) {
-        console.log(res.data.data)
         setEvents(res.data.data)
       } else {
         toast.error(res?.response?.data?.message || "Failed to fetch events")

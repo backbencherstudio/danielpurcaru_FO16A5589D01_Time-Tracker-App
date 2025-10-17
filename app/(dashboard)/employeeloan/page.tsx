@@ -120,8 +120,6 @@ export default function Page() {
         setIsLoading(st);
     }
 
-    // console.log("Employee loan data : ",empLoadData)
-
     if (isLoading) {
         return (
             <div className='w-full h-full flex items-center justify-center'>

@@ -34,7 +34,6 @@ const LoginPage = () => {
 
             if (res?.data?.success) {
                 const token = res?.data?.authorization?.token;
-                console.log(res)
                 if (token) {
                     CookieHelper.set({
                         key: "empdashtoken",

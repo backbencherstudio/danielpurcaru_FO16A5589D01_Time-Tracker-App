@@ -1,7 +1,7 @@
 'use client'
 import { UserService } from "@/service/user/user.service";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import toast,{Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { FaCheck } from "react-icons/fa6";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import {
@@ -32,6 +32,7 @@ interface UpdateWorkHour {
     id: string;
     index: number;
     workHour: number;
+    date:string;
 }
 
 type ProjectType = {
@@ -173,18 +174,23 @@ export default function Page() {
         }));
     };
 
-    const handleSaveData = async (id: string) => {
-        if(selectedProject === ''){
+    const handleSaveData = async (id: string,user_id:string,date:string) => {
+        if (selectedProject === '') {
             toast.error("Select a project first.");
             return;
         }
         try {
             setLoading(true);
-            const res = await UserService?.updateAttendance(id, {
-                hours: currentHour,
-                // attendance_status: currentHour === 0 ? "ABSENT" : "PRESENT",
-                project_id: selectedProject
-            });
+            let res;
+            if (id) {
+                res = await UserService?.updateAttendance(id, {
+                    hours: currentHour,
+                    // attendance_status: currentHour === 0 ? "ABSENT" : "PRESENT",
+                    project_id: selectedProject
+                });
+            } else {
+                res = await UserService?.createAttendace({user_id,project_id:selectedProject,hours:currentHour,date});
+            }
             if (res?.data?.success) {
                 toast.success("Attendance updated successfully");
                 setWorkHourEditor(false);
@@ -204,7 +210,7 @@ export default function Page() {
         }
     }
 
-    const handleCellClick = (event: React.MouseEvent, workHour: AttendanceDay, empId: string, index: number) => {
+    const handleCellClick = (event: React.MouseEvent, workHour: AttendanceDay, empId: string, index: number,date:string) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -217,7 +223,8 @@ export default function Page() {
             id: workHour?.id || '',
             emp: empId,
             index: index,
-            workHour: workHour?.hours || 0
+            workHour: workHour?.hours || 0,
+            date
         });
 
         setSelectedProject(workHour?.project_id);
@@ -236,7 +243,6 @@ export default function Page() {
     const totalItems = filteredAttendanceData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const currentEntries = useMemo(() => {
-        console.log(filteredAttendanceData);
         const lastIndex = currentPage * itemsPerPage;
         const firstIndex = lastIndex - itemsPerPage;
         return filteredAttendanceData.slice(firstIndex, lastIndex);
@@ -267,10 +273,6 @@ export default function Page() {
 
     const visiblePages = useMemo(() => getVisiblePageNumbers(), [currentPage, totalPages]);
 
-    useEffect(()=>{
-        console.log("Selected project : ",selectedProject);
-    },[selectedProject])
-
     if (loading) {
         return (
             <div className='w-full h-full flex items-center justify-center'>
@@ -282,7 +284,7 @@ export default function Page() {
     return (
         <div className="p-6 bg-white rounded-xl space-y-6">
             {/* Header and Filters */}
-            <Toaster position="top-right"/>
+            <Toaster position="top-right" />
             <div className="flex items-center">
                 <h3 className="flex-1 text-[#1D1F2C] text-[24px] font-semibold">Attendance</h3>
                 <div className="flex gap-5">
@@ -347,7 +349,7 @@ export default function Page() {
                                         <td
                                             key={date}
                                             className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#fff] cursor-pointer"
-                                            onClick={(e) => handleCellClick(e, workHour, emp?.user?.id, index)}
+                                            onClick={(e) => handleCellClick(e, workHour, emp?.user?.id, index,date)}
                                         >
                                             {(workHour?.hours || workHour?.hours === 0) ? `${workHour?.hours}hr` : ""}
                                         </td>
@@ -427,9 +429,7 @@ export default function Page() {
                             <FaCheck
                                 className="text-[#82C8E5] cursor-pointer"
                                 onClick={() => {
-                                    if (updateWorkHour?.id) {
-                                        handleSaveData(updateWorkHour.id);
-                                    }
+                                    handleSaveData(updateWorkHour?.id || null,updateWorkHour?.emp,updateWorkHour?.date);
                                 }}
                             />
                         </div>

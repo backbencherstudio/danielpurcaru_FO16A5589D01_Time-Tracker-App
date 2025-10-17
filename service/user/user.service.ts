@@ -22,9 +22,9 @@ interface GetSummaryConfig {
     "Content-Type": string;
     Authorization: string;
   };
-  params?:{
-    limit:number;
-    page:number;
+  params?: {
+    limit: number;
+    page: number;
   }
 }
 
@@ -123,7 +123,6 @@ export const UserService = {
   getAttendanceReport: async (params: SummaryParams, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
     const month = new Date().getMonth();
-    console.log(month);
 
     const config: GetSummaryConfig = {
       headers: {
@@ -157,7 +156,7 @@ export const UserService = {
 
     return await Fetch.get(`/employee?${queryParams}`, config);
   },
-  getSingleEmpData: async (id:string, context: any = null) => {
+  getSingleEmpData: async (id: string, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -205,18 +204,30 @@ export const UserService = {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-        },
-        params: {
-            page,
-            limit
-        }
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      params: {
+        page,
+        limit
+      }
     };
 
     return await Fetch.get(`/employee-loan`, config);
-},
+  },
+  getNotification: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "empdashtoken", context });
+
+    const config: GetSummaryConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      }
+    };
+
+    return await Fetch.get(`/admin/notification`, config);
+  },
 
 
   deleteEmpLoadData: async (loanDetails: string, context: any = null) => {
@@ -350,7 +361,7 @@ export const UserService = {
   },
 
 
-  updateProject: async({data,id},context=null)=>{
+  updateProject: async ({ data, id }, context = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
     const config = {
       headers: {
@@ -358,7 +369,7 @@ export const UserService = {
         Authorization: `Bearer ${userToken}`,
       }
     }
-    return await Fetch.patch(`/project/${id}`,data,config);
+    return await Fetch.patch(`/project/${id}`, data, config);
   },
 
 
@@ -413,7 +424,7 @@ export const UserService = {
   },
 
 
-  getEvents: async (month:number,context: any = null) => {
+  getEvents: async (month: number, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -475,7 +486,7 @@ export const UserService = {
     return await Fetch.post(`/attendance/check-absence`, {}, config);
   },
 
-  updateAttendance: async (id: string, data: { hours: number,project_id:string }, context: any = null) => {
+  updateAttendance: async (id: string, data: { hours: number, project_id: string }, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -489,7 +500,7 @@ export const UserService = {
   },
 
 
-  updateEmpLoan: async (id:string,data:{loan_status:string},context = null) => {
+  updateEmpLoan: async (id: string, data: { loan_status: string }, context = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -502,7 +513,7 @@ export const UserService = {
     return await Fetch.patch(`/employee-loan/${id}`, data, config);
   },
 
-  deleteEmployee: async (id:string,context = null)=>{
+  deleteEmployee: async (id: string, context = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -514,6 +525,13 @@ export const UserService = {
 
     return await Fetch.delete(`/employee/${id}`, config);
   },
-
-
+  createAttendace: async ({ user_id, project_id, date, hours }: { user_id: string; project_id: string, date: string, hours: number }) => {
+    const data = {
+      user_id,
+      project_id,
+      date,
+      hours
+    };
+    return await Fetch.post("/attendance", data, config);
+  },
 };

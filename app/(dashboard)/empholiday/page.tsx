@@ -75,8 +75,6 @@ export default function Page() {
             end_date: endDate.toISOString().split("T")[0],
         };
 
-        console.log(holidayData);
-
         try {
             setLoading(true);
             const res = await UserService?.createEmpHoliday(holidayData);
@@ -110,7 +108,6 @@ export default function Page() {
 
                 if (empRes?.data?.success) {
                     setEmpData(empRes.data.data);
-                    console.log("Employee data loaded:", empRes.data.data); // Debug log
                 }
 
                 if (holidaysRes?.data?.success) {

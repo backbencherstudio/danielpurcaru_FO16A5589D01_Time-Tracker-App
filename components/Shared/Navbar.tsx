@@ -6,35 +6,33 @@ import Profilepic from '@/public/images/Employee/ronald.png';
 import Profilepic2 from '@/public/images/Employee/sanvannah.png';
 import Profilepic3 from '@/public/images/profileIcon.png';
 import { UserService } from "@/service/user/user.service";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import defaultAvatar from "@/public/avatar.png"
 import LanguageSwitcher from "./LanguageSwitcher";
 import Link from "next/link";
+import { CookieHelper } from "@/helper/cookie.helper";
+import { io, Socket } from "socket.io-client";
 
 
-interface loanData {
-    created_at: string,
-    id: string,
-    loan_amount: string,
-    loan_status: string,
-    notes: string,
-    user: userType,
-    user_id: string,
+interface notification {
+    entity_id: string;
+    amount: number;
+    sender_id: string;
+    sender_image: string;
+    sender_name: string;
+    text: string;
 }
 
-interface userType {
-    avatar: string,
-    avatarUrl: string,
-    id: string,
-    name: string
-}
 
 export default function Navbar() {
-    const [empLoanData, setEmpLoanData] = useState<loanData[]>()
+    const userToken = CookieHelper.get({ key: "empdashtoken", context: null });
+    const [notification, setNotification] = useState<notification[]>([])
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [avatar, setAvatar] = useState();
+    const socketRef = useRef<Socket | null>(null);
+    const [hasNotification,setHasNotification] = useState(false);
     const [adminInfo, setAdminInfo] = useState({
         name: "",
         email: "",
@@ -59,34 +57,43 @@ export default function Navbar() {
         return cookieString?.split("=")[1] || null;
     };
 
-
     useEffect(() => {
-        const token = getCookieToken();
-        const fetchEmpData = async () => {
-            try {
-                const res = await UserService?.getEmpLoanData();
-                if (res?.data?.success) {
-                    console.log("Response load :", res.data.data);
-                    setEmpLoanData(res.data.data)
-                } else {
-                    toast.error(res?.response?.data?.message || "Failed to fetch data");
-                }
-            } catch (error: any) {
-                toast.error(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "An error occurred while fetching data"
-                );
-                console.error("Fetch error:", error);
-            } finally {
-                // setLoading(false);
-            }
-        }
+        if (!userToken) return;
 
-        if (token) {
-            fetchEmpData()
-        }
-    }, [])
+        const connectSocket = () => {
+            const socket = io(`${process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://103.161.8.243:5000'}`, {
+                auth: {
+                    token: userToken
+                },
+                timeout: 10000,
+                retries: 3
+            });
+
+            socketRef.current = socket;
+
+            socket.on('connect', () => {
+                console.log('Socket connected');
+            });
+
+            socket.on('notification', (data) => {
+                console.log(`🔔 Received notification: `,data);
+                setHasNotification(true);
+                setNotification(prev => [data,...prev]);
+            });
+
+            socket.on('disconnect', (reason) => {
+                console.log('Disconnected:');
+            });
+
+            return socket;
+        };
+
+        const socket = connectSocket();
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [userToken]);
 
 
     useEffect(() => {
@@ -115,6 +122,30 @@ export default function Navbar() {
         }
     }, [])
 
+    useEffect(() => {
+        const token = getCookieToken();
+        const getNotification = async () => {
+            try {
+                const res = await UserService?.getNotification();
+                if (res?.data?.success) {
+                    setNotification(res.data.data)
+                } else {
+                    toast.error(res?.response?.data?.message || "Failed to fetch data");
+                }
+            } catch (error: any) {
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    "An error occurred while fetching data"
+                );
+                console.error("Fetch error:", error);
+            }
+        }
+
+        if (token) {
+            getNotification();
+        }
+    }, [])
 
     return (
         <div className="w-full flex justify-between sm:px-5 px-2 py-3 gap-5 bg-white fixed z-[2] max-w-[1440px]">
@@ -134,12 +165,12 @@ export default function Navbar() {
                                 <path d="M12.5167 15.8833C12.5167 17.2583 11.3917 18.3833 10.0167 18.3833C9.33339 18.3833 8.70006 18.1 8.25006 17.65C7.80006 17.2 7.51672 16.5666 7.51672 15.8833" stroke="#161618" strokeWidth="1.5" strokeMiterlimit="10" />
 
                             </svg>
-                            <div className="w-2 h-2 bg-red-500 rounded-full absolute -top-[2px] -right-[2px]"></div>
+                            {hasNotification&&<div className="w-2 h-2 bg-red-500 rounded-full absolute -top-[2px] -right-[2px]"></div>}
                         </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-4 rounded-xl shadow-[5px_5px_50px_0px_rgba(26,32,44,0.06)]">
 
-                        <NotificationBanner notifications={empLoanData} closeNotification={() => setIsNotificationOpen(prev => !prev)} />
+                        <NotificationBanner notifications={notification} closeNotification={() => setIsNotificationOpen(prev => !prev)} handleNewNotification={()=>setHasNotification(false)}/>
 
                     </PopoverContent>
                 </Popover>

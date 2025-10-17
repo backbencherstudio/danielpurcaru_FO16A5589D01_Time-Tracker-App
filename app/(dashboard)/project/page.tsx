@@ -92,7 +92,6 @@ export default function ProjectManagementPage() {
     setLoading(true);
     try {
       const res = await UserService.getProjectData();
-      console.log("Project data : ", res)
       if (res?.data?.success) {
         setData(res.data.data);
         setSelectedProject(res?.data?.data[0]);

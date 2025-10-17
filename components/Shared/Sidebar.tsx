@@ -5,8 +5,10 @@ import { CookieHelper } from "@/helper/cookie.helper";
 import { LogOut } from "lucide-react";
 import router from "next/router";
 import { toast } from "react-toastify";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
+    const pathname = usePathname();
     const [menu, setMenu] = useState({
         dashboard: false,
         employees: false,
@@ -48,7 +50,7 @@ export default function Sidebar() {
         } else {
             handleMenu(window.location.pathname.split("/")[1])
         }
-    }, [])
+    }, [pathname])
 
 
     const logOut = () => {

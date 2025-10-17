@@ -49,7 +49,6 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
 
 
     useEffect(() => {
-        console.log("Reloading....")
         setEmployeeData(empData);
     }, [empData, empDataSaved]);
 
