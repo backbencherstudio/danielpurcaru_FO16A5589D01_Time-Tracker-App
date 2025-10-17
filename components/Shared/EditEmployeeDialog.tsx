@@ -113,7 +113,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:space-x-6">
+                        {/* <div className="flex flex-col sm:flex-row sm:space-x-6">
                             <div className="flex-1">
                                 <label className="text-sm font-medium">Password</label>
                                 <div className='relative mt-2'>
@@ -124,7 +124,6 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
                                         value={empPassword}
                                         onChange={(e) => setEmpPassword(e.target.value)}
                                     />
-                                    {/* Eye Icon for toggling password visibility */}
                                     <button
                                         type="button"
                                         onClick={() => setPasswordVisible(!passwordVisible)}
@@ -138,7 +137,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId, 
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex flex-col sm:flex-row sm:space-x-6">
                             <div className="flex-1">
