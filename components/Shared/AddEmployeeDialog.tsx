@@ -7,11 +7,11 @@ import { useForm } from 'react-hook-form';
 import prof from "@/public/images/profileIcon.png";
 import { StaticImageData } from 'next/image';
 import { UserService } from '@/service/user/user.service';
-import { toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import { useEmpData } from '@/context/EmpDataContext';
 
 export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
-    const {handleLoading,fetchEmpData} = useEmpData();
+    const { handleLoading, fetchEmpData } = useEmpData();
     const [avatar, setAvatar] = useState<string | StaticImageData>(prof);
     const [loading, setLoading] = useState(false);
 
@@ -42,14 +42,13 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
         try {
             setLoading(true)
             const res = await UserService?.createEmployee(empData);
-
+            console.log("Response : ",res);
             if (res?.data?.success) {
-                toast.success(res.data.message);
-                handleDialogToggle()
+                toast.success("Registration successful");
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Registration failed");
-            console.log(error);
+        } catch (err: any) {
+            toast.error(err.response?.data?.message || "Registration failed");
+            console.log(err);
         } finally {
             setLoading(false);
             handleLoading(false);
@@ -59,12 +58,11 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
     };
 
     return (
-        <div className="p-6">
-            <Dialog open={isOpen} onOpenChange={handleDialogToggle}>
-                <DialogContent className="max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
-                    <DialogHeader>
+        <div className="p-6 fixed inset-0 bg-[#0000001e] backdrop-blur-sm z-[99] flex items-center justify-center" onClick={handleDialogToggle}>
+            <Toaster position='top-right' />
+            <div className=' rounded-lg overflow-hidden' onClick={(e)=> e.stopPropagation()}>
+                <div className="max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg h-full max-h-[90vh] overflow-y-auto">
                         <h3 className="text-xl font-semibold">Add New Employee</h3>
-                    </DialogHeader>
 
                     {/* Upload Photo Section */}
                     <div className="flex justify-center items-center space-x-4 border-dashed border-2 border-gray-400 rounded-lg p-4 mb-6">
@@ -171,9 +169,19 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                                 <label className="text-sm font-medium">Hourly Rate ($)</label>
                                 <input
                                     type="text"
+                                    inputMode='numeric'
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter Hourly Rate"
-                                    {...register("hourlyRate", { required: "Hourly rate is required" })}
+                                    {...register('hourlyRate', {
+                                        required: true,
+                                        pattern: {
+                                            value: /^[0-9]*$/,
+                                            message: "Hourly rate is required"
+                                        },
+                                        onChange: (e) => {
+                                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                        }
+                                    })}
                                 />
                                 {errors.hourlyRate && <p className="text-red-500 text-sm">{`${errors.hourlyRate.message}`}</p>}
                             </div>
@@ -200,8 +208,8 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                             </button>
                         </DialogFooter>
                     </form>
-                </DialogContent>
-            </Dialog>
+                </div>
+            </div>
         </div>
     );
 }
