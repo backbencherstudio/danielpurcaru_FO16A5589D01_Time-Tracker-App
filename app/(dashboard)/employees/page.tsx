@@ -19,25 +19,14 @@ import { EmpDataContext } from "@/context/EmpDataContext";
 
 export default function page() {
     const [empData, setEmpData] = useState([])
-    const totalPages = Math.ceil(empData.length / 8);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageStart, setPageStart] = useState(0);
-    const [pageLeft, setPageLeft] = useState([]);
-    const [pageRight, setPageRight] = useState([]);
     const [isLargeScreen, setIsLargeScreen] = useState(2);
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [empDataSaved, setEmpDataSaved] = useState(false);
-    const handlePageChange = async (pageNumber) => {
-        if (pageNumber != currentPage) {
-            // setPageLoading(true);
-            setCurrentPage(pageNumber);
-            setPageStart(Math.abs(pageNumber - 1) * 8)
-            // Add a small delay to create a smooth transition effect
-            await new Promise((resolve) => setTimeout(resolve, 300));
-            // setPageLoading(false);
-        }
-    };
+    const [totalPages,setTotalPages] = useState(1);
+    const [itemsPerPage,setItemsPerPage] = useState(10);
+    const [totalItems,setTotalItems] = useState(0);
 
 
     const handleLoading = (state: boolean) => {
@@ -70,9 +59,11 @@ export default function page() {
     const fetchEmpData = async () => {
         setLoading(true);
         try {
-            const res = await UserService?.getAllEmpData();
+            const res = await UserService?.getAllEmpData({page:currentPage,limit:itemsPerPage});
             if (res?.data?.success) {
-                setEmpData(res.data.data)
+                setEmpData(res.data.data);
+                setTotalPages(res?.data?.meta?.totalPages);
+                setTotalItems(res?.data?.meta?.total);
             } else {
                 toast.error(res?.response?.data?.message || "Failed to fetch data");
             }
@@ -93,30 +84,7 @@ export default function page() {
         if (token) {
             fetchEmpData()
         }
-    }, [])
-
-    const getPageNumbers = () => {
-        const pageNumbers = [];
-        const totalPagesToShow = isLargeScreen === 3 ? 6 : 4;
-
-        let startPage = Math.max(currentPage - Math.floor(totalPagesToShow / 2), 1);
-        let endPage = Math.min(startPage + totalPagesToShow - 1, totalPages);
-
-        if (endPage - startPage + 1 < totalPagesToShow) {
-            startPage = Math.max(endPage - totalPagesToShow + 1, 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        setPageLeft(pageNumbers.slice(0, Math.ceil(pageNumbers.length / 2)));
-        setPageRight(pageNumbers.slice(Math.ceil(pageNumbers.length / 2)));
-    };
-
-    useEffect(() => {
-        getPageNumbers();
-    }, [currentPage, isLargeScreen]);
+    }, [currentPage,itemsPerPage])
 
 
     const handleEmpDataSaved = () => {
@@ -152,7 +120,19 @@ export default function page() {
                 </div>
             </div>
             <EmpDataContext.Provider value={{ fetchEmpData, handleEmpDataSaved,handleLoading }}>
-                <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={true} onUpdate={fetchEmpData}/>
+                <EmployeeTable 
+                empData={empData} 
+                empDataSaved={empDataSaved} 
+                showPage={true} 
+                onUpdate={fetchEmpData} 
+                pagination={{totalPages,itemsPerPage,currentPage,totalItems}} 
+                paginationUpdate={({limit,page}:{limit:number,page:number})=>{
+                    if(page)
+                        setCurrentPage(page);
+                    if(limit)
+                        setItemsPerPage(limit);
+                }}
+                />
                 {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={()=>setIsModalOpen(prev => !prev)} />}
             </EmpDataContext.Provider>
         </div>

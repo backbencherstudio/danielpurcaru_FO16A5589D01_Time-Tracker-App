@@ -168,7 +168,7 @@ export const UserService = {
 
     return await Fetch.get(`/employee/${id}`, config);
   },
-  getAllEmpData: async (context: any = null) => {
+  getAllEmpData: async ({page,limit}:{page:number,limit:number},context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -178,10 +178,10 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/employee`, config);
+    return await Fetch.get(`/employee?limit=${limit}&page=${page}`, config);
   },
 
-  getAttendanceData: async (month: number, context: any = null) => {
+  getAttendanceData: async ({month,limit,page}:{month:number,limit:number,page:number}, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -196,7 +196,7 @@ export const UserService = {
       month: month.toString(),
     }).toString();
 
-    return await Fetch.get(`/attendance/grid?${queryParams}`, config);
+    return await Fetch.get(`/attendance/grid?${queryParams}&limit=${limit}&page=${page}`, config);
   },
 
 
@@ -298,7 +298,7 @@ export const UserService = {
 
 
 
-  getEmpHolidays: async (context: any = null) => {
+  getEmpHolidays: async ({limit,page}:{limit:number,page:number},context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -308,11 +308,11 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/employee-holiday`, config);
+    return await Fetch.get(`/employee-holiday?limit=${limit}&page=${page}`, config);
   },
 
 
-  getProjectData: async (context: any = null) => {
+  getProjectData: async ({limit,page}:{limit:number,page:number},context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -322,7 +322,7 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/project`, config);
+    return await Fetch.get(`/project?page=${page}&limit=${limit}`, config);
   },
 
 

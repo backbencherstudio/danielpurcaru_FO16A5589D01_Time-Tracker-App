@@ -31,47 +31,16 @@ const ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
 export default function ProjectManagementPage() {
   const [data, setData] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' } | null>(null);
-  const [selectedProject,setSelectedProject] = useState<Project>()
-  const [editing,setEditing] = useState(false);
-  const totalItems = data.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const sortedData = useMemo(() => {
-    let sortableData = [...data];
-    if (sortConfig !== null) {
-      sortableData.sort((a, b) => {
-        // @ts-ignore
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        // @ts-ignore
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableData;
-  }, [data, sortConfig]);
-
-  const currentItems = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return sortedData.slice(startIndex, startIndex + itemsPerPage);
-  }, [sortedData, currentPage, itemsPerPage]);
-
-  const requestSort = (key: string) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
+  const [selectedProject, setSelectedProject] = useState<Project>()
+  const [editing, setEditing] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   // token extract helper
   const getCookieToken = () => {
@@ -88,12 +57,14 @@ export default function ProjectManagementPage() {
     setProjectToDelete(null);
   };
 
-  const fetchProjectData = useCallback(async () => {
+  const fetchProjectData = async () => {
     setLoading(true);
     try {
-      const res = await UserService.getProjectData();
+      const res = await UserService.getProjectData({ limit: itemsPerPage, page: currentPage });
       if (res?.data?.success) {
         setData(res.data.data);
+        setTotalItems(res.data?.meta?.total);
+        setTotalPages(res.data?.meta?.totalPages);
         setSelectedProject(res?.data?.data[0]);
       } else {
         toast.error(res?.response?.data?.message || "Failed to fetch data");
@@ -107,13 +78,14 @@ export default function ProjectManagementPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
     const token = getCookieToken();
+    console.log("Items per apge : ", itemsPerPage)
     if (token)
       fetchProjectData();
-  }, [fetchProjectData]);
+  }, [currentPage, itemsPerPage]);
 
   const handleDeleteProject = async () => {
     if (!projectToDelete) return;
@@ -123,10 +95,7 @@ export default function ProjectManagementPage() {
       const res = await UserService.deleteProject(projectToDelete);
       if (res?.data?.success) {
         toast.success("Project deleted successfully");
-        setData(prev => prev.filter(project => project.id !== projectToDelete));
-        if (currentItems.length === 1 && currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        }
+        setCurrentPage(1);
         closeDeleteModal();
       } else {
         toast.error(res?.response?.data?.message || "Failed to delete project");
@@ -150,79 +119,19 @@ export default function ProjectManagementPage() {
 
   const toggleModal = () => setIsModalOpen(prev => !prev);
 
-  const renderPaginationButtons = () => {
-    const buttons = [];
-    const maxVisibleButtons = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+  const getVisiblePageNumbers = () => {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
 
-    if (endPage - startPage + 1 < maxVisibleButtons) {
-      startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
 
-    if (startPage > 1) {
-      buttons.push(
-        <button
-          key={1}
-          onClick={() => handlePageChange(1)}
-          className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
-        >
-          1
-        </button>
-      );
-      if (startPage > 2) {
-        buttons.push(<span key="start-ellipsis" className="px-2">...</span>);
-      }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`w-[40px] h-[40px] m-1 rounded-xl ${currentPage === i ? 'bg-[#F8FAFB] text-[#1D1F2C]' : 'text-[#1D1F2C] hover:bg-gray-100'}`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        buttons.push(<span key="end-ellipsis" className="px-2">...</span>);
-      }
-      buttons.push(
-        <button
-          key={totalPages}
-          onClick={() => handlePageChange(totalPages)}
-          className="w-[40px] h-[40px] m-1 rounded-xl text-[#1D1F2C] hover:bg-gray-100"
-        >
-          {totalPages}
-        </button>
-      );
-    }
-
-    return buttons;
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   };
 
-  const SortIcon = ({ onClick }: { onClick: () => void }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      className="cursor-pointer"
-      onClick={onClick}
-    >
-      <path d="M6.00682 13.6662L2.66016 10.3262" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6.00586 2.33398V13.6673" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-      <g opacity="0.4">
-        <path d="M9.99414 2.33398L13.3408 5.67398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M9.99414 13.6673V2.33398" stroke="#4A4C56" strokeWidth="1.6" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-    </svg>
-  );
+  const visiblePages = useMemo(() => getVisiblePageNumbers(), [currentPage, totalPages]);
 
   if (loading) {
     return (
@@ -318,14 +227,14 @@ export default function ProjectManagementPage() {
           </thead>
 
           <tbody>
-            {currentItems.length === 0 ? (
+            {data.length === 0 ? (
               <tr>
                 <td colSpan={8} className="py-8 text-center text-gray-500">
                   No projects found
                 </td>
               </tr>
             ) : (
-              currentItems.map((row, index) => {
+              data.map((row, index) => {
                 const endDate = new Date(row.end_date).toLocaleDateString();
                 const priority = row.priority.charAt(0).toUpperCase() + row.priority.slice(1).toLowerCase();
                 const statusText = row.status === 1 ? "In Progress" : "Completed";
@@ -372,7 +281,7 @@ export default function ProjectManagementPage() {
                         <Eye size={20} />
                       </Link>
                       <button
-                      onClick={()=> {setSelectedProject(row);setEditing(true)}}
+                        onClick={() => { setSelectedProject(row); setEditing(true) }}
                         className="bg-[#82C8E5] hover:bg-sky-400 w-fit px-[7px] py-[7px] rounded-lg cursor-pointer"
                       >
                         {editIcon}
@@ -395,43 +304,58 @@ export default function ProjectManagementPage() {
       </div>
 
       {/* Pagination Section */}
-      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 rounded-lg border disabled:opacity-50"
-          >
-            <MdKeyboardArrowLeft />
-          </button>
-          {renderPaginationButtons()}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 rounded-lg border disabled:opacity-50"
-          >
-            <MdKeyboardArrowRight />
-          </button>
-        </div>
+      {data.length > 0 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4 w-full">
+          <div className="flex items-center rounded-lg sm:px-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "text-[#1D1F2C] hover:bg-gray-100"
+                } border border-[#F6F8FA] rounded-lg`}
+            >
+              <MdKeyboardArrowLeft className="text-xl" />
+            </button>
 
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <span className="text-sm">
-            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
-          </span>
-          <select
-            value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="border rounded-md px-2 py-1 text-sm"
-          >
-            {ITEMS_PER_PAGE_OPTIONS.map(number => (
-              <option key={number} value={number}>{number}</option>
+            {visiblePages.map((number) => (
+              <button
+                key={number}
+                onClick={() => handlePageChange(number)}
+                className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${currentPage === number ? "bg-[#F6F8FA]" : "text-[#1D1F2C] hover:bg-gray-100"
+                  } rounded-lg`}
+              >
+                {number}
+              </button>
             ))}
-          </select>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "text-[#1D1F2C] hover:bg-gray-100"
+                } border border-[#F6F8FA] rounded-lg`}
+            >
+              <MdKeyboardArrowRight className="text-xl" />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm sm:text-base text-[#777980] font-normal">
+            <span>
+              Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+            </span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              className="border rounded-md px-2 py-1 text-[#1D1F2C]"
+            >
+              {[5, 10, 20, 50].map((number) => (
+                <option key={number} value={number}>
+                  {number}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
 
       {isModalOpen && (
         <AddNewProjectForm
@@ -444,7 +368,7 @@ export default function ProjectManagementPage() {
         />
       )}
       {editing &&
-        <EditProjects project={selectedProject} onClose={()=>{setEditing(false)}} onUpdate={()=>{fetchProjectData();setEditing(false)}}/>
+        <EditProjects project={selectedProject} onClose={() => { setEditing(false) }} onUpdate={() => { fetchProjectData(); setEditing(false) }} />
       }
     </div>
   );
