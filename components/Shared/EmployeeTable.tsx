@@ -32,13 +32,18 @@ interface EmployeeTableProps {
     empDataSaved: boolean;
     showPage: boolean;
     onUpdate: () => void;
+    pagination?: {
+        currentPage:number;
+        itemsPerPage: number;
+        totalPages: number;
+        totalItems:number;
+    };
+    paginationUpdate?: ({limit,page}:{limit?:number,page?:number})=> void;
 }
 
-export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate,pagination,paginationUpdate }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
-    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedEmpId, setSelectedEmpId] = useState("");
     const [sortOrder, setSortOrder] = useState('asc');
@@ -74,8 +79,6 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
         return result;
     }, [employeeData, selectedJobTitle, searchQuery]);
 
-    const totalItems = filteredEmpData.length;
-
     // Extract unique job titles
     const jobTitles = useMemo(() =>
         Array.from(new Set(employeeData.map(emp => emp?.employee_role))),
@@ -83,14 +86,14 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
     );
 
     // Pagination calculations
-    let { currentEntries, totalPages } = useMemo(() => {
-        const lastIndex = currentPage * itemsPerPage;
-        const firstIndex = lastIndex - itemsPerPage;
-        return {
-            currentEntries: filteredEmpData.slice(firstIndex, lastIndex),
-            totalPages: Math.ceil(filteredEmpData.length / itemsPerPage)
-        };
-    }, [filteredEmpData, currentPage, itemsPerPage]);
+    // let { currentEntries, totalPages } = useMemo(() => {
+    //     const lastIndex = currentPage * itemsPerPage;
+    //     const firstIndex = lastIndex - itemsPerPage;
+    //     return {
+    //         currentEntries: filteredEmpData.slice(firstIndex, lastIndex),
+    //         totalPages: Math.ceil(filteredEmpData.length / itemsPerPage)
+    //     };
+    // }, [filteredEmpData, currentPage, itemsPerPage]);
 
 
     const handleSorting = (key: keyof Employee) => {
@@ -112,30 +115,30 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
 
     const handleJobTitleFilter = (jobTitle: string) => {
         setSelectedJobTitle(jobTitle);
-        setCurrentPage(1);
+        paginationUpdate({page:1});
     };
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        setCurrentPage(1);
+        paginationUpdate({page:1});
     };
 
     const handlePageChange = (pageNumber: number) => {
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-            setCurrentPage(pageNumber);
+        if (pageNumber >= 1 && pageNumber <= pagination?.totalPages) {
+            paginationUpdate({page:pageNumber});
         }
     };
 
     const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newItemsPerPage = Number(e.target.value);
-        setItemsPerPage(newItemsPerPage);
-        setCurrentPage(1);
+        paginationUpdate({limit:newItemsPerPage});
+        paginationUpdate({page:1});
     };
 
     const getVisiblePageNumbers = () => {
         const maxVisiblePages = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+        let startPage = Math.max(1, pagination?.currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(startPage + maxVisiblePages - 1, pagination?.totalPages);
 
         if (endPage - startPage + 1 < maxVisiblePages) {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -157,7 +160,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
             const res = await UserService.deleteEmployee(selectedEmp);
             if (res?.data?.success) {
                 toast.success("Employee deleted successfully");
-                setCurrentPage(1);
+                paginationUpdate({page:1});
                 onUpdate();
             } else {
                 toast.error(res?.response?.data?.message || "Failed to delete employee");
@@ -341,7 +344,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                     </thead>
 
                     <tbody className="text-[#1D1F2C] text-[12px] font-medium ">
-                        {currentEntries.map((emp, index) => (
+                        {filteredEmpData.map((emp, index) => (
                             <tr key={emp?.id} className="border-t-[0.2px] border-[#F6F8FA] ">
                                 <td className="p-4">{index + 1}</td>
                                 <td className="flex items-center gap-2 p-4">
@@ -393,9 +396,9 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                     <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
                         <div className="flex items-center rounded-lg sm:px-4">
                             <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === 1
+                                onClick={() => handlePageChange(pagination?.currentPage - 1)}
+                                disabled={pagination?.currentPage === 1}
+                                className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${pagination?.currentPage === 1
                                     ? "text-gray-400 cursor-not-allowed"
                                     : "text-[#1D1F2C] hover:bg-gray-100"
                                     } border border-[#F6F8FA] rounded-lg`}
@@ -407,7 +410,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                                 <button
                                     key={number}
                                     onClick={() => handlePageChange(number)}
-                                    className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${currentPage === number
+                                    className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${pagination?.currentPage === number
                                         ? "bg-[#F6F8FA]"
                                         : "text-[#1D1F2C] hover:bg-gray-100"
                                         } rounded-lg`}
@@ -417,9 +420,9 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                             ))}
 
                             <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === totalPages
+                                onClick={() => handlePageChange(pagination?.currentPage + 1)}
+                                disabled={pagination?.currentPage === pagination?.totalPages}
+                                className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${pagination?.currentPage === pagination?.totalPages
                                     ? "text-gray-400 cursor-not-allowed"
                                     : "text-[#1D1F2C] hover:bg-gray-100"
                                     } border border-[#F6F8FA] rounded-lg`}
@@ -430,11 +433,11 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
 
                         <div className="flex items-center gap-2 text-sm sm:text-base text-[#777980] font-normal">
                             <span>
-                                Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
-                                {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                                Showing {((pagination?.currentPage - 1) * pagination?.itemsPerPage) + 1} to{' '}
+                                {Math.min(pagination?.currentPage * pagination?.itemsPerPage, pagination?.totalItems)} of {pagination?.totalItems} entries
                             </span>
                             <select
-                                value={itemsPerPage}
+                                value={pagination?.itemsPerPage}
                                 onChange={handleItemsPerPageChange}
                                 className="border rounded-md px-2 py-1 text-[#1D1F2C]"
                             >

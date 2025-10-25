@@ -169,7 +169,7 @@ const EmpLoanTable = ({ empData, isLoading, handleLoading, fetchEmpData,handleEm
     }
 
     return (
-        <div className="space-y-6 bg-white p-4 rounded-lg shadow-sm">
+        <div className="space-y-6 bg-white p-4 rounded-lg">
             <DeletePopUp
                 isDeleteModalOpen={isDeleteModalOpen}
                 closeDeleteModal={closeDeleteModal}

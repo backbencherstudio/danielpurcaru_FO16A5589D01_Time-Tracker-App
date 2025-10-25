@@ -199,9 +199,9 @@ export default function Home() {
       <div className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {Object.entries(cardData || {})?.map((card, index) => <DashboardCard key={index} title={card[0]} value={card[1]} />)}
       </div>
-      {!loading && <div className="w-full flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-fit bg-white flex flex-col items-center justify-center rounded-lg">
-          <div className="md:px-[56px] py-6 bg-white w-fit rounded-lg">
+      {!loading && <div className="w-full flex flex-col-reverse gap-4">
+        <div className="w-full bg-white grid md:grid-cols-2 md:items-center md:justify-center rounded-lg">
+          <div className="md:px-[56px] py-6 bg-white w-full rounded-lg">
             <DonutChart typeOfEmp={typeOfEmp} title="Total Emp." />
           </div>
           <div className="px-6 space-y-[6px] w-full">

@@ -32,7 +32,7 @@ interface UpdateWorkHour {
     id: string;
     index: number;
     workHour: number;
-    date:string;
+    date: string;
 }
 
 type ProjectType = {
@@ -68,13 +68,15 @@ export default function Page() {
     const [updateWorkHour, setUpdateWorkHour] = useState<UpdateWorkHour | null>(null);
     const [attendanceData, setAttendanceData] = useState<EmployeeAttendance[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentHour, setCurrentHour] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [editorPosition, setEditorPosition] = useState({ top: 0, left: 0 });
     const [projects, setProjects] = useState<ProjectType[]>()
     const [selectedProject, setSelectedProject] = useState<string>('');
     const [isOpen, setIsOpen] = useState(false);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems,setTotalItems] = useState(0);
 
     const editorRef = useRef<HTMLDivElement>(null);
 
@@ -96,33 +98,36 @@ export default function Page() {
     }, [selectedMonth]);
 
     // Fetch attendance data
-    useEffect(() => {
-        const fetchEmpData = async () => {
-            try {
-                setLoading(true);
-                const res = await UserService?.getAttendanceData(selectedMonth + 1);
-                if (res?.data?.success) {
-                    setAttendanceData(res.data.data);
-                } else {
-                    toast.error(res?.response?.data?.message || "Failed to fetch data");
-                }
-            } catch (error: any) {
-                toast.error(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "An error occurred while fetching data"
-                );
-            } finally {
-                setLoading(false);
+    const fetchEmpData = async () => {
+        try {
+            setLoading(true);
+            const res = await UserService?.getAttendanceData({ month: selectedMonth + 1, limit: itemsPerPage, page: currentPage });
+            console.log("Response data : ", res);
+            if (res?.data?.success) {
+                setAttendanceData(res.data.data);
+                setTotalPages(res?.data?.meta?.totalPages)
+                setTotalItems(res?.data?.meta?.total)
+            } else {
+                toast.error(res?.response?.data?.message || "Failed to fetch data");
             }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data"
+            );
+        } finally {
+            setLoading(false);
         }
+    }
+    useEffect(() => {
         fetchEmpData();
-    }, [selectedMonth]);
+    }, [selectedMonth,currentPage,itemsPerPage]);
 
     const fetchProjectData = async () => {
         setLoading(true);
         try {
-            const res = await UserService.getProjectData();
+            const res = await UserService.getProjectData({limit: 100,page:1});
             if (res?.data?.success && Array.isArray(res?.data?.data)) {
                 const projectList = res?.data?.data?.map((project) => ({
                     name: project?.name,
@@ -174,8 +179,8 @@ export default function Page() {
         }));
     };
 
-    const handleSaveData = async (id: string,user_id:string,date:string) => {
-        console.log("project id : ",selectedProject);
+    const handleSaveData = async (id: string, user_id: string, date: string) => {
+        console.log("project id : ", selectedProject);
         if (selectedProject === '') {
             toast.error("Select a project first.");
             return;
@@ -190,7 +195,7 @@ export default function Page() {
                     project_id: selectedProject
                 });
             } else {
-                res = await UserService?.createAttendace({user_id,project_id:selectedProject,hours:currentHour,date});
+                res = await UserService?.createAttendace({ user_id, project_id: selectedProject, hours: currentHour, date });
             }
             if (res?.data?.success) {
                 toast.success("Attendance updated successfully");
@@ -211,7 +216,7 @@ export default function Page() {
         }
     }
 
-    const handleCellClick = (event: React.MouseEvent, workHour: AttendanceDay, empId: string, index: number,date:string) => {
+    const handleCellClick = (event: React.MouseEvent, workHour: AttendanceDay, empId: string, index: number, date: string) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -241,13 +246,13 @@ export default function Page() {
         );
     }, [attendanceData, searchTerm]);
 
-    const totalItems = filteredAttendanceData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const currentEntries = useMemo(() => {
-        const lastIndex = currentPage * itemsPerPage;
-        const firstIndex = lastIndex - itemsPerPage;
-        return filteredAttendanceData.slice(firstIndex, lastIndex);
-    }, [filteredAttendanceData, currentPage, itemsPerPage]);
+    // const totalItems = filteredAttendanceData.length;
+    // const totalPages = Math.ceil(totalItems / itemsPerPage);
+    // const currentEntries = useMemo(() => {
+    //     const lastIndex = currentPage * itemsPerPage;
+    //     const firstIndex = lastIndex - itemsPerPage;
+    //     return filteredAttendanceData.slice(firstIndex, lastIndex);
+    // }, [filteredAttendanceData, currentPage, itemsPerPage]);
 
     const handleMonthChange = (month: number) => {
         setSelectedMonth(month);
@@ -341,7 +346,7 @@ export default function Page() {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentEntries.map(emp => (
+                            {filteredAttendanceData.map(emp => (
                                 <tr key={emp?.user?.id} className="flex items-center w-full justify-between">
                                     <td className="w-[82px] flex items-center justify-center text-[8px] py-[12px] border-b border-[#ECEFF3]">
                                         {emp?.user?.name}
@@ -350,7 +355,7 @@ export default function Page() {
                                         <td
                                             key={date}
                                             className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#fff] cursor-pointer"
-                                            onClick={(e) => handleCellClick(e, workHour, emp?.user?.id, index,date)}
+                                            onClick={(e) => handleCellClick(e, workHour, emp?.user?.id, index, date)}
                                         >
                                             {(workHour?.hours || workHour?.hours === 0) ? `${workHour?.hours}hr` : ""}
                                         </td>

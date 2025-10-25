@@ -2,12 +2,14 @@
 
 import { UserService } from "@/service/user/user.service";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import avatar from '@/public/avatar.png'
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import CustomDropdown from "@/components/CustomSelect/CustomSelect";
 
 interface Employee {
     id: string;
@@ -37,6 +39,11 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [empData, setEmpData] = useState<Employee[]>([]);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+
 
     const handleAddHolidayOpen = () => {
         setAddHoliday((prev) => !prev);
@@ -83,9 +90,10 @@ export default function Page() {
                 toast.success(res.data.message);
                 setAddHoliday(false);
                 // Refresh the holidays list
-                const holidaysRes = await UserService?.getEmpHolidays();
+                const holidaysRes = await UserService?.getEmpHolidays({ limit: itemsPerPage, page: currentPage });
                 if (holidaysRes?.data?.success) {
-                    setEmpHolidays(holidaysRes.data.data);
+                    // setEmpHolidays(holidaysRes.data.data);
+                    fetchData();
                 }
             }
         } catch (error: any) {
@@ -96,38 +104,61 @@ export default function Page() {
         }
     };
 
-    useEffect(() => {
-        const token = getCookieToken();
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [empRes, holidaysRes] = await Promise.all([
-                    UserService?.getAllEmpData(),
-                    UserService?.getEmpHolidays()
-                ]);
+    const token = getCookieToken();
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const [empRes, holidaysRes] = await Promise.all([
+                UserService?.getAllEmpData({ limit: 100, page: 1 }),
+                UserService?.getEmpHolidays({ limit: itemsPerPage, page: currentPage })
+            ]);
 
-                if (empRes?.data?.success) {
-                    setEmpData(empRes.data.data);
-                }
-
-                if (holidaysRes?.data?.success) {
-                    setEmpHolidays(holidaysRes.data.data);
-                }
-            } catch (error: any) {
-                toast.error(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "An error occurred while fetching data"
-                );
-                console.error("Fetch error:", error);
-            } finally {
-                setLoading(false);
+            if (empRes?.data?.success) {
+                setEmpData(empRes.data.data);
             }
-        };
+
+            if (holidaysRes?.data?.success) {
+                setEmpHolidays(holidaysRes.data.data);
+                setTotalItems(holidaysRes?.data?.meta?.total);
+                setTotalPages(holidaysRes?.data?.meta?.totalPages);
+            }
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred while fetching data"
+            );
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         if (token) {
             fetchData();
         }
-    }, []);
+    }, [itemsPerPage, currentPage]);
+
+    const getVisiblePageNumbers = () => {
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    };
+
+    const visiblePages = useMemo(() => getVisiblePageNumbers(), [currentPage, totalPages]);
+
+    const handlePageChange = (pageNumber: number) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
 
     if (loading) {
         return (
@@ -251,32 +282,71 @@ export default function Page() {
                 )}
             </div>
 
+            {empHolidays.length > 0 && (
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
+                    <div className="flex items-center rounded-lg sm:px-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "text-[#1D1F2C] hover:bg-gray-100"
+                                } border border-[#F6F8FA] rounded-lg`}
+                        >
+                            <MdKeyboardArrowLeft className="text-xl" />
+                        </button>
+
+                        {visiblePages.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handlePageChange(number)}
+                                className={`mx-1 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${currentPage === number ? "bg-[#F6F8FA]" : "text-[#1D1F2C] hover:bg-gray-100"
+                                    } rounded-lg`}
+                            >
+                                {number}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`flex items-center gap-1 px-2 sm:px-3 py-2 ${currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "text-[#1D1F2C] hover:bg-gray-100"
+                                } border border-[#F6F8FA] rounded-lg`}
+                        >
+                            <MdKeyboardArrowRight className="text-xl" />
+                        </button>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm sm:text-base text-[#777980] font-normal">
+                        <span>
+                            Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
+                            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                        </span>
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                            className="border rounded-md px-2 py-1 text-[#1D1F2C]"
+                        >
+                            {[5, 10, 20, 50].map((number) => (
+                                <option key={number} value={number}>
+                                    {number}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
+
             {addHoliday && (
                 <div className="fixed inset-0 bg-[#e2e2e233] z-[99] flex items-center justify-center backdrop-blur-[10px]">
                     <form onSubmit={handleSubmit(handleFormSubmit)} className="bg-white w-[567px] rounded-xl p-[32px] space-y-[40px] relative">
                         <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Add Employee Holiday</h3>
                         <div className="space-y-6">
                             <div className="grid grid-cols-1 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label htmlFor="employee" className="text-[#1D1F2C] text-base font-medium">Employee</label>
-                                    <select
-                                        id="employee"
-                                        onChange={(e) => setSelectedEmployeeId(e.currentTarget.value)}
-                                    >
-                                        <option value="">Select an employee</option>
-                                        {empData.map(emp => {
-                                            const { id, first_name, last_name } = emp;
-                                            return (
-                                                <option key={id} value={id}>
-                                                    {`${first_name} ${last_name ?? ''}`}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                    {empData.length === 0 && !loading && (
-                                        <p className="text-sm text-red-500">No employees available to select</p>
-                                    )}
-                                </div>
+                                <CustomDropdown 
+                                loading={loading}
+                                setSelectedEmployeeId={(id:string)=>setSelectedEmployeeId(id)}
+                                selectedEmployeeId={selectedEmployeeId}
+                                empData={empData}
+                                />
                             </div>
 
                             <div>
@@ -286,7 +356,7 @@ export default function Page() {
                                         selected={startDate}
                                         onChange={(date: Date) => setStartDate(date)}
                                         dateFormat="MMMM d, yyyy"
-                                        className="w-full"
+                                        className="w-full bg-gray-200 px-1 cursor-pointer"
                                         placeholderText="Select a date"
                                         minDate={new Date()}
                                         id="startDate"
@@ -301,7 +371,7 @@ export default function Page() {
                                         selected={endDate}
                                         onChange={(date: Date) => setEndDate(date)}
                                         dateFormat="MMMM d, yyyy"
-                                        className="w-full outline-none flex-1"
+                                        className="w-full outline-none flex-1 bg-gray-200 px-1 cursor-pointer"
                                         placeholderText="Select a date"
                                         minDate={startDate}
                                         id="endDate"

@@ -139,7 +139,7 @@ export default function Page() {
             />
 
             {paginationMeta.total > 0 && (
-                <div className="flex flex-col sm:flex-row justify-between items-center mt-10 mb-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
+                <div className="flex flex-col sm:flex-row justify-between items-center py-5 pr-4 max-w-[1200px] mx-auto font-bold rounded-lg gap-4">
                     <div className="flex items-center rounded-lg sm:px-4">
                         <button
                             onClick={() => handlePageChange(paginationMeta.page - 1)}
