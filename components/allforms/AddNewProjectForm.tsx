@@ -5,10 +5,6 @@ import { UserService } from '@/service/user/user.service';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 
-interface Employee {
-  id: string;
-  name: string;
-}
 
 interface ProjectFormData {
   name: string;
@@ -29,42 +25,10 @@ interface AddNewProjectFormProps {
 export default function AddNewProjectForm({ isOpen, handleDialogToggle,onSuccess }: AddNewProjectFormProps) {
   const { handleSubmit, register, formState: { errors } } = useForm<ProjectFormData>();
   const [priority, setPriority] = useState('high');
-  const [empData, setEmpData] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
   const [assignMember, setAssignMember] = useState<string[]>([]);
   const [selectedMember, setSelectedMember] = useState("");
 
-  useEffect(() => {
-    const fetchEmpData = async () => {
-      setLoading(true);
-      try {
-        const res = await UserService?.getAllEmpData();
-        if (res?.data?.success) {
-          setEmpData(res.data.data);
-        } else {
-          toast.error(res?.response?.data?.message || "Failed to fetch data");
-        }
-      } catch (error: any) {
-        toast.error(
-          error.response?.data?.message ||
-          error.message ||
-          "An error occurred while fetching data"
-        );
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchEmpData();
-  }, []);
-
-  const handleAssignMember = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const memberId = e.target.value;
-    if (memberId && !assignMember.includes(memberId)) {
-      setAssignMember(prev => [...prev, memberId]);
-      setSelectedMember(memberId);
-    }
-  };
 
   const removeMember = (memberId: string) => {
     setAssignMember(prev => prev.filter(id => id !== memberId));
