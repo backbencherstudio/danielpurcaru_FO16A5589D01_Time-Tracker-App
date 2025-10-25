@@ -49,7 +49,7 @@ export default function EditProjects({ project, onClose, onUpdate }: propType) {
         const fetchEmpData = async () => {
             setLoading(true);
             try {
-                const res = await UserService?.getAllEmpData();
+                const res = await UserService?.getAllEmpData({limit:100,page:1});
                 if (res?.data?.success) {
                     setEmpData(res.data.data);
                 } else {
