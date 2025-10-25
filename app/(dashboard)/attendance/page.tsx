@@ -427,12 +427,12 @@ export default function Page() {
                     >
                         <div className="flex justify-between items-center">
                             <h3 className="font-medium">Edit Hour</h3>
-                            <FaCheck
-                                className="text-[#82C8E5] cursor-pointer"
+                            <button
+                                type="button"
+                                className="text-white cursor-pointer border text-sm px-2 py-[2px] rounded bg-[#82C8E5]"
                                 onClick={() => {
-                                    handleSaveData(updateWorkHour?.id || null,updateWorkHour?.emp,updateWorkHour?.date);
-                                }}
-                            />
+                                    handleSaveData(updateWorkHour?.id || null, updateWorkHour?.emp, updateWorkHour?.date);
+                                }}>Save</button>
                         </div>
                         <div className="relative w-full max-w-[200px]">
                             <button
