@@ -284,7 +284,7 @@ const EmpLoanTable = ({ empData, isLoading, handleLoading, fetchEmpData,handleEm
                                     <td className="p-4">
                                         {emp.created_at ? new Date(emp.created_at).toISOString().split('T')[0] : '-'}
                                     </td>
-                                    <td className="p-4">${emp.loan_amount}</td>
+                                    <td className="p-4"><span className="font-semibold">€ </span>{emp.loan_amount}</td>
                                     <td className={`p-4 ${emp?.loan_status === 'REJECTED' ? "text-red-400" : emp?.loan_status === 'PENDING' ? "text-blue-400" : "text-green-500"}`}>{emp?.loan_status}</td>
                                     <td className="flex items-center justify-end p-4 space-x-2.5">
                                         {emp?.loan_status === "PENDING"&&<div className="flex w-full sm:w-fit justify-start gap-2.5">

@@ -358,9 +358,9 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                                 {/* <td className="p-4 text-nowrap">{emp?.username}</td> */}
                                 {/* <td className="p-4 text-nowrap">{emp?.email}</td> */}
                                 <td className="p-4 text-nowrap">{emp?.employee_role}</td>
-                                <td className="text-center p-4">${emp?.hourly_rate}</td>
+                                <td className="text-center p-4"><span className="font-semibold">€ </span>{emp?.hourly_rate}</td>
                                 <td className="text-center p-4">{emp?.recorded_hours}</td>
-                                <td className="text-center p-4">${(emp?.recorded_hours * parseFloat(emp?.hourly_rate)).toFixed(2)}</td>
+                                <td className="text-center p-4"><span className="font-semibold">€ </span>{(emp?.recorded_hours * parseFloat(emp?.hourly_rate)).toFixed(2)}</td>
                                 <td className="flex items-center justify-center p-4 space-x-2">
                                     <Link
                                         href={`/employees/${emp?.id}`}

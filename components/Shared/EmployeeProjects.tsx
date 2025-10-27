@@ -38,7 +38,7 @@ export default function ProjectAssignments({ projects }: { projects: Project[] }
                                     <Badge variant="outline">{assignment.total_hours}h</Badge>
                                 </td>
                                 <td className="py-3 px-4">
-                                    <span className="font-semibold text-green-600">${assignment.total_cost}</span>
+                                    <span className="font-semibold text-green-600"><span className="font-semibold">€ </span>{assignment.total_cost}</span>
                                 </td>
                             </tr>
                         ))}

@@ -45,7 +45,7 @@ const NotificationBanner = ({ notifications,closeNotification,handleNewNotificat
                 </div>
                 {/* <div className="text-zinc-500 text-xs">{ notification.time}</div> */}
               </div>
-              <div className="text-zinc-500 text-xs mt-1">{`${nt?.sender_name}  has requested a payment of $ ${nt?.amount}`}</div>
+              <div className="text-zinc-500 text-xs mt-1">{`${nt?.sender_name}  has requested a payment of € ${nt?.amount}`}</div>
             </div>
           </div>
         ))}

@@ -97,26 +97,6 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
 
     return (
         <div className=" bg-background">
-            {/* Header */}
-            {/* <div className="border-b border-border bg-card">
-        <div className="flex items-center justify-between p-6">
-          <Link href="/employees">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Employees
-            </Button>
-          </Link>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              Edit
-            </Button>
-            <Button variant="outline" size="sm" className="text-destructive bg-transparent">
-              Delete
-            </Button>
-          </div>
-        </div>
-      </div> */}
-
             {/* Main Content */}
             <div className="p-3 sm:p-4">
                 <div className="grid gap-6">
@@ -144,7 +124,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Total Earnings</p>
-                                    <p className="text-md sm:text-2xl font-semibold">${empData?.earning}</p>
+                                    <p className="text-md sm:text-2xl font-semibold"><span className="font-semibold">€ </span>{empData?.earning}</p>
                                 </div>
                             </div>
                         </Card>
@@ -156,7 +136,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                                    <p className="text-md sm:text-2xl font-semibold">${empData?.hourly_rate}/h</p>
+                                    <p className="text-md sm:text-2xl font-semibold"><span className="font-semibold">€ </span>{empData?.hourly_rate}/h</p>
                                 </div>
                             </div>
                         </Card>

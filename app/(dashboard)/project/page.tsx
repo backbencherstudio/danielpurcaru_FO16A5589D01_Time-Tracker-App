@@ -266,7 +266,7 @@ export default function ProjectManagementPage() {
                     </td> */}
                     <td className="p-4">{endDate}</td>
                     <td className="p-4">{priority}</td>
-                    <td className="p-4">${Number(row.price).toFixed(2)}</td>
+                    <td className="p-4"><span className="font-semibold">€ </span>{Number(row.price).toFixed(2)}</td>
                     <td className="p-4 text-nowrap">
                       <div className={`px-2 py-1 flex justify-center items-center text-teal-600 ${statusClass} rounded-lg text-[10px] font-medium`}>
                         {statusText}
