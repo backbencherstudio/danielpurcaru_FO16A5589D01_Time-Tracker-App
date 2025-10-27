@@ -309,7 +309,7 @@ export default function Page() {
                     </div>
                     <div>
                         <select
-                            className="py-[18px] border border-[#E8ECF4] justify-center rounded-xl text-base text-[#1D1F2C] outline-none"
+                            className="py-[16px] px-5 border border-[#E8ECF4] justify-center rounded-xl text-base text-[#1D1F2C] outline-none"
                             onChange={(e) => handleMonthChange(parseInt(e.target.value))}
                             value={selectedMonth}
                         >
@@ -329,7 +329,7 @@ export default function Page() {
                     <table className="w-full table-auto">
                         <thead>
                             <tr className="flex items-center w-full justify-between">
-                                <th className="w-[82px] flex items-center justify-center text-[8px] font-bold bg-[#F6F8FA] text-[#4A4C56] py-[12px]">Day</th>
+                                <th className="w-[220px] flex items-center justify-center text-[14px] font-bold bg-[#F6F8FA] text-[#4A4C56] py-[8px]">Day</th>
                                 {days.map(day => (
                                     <th key={day.day} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">
                                         {day.weekdayName}
@@ -337,7 +337,7 @@ export default function Page() {
                                 ))}
                             </tr>
                             <tr className="flex items-center w-full justify-between">
-                                <th className="w-[82px] flex items-center justify-center text-[8px] bg-[#ECEFF3] py-[12px] text-[#4A4C56] font-medium">Name/Date</th>
+                                <th className="w-[220px] flex items-center justify-center text-[12px] bg-[#ECEFF3] py-[8px] text-[#4A4C56] font-medium">Name/Date</th>
                                 {days.map((_, index) => (
                                     <th key={index} className="flex-1 border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#FAFAFA]">
                                         {index < 9 ? `0${index + 1}` : index + 1}
@@ -348,16 +348,16 @@ export default function Page() {
                         <tbody>
                             {filteredAttendanceData.map(emp => (
                                 <tr key={emp?.user?.id} className="flex items-center w-full justify-between">
-                                    <td className="w-[82px] flex items-center justify-center text-[8px] py-[12px] border-b border-[#ECEFF3]">
+                                    <td className="w-[220px] flex items-center justify-center text-nowrap text-[14px] py-[7px] border-b border-[#ECEFF3]">
                                         {emp?.user?.name}
                                     </td>
                                     {Object.entries(emp?.days).map(([date, workHour], index) => (
                                         <td
                                             key={date}
-                                            className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square text-[#4A4C56] text-[12px] bg-[#fff] cursor-pointer"
+                                            className="relative w-[36.16px] border border-[#ECEFF3] flex items-center justify-center aspect-square font-semibold text-[#4A4C56] text-[16px] bg-[#fff] cursor-pointer"
                                             onClick={(e) => handleCellClick(e, workHour, emp?.user?.id, index, date)}
                                         >
-                                            {(workHour?.hours || workHour?.hours === 0) ? `${workHour?.hours}hr` : ""}
+                                            {(workHour?.hours || workHour?.hours === 0) ? `${workHour?.hours}` : ""}
                                         </td>
                                     ))}
                                 </tr>
