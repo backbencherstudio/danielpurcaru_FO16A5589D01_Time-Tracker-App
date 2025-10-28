@@ -21,14 +21,14 @@ interface AttendanceRecord {
 }
 
 export default function AttendanceRecords({ attendance }: { attendance: AttendanceRecord[] }) {
-    const [sortBy, setSortBy] = useState<"date" | "status">("date")
+    // const [sortBy, setSortBy] = useState<"date" | "status">("date")
 
-    const sortedAttendance = [...attendance].sort((a, b) => {
-        if (sortBy === "date") {
-            return new Date(b.date).getTime() - new Date(a.date).getTime()
-        }
-        return a.attendance_status.localeCompare(b.attendance_status)
-    })
+    // const sortedAttendance = [...attendance].sort((a, b) => {
+    //     if (sortBy === "date") {
+    //         return new Date(b.date).getTime() - new Date(a.date).getTime()
+    //     }
+    //     return a.attendance_status.localeCompare(b.attendance_status)
+    // })
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("en-US", {
@@ -40,12 +40,20 @@ export default function AttendanceRecords({ attendance }: { attendance: Attendan
     }
 
     const formatTime = (timeString: string | null) => {
-        if (!timeString) return "-"
-        return new Date(timeString).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-    }
+        if (!timeString) return "";
+        try {
+            const date = new Date(timeString);
+            return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'UTC'
+            });
+        } catch (error) {
+            console.error("Error formatting time:", error);
+            return "";
+        }
+    };
 
     return (
         <Card className="p-2 sm:p-4">
@@ -77,7 +85,7 @@ export default function AttendanceRecords({ attendance }: { attendance: Attendan
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedAttendance.map((record) => (
+                        {attendance.map((record) => (
                             <tr key={record.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                                 <td className="py-3 px-4">
                                     <span className="font-medium text-nowrap">{formatDate(record.date)}</span>
