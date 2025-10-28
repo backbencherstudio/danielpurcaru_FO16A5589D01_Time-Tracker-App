@@ -452,7 +452,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                     </div>
                 )}
             </div>}
-            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId} data={filteredEmpData} />}
+            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId}/>}
         </div>
     );
 }
