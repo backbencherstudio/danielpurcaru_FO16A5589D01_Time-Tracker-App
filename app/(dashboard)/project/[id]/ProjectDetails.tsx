@@ -169,7 +169,7 @@ export default function ProjectDetails({ id }: ProjectDetailsProps) {
           <div className="w-full">
             <ProjectDetailsCard
               title="Total Cost"
-              value={`$${projectData.totalCost.toFixed(2)}`}
+              value={`€${projectData.totalCost.toFixed(2)}`}
               isNumber={true}
             />
           </div>

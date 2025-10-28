@@ -25,6 +25,7 @@ interface Employee {
     avatarUrl: string;
     username: string;
     email: string;
+    phone: string;
 }
 
 interface EmployeeTableProps {

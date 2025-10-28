@@ -474,7 +474,7 @@ export default function Page() {
                                     </svg>
                                 </button>
                                 <div className="select-none border border-[#E8ECF4] rounded-sm flex items-center text-[#4A4C56] font-medium justify-center px-4 bg-[#F7F8F9] h-8">
-                                    {currentHour}hr
+                                    {currentHour}
                                 </div>
                                 <button
                                     className="w-8 h-8 flex items-center justify-center border border-[#E8ECF4] rounded-sm bg-[#82C8E5]"
