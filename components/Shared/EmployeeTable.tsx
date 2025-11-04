@@ -34,15 +34,15 @@ interface EmployeeTableProps {
     showPage: boolean;
     onUpdate: () => void;
     pagination?: {
-        currentPage:number;
+        currentPage: number;
         itemsPerPage: number;
         totalPages: number;
-        totalItems:number;
+        totalItems: number;
     };
-    paginationUpdate?: ({limit,page}:{limit?:number,page?:number})=> void;
+    paginationUpdate?: ({ limit, page }: { limit?: number, page?: number }) => void;
 }
 
-export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate,pagination,paginationUpdate }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate, pagination, paginationUpdate }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
     const [searchQuery, setSearchQuery] = useState("");
@@ -51,8 +51,14 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
     const [employeeData, setEmployeeData] = useState(empData);
     const [loading, setLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [selectedEmp, setSelectedEmp] = useState<string>()
+    const [selectedEmp, setSelectedEmp] = useState<string>();
+    const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
 
+
+    const handleMonthChange = (month: number) => {
+        setSelectedMonth(month);
+        paginationUpdate({ page: 1 });
+    };
 
     useEffect(() => {
         setEmployeeData(empData);
@@ -116,24 +122,24 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
 
     const handleJobTitleFilter = (jobTitle: string) => {
         setSelectedJobTitle(jobTitle);
-        paginationUpdate({page:1});
+        paginationUpdate({ page: 1 });
     };
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        paginationUpdate({page:1});
+        paginationUpdate({ page: 1 });
     };
 
     const handlePageChange = (pageNumber: number) => {
         if (pageNumber >= 1 && pageNumber <= pagination?.totalPages) {
-            paginationUpdate({page:pageNumber});
+            paginationUpdate({ page: pageNumber });
         }
     };
 
     const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newItemsPerPage = Number(e.target.value);
-        paginationUpdate({limit:newItemsPerPage});
-        paginationUpdate({page:1});
+        paginationUpdate({ limit: newItemsPerPage });
+        paginationUpdate({ page: 1 });
     };
 
     const getVisiblePageNumbers = () => {
@@ -161,7 +167,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
             const res = await UserService.deleteEmployee(selectedEmp);
             if (res?.data?.success) {
                 toast.success("Employee deleted successfully");
-                paginationUpdate({page:1});
+                paginationUpdate({ page: 1 });
                 onUpdate();
             } else {
                 toast.error(res?.response?.data?.message || "Failed to delete employee");
@@ -226,6 +232,19 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                         <option>All Job Titles</option>
                         {jobTitles.map((title, index) => (
                             <option key={index}>{title}</option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <select
+                        className="py-[25px] px-5 border border-[#E8ECF4] justify-center rounded-xl text-base text-[#1D1F2C] outline-none"
+                        onChange={(e) => handleMonthChange(parseInt(e.target.value))}
+                        value={selectedMonth}
+                    >
+                        {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i} value={i}>
+                                {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                            </option>
                         ))}
                     </select>
                 </div>
@@ -364,7 +383,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                                 <td className="text-center p-4"><span className="font-semibold">€ </span>{(emp?.recorded_hours * parseFloat(emp?.hourly_rate)).toFixed(2)}</td>
                                 <td className="flex items-center justify-center p-4 space-x-2">
                                     <Link
-                                        href={`/employees/${emp?.id}`}
+                                        href={`/employees/${emp?.id}?month=${selectedMonth}`}
                                         className="bg-sky-300 rounded-lg p-2 text-white hover:bg-sky-400 transition-colors"
                                         aria-label="View project"
                                     >
@@ -452,7 +471,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                     </div>
                 )}
             </div>}
-            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId}/>}
+            {isModalOpen && <EditEmployeeDialog isOpen={isModalOpen} handleDialogToggle={() => setIsModalOpen(false)} empId={selectedEmpId} />}
         </div>
     );
 }

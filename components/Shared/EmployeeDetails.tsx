@@ -11,6 +11,7 @@ import AttendanceRecords from "./EmployeeAttendanceRecords"
 import { useEffect, useState } from "react"
 import { UserService } from "@/service/user/user.service"
 import toast from "react-hot-toast"
+import { useSearchParams } from "next/navigation"
 
 // Mock data - replace with actual API call
 
@@ -59,6 +60,17 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
 
     const [loading, setLoading] = useState(false);
     const [empData, setEmpData] = useState<employeeType>();
+    const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth())
+    const search = useSearchParams();
+    const monthParam = search.get('month');
+
+    useEffect(()=>{
+        setSelectedMonth(Number(monthParam));
+    },[monthParam])
+
+    const handleMonthChange = (month: number) => {
+        setSelectedMonth(month);
+    };
 
     const fetchEmpData = async () => {
         setLoading(true);
@@ -101,7 +113,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
             <div className="p-3 sm:p-4">
                 <div className="grid gap-6">
                     {/* Employee Header Card */}
-                    {empData && <EmployeeHeader employee={empData} />}
+                    {empData && <EmployeeHeader employee={empData} selectedMonth={selectedMonth} handleMonthChange={handleMonthChange}/>}
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
@@ -162,7 +174,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
                     </div>
 
                     {/* Attendance Records */}
-                    {empData&&
+                    {empData &&
                         <AttendanceRecords attendance={empData?.attendance} />
                     }
                 </div>
