@@ -75,7 +75,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
     const fetchEmpData = async () => {
         setLoading(true);
         try {
-            const res = await UserService?.getSingleEmpData(id);
+            const res = await UserService?.getSingleEmpData({id,month:selectedMonth});
             if (res?.data?.success) {
                 setEmpData(res.data.data)
             } else {
@@ -97,7 +97,7 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
         if (id) {
             fetchEmpData();
         }
-    }, [id])
+    }, [id,selectedMonth])
 
     if (loading) {
         return (
@@ -109,13 +109,9 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
 
     return (
         <div className=" bg-background">
-            {/* Main Content */}
             <div className="p-3 sm:p-4">
                 <div className="grid gap-6">
-                    {/* Employee Header Card */}
                     {empData && <EmployeeHeader employee={empData} selectedMonth={selectedMonth} handleMonthChange={handleMonthChange}/>}
-
-                    {/* Stats Grid */}
                     <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
                         <Card className="p-2 sm:p-4">
                             <div className="flex items-center gap-2 sm:gap-3">
@@ -165,15 +161,11 @@ export default function EmployeeDetailsPage({ id }: { id: string }) {
                             </div>
                         </Card>
                     </div>
-
-                    {/* Project Assignments */}
                     <div className="max-w-full">
                         {empData &&
                             <ProjectAssignments projects={empData?.projectAssignee} />
                         }
                     </div>
-
-                    {/* Attendance Records */}
                     {empData &&
                         <AttendanceRecords attendance={empData?.attendance} />
                     }

@@ -27,6 +27,7 @@ export default function page() {
     const [totalPages,setTotalPages] = useState(1);
     const [itemsPerPage,setItemsPerPage] = useState(10);
     const [totalItems,setTotalItems] = useState(0);
+    const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
 
 
     const handleLoading = (state: boolean) => {
@@ -59,7 +60,7 @@ export default function page() {
     const fetchEmpData = async () => {
         setLoading(true);
         try {
-            const res = await UserService?.getAllEmpData({page:currentPage,limit:itemsPerPage});
+            const res = await UserService?.getAllEmpData({page:currentPage,limit:itemsPerPage,month:selectedMonth});
             if (res?.data?.success) {
                 setEmpData(res.data.data);
                 setTotalPages(res?.data?.meta?.totalPages);
@@ -84,7 +85,7 @@ export default function page() {
         if (token) {
             fetchEmpData()
         }
-    }, [currentPage,itemsPerPage])
+    }, [currentPage,itemsPerPage,selectedMonth])
 
 
     const handleEmpDataSaved = () => {
@@ -132,6 +133,8 @@ export default function page() {
                     if(limit)
                         setItemsPerPage(limit);
                 }}
+                changeMonth={(month)=>setSelectedMonth(Number(month))}
+                selectedMonth={selectedMonth}
                 />
                 {isModalOpen && <AddEmployeeDialog isOpen={isModalOpen} handleDialogToggle={()=>setIsModalOpen(prev => !prev)} />}
             </EmpDataContext.Provider>

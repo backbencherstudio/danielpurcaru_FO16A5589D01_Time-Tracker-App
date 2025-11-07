@@ -156,7 +156,7 @@ export const UserService = {
 
     return await Fetch.get(`/employee?${queryParams}`, config);
   },
-  getSingleEmpData: async (id: string, context: any = null) => {
+  getSingleEmpData: async ({id,month}:{id: string,month:number}, context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -166,9 +166,9 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/employee/${id}`, config);
+    return await Fetch.get(`/employee/${id}?month=${month+1}`, config);
   },
-  getAllEmpData: async ({page,limit}:{page:number,limit:number},context: any = null) => {
+  getAllEmpData: async ({page,limit,month}:{page:number,limit:number,month: number},context: any = null) => {
     const userToken = CookieHelper.get({ key: "empdashtoken", context });
 
     const config: GetSummaryConfig = {
@@ -178,7 +178,11 @@ export const UserService = {
       },
     };
 
-    return await Fetch.get(`/employee?limit=${limit}&page=${page}`, config);
+    if(month){
+      return await Fetch.get(`/employee?limit=${limit}&page=${page}&month=${month+1}`, config);
+    }else{
+      return await Fetch.get(`/employee?limit=${limit}&page=${page}`, config);
+    }
   },
 
   getAttendanceData: async ({month,limit,page}:{month:number,limit:number,page:number}, context: any = null) => {
