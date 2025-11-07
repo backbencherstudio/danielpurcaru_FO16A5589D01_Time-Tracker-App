@@ -33,16 +33,18 @@ interface EmployeeTableProps {
     empDataSaved: boolean;
     showPage: boolean;
     onUpdate: () => void;
+    changeMonth: (month: number)=> void;
     pagination?: {
         currentPage: number;
         itemsPerPage: number;
         totalPages: number;
         totalItems: number;
     };
+    selectedMonth: number;
     paginationUpdate?: ({ limit, page }: { limit?: number, page?: number }) => void;
 }
 
-export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate, pagination, paginationUpdate }: EmployeeTableProps) {
+export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdate, pagination, paginationUpdate,changeMonth,selectedMonth }: EmployeeTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedJobTitle, setSelectedJobTitle] = useState("All Job Titles");
     const [searchQuery, setSearchQuery] = useState("");
@@ -52,12 +54,11 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
     const [loading, setLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedEmp, setSelectedEmp] = useState<string>();
-    const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
 
 
     const handleMonthChange = (month: number) => {
-        setSelectedMonth(month);
         paginationUpdate({ page: 1 });
+        changeMonth(month)
     };
 
     useEffect(() => {
