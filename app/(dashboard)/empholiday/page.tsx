@@ -109,7 +109,7 @@ export default function Page() {
         try {
             setLoading(true);
             const [empRes, holidaysRes] = await Promise.all([
-                UserService?.getAllEmpData({ limit: 100, page: 1 }),
+                UserService?.allEmployees(),
                 UserService?.getEmpHolidays({ limit: itemsPerPage, page: currentPage })
             ]);
 

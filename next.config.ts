@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   poweredByHeader: false,
   images: {
-    domains: ['server.cdcg.pt'],
+    domains: ['server.cdcg.pt','nirob.signalsmind.com'],
   },
 };
 

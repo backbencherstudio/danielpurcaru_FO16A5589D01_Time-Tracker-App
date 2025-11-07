@@ -60,7 +60,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId }
     const fetchSingleEmpData = async () => {
         setFetching(true);
         try {
-            const res = await UserService?.getSingleEmpData(empId);
+            const res = await UserService?.getSingleEmpData({id:empId});
             console.log("Response : ", res);
             if (res?.data?.success) {
                 setEmpData(res?.data?.data);

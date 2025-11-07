@@ -229,7 +229,7 @@ export default function Home() {
           <h3 className="text-[#1D1F2C] text-[24px] font-semibold">Employees</h3>
           <Link href="/employees" className="text-base font-medium text-[#82C8E5]  px-[16px] py-[11px] border rounded-lg cursor-pointer">See More</Link>
         </div>
-        <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={false} onUpdate={fetchEmpData}/>
+        <EmployeeTable empData={empData} empDataSaved={empDataSaved} showPage={false} onUpdate={fetchEmpData} selectedMonth={new Date().getMonth()} changeMonth={()=>{}}/>
       </div>}
     </div>
   );
