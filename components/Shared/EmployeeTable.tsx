@@ -374,7 +374,7 @@ export default function EmployeeTable({ empData, empDataSaved, showPage, onUpdat
                                             <Image src={emp?.avatarUrl ? emp?.avatarUrl : avatar} alt={`${emp?.name}'s avatar`} width={24} height={24} className="w-[24px] h-[24px] rounded-full object-cover" />
                                         )}
                                     </div>
-                                    <h3 className="text-nowrap">{emp?.name}</h3>
+                                    <h3 className="text-nowrap">{emp?.first_name} {emp?.last_name}</h3>
                                 </td>
                                 {/* <td className="p-4 text-nowrap">{emp?.username}</td> */}
                                 {/* <td className="p-4 text-nowrap">{emp?.email}</td> */}
