@@ -241,7 +241,7 @@ export default function Page() {
     // Pagination and filtering
     const filteredAttendanceData = useMemo(() => {
         if (!searchTerm) return attendanceData;
-        return attendanceData.filter(emp =>
+        return attendanceData?.filter(emp =>
             emp.user.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [attendanceData, searchTerm]);
@@ -444,7 +444,7 @@ export default function Page() {
                                 onClick={() => setIsOpen(prev => !prev)}
                                 className="w-full bg-white border rounded p-2 text-left truncate"
                             >
-                                {(selectedProject && projects.filter(item => item.id === selectedProject)?.[0]?.name) || 'Select a project'}
+                                {(selectedProject && projects?.filter(item => item.id === selectedProject)?.[0]?.name) || 'Select a project'}
                             </button>
 
                             {isOpen && (
