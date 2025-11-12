@@ -83,7 +83,7 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId }
         { data?.password && fd.append('password', data?.password) }
         { data?.hourlyRate && fd.append('hourly_rate', data?.hourlyRate) };
         { data?.role && fd.append('employee_role', data?.role) }
-        { avatarFile && fd.append('avatar', avatarFile) }
+        { avatarFile && fd.append('file', avatarFile) }
         try {
             setLoading(true)
             const res = await UserService?.updateEmp(fd, empId);

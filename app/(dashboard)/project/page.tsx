@@ -95,6 +95,7 @@ export default function ProjectManagementPage() {
       const res = await UserService.deleteProject(projectToDelete);
       if (res?.data?.success) {
         toast.success("Project deleted successfully");
+        fetchProjectData();
         setCurrentPage(1);
         closeDeleteModal();
       } else {
