@@ -1,16 +1,11 @@
 'use client'
 import { UserService } from "@/service/user/user.service";
+import { useRouter } from "next/navigation";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaCheck } from "react-icons/fa6";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+
 
 
 interface AttendanceDay {
@@ -40,7 +35,6 @@ type ProjectType = {
     id: string;
 }
 
-// Custom hook for detecting clicks outside an element
 const useOnClickOutside = (ref: React.RefObject<HTMLElement>, handler: () => void) => {
     useEffect(() => {
         const listener = (event: MouseEvent | TouchEvent) => {
@@ -61,7 +55,8 @@ const useOnClickOutside = (ref: React.RefObject<HTMLElement>, handler: () => voi
 };
 
 export default function Page() {
-    const [days, setDays] = useState<Array<{ day: number, weekdayName: string }>>([]);
+    const router = useRouter();
+;    const [days, setDays] = useState<Array<{ day: number, weekdayName: string }>>([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [WorkHourEditor, setWorkHourEditor] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -82,7 +77,13 @@ export default function Page() {
 
     useOnClickOutside(editorRef, () => setWorkHourEditor(false));
 
-    // Month days calculation
+    const checkIsLogin=()=>{
+        const isLogin = localStorage.getItem('isLogin');
+        if(!isLogin){
+            router.push('/');
+        }
+    }
+
     useEffect(() => {
         const currentYear = new Date().getFullYear();
         const daysInMonth = new Date(currentYear, selectedMonth + 1, 0).getDate();
@@ -97,7 +98,6 @@ export default function Page() {
         setDays(daysArray);
     }, [selectedMonth]);
 
-    // Fetch attendance data
     const fetchEmpData = async () => {
         try {
             setLoading(true);
@@ -218,10 +218,12 @@ export default function Page() {
 
     const handleCellClick = (event: React.MouseEvent, workHour: AttendanceDay, empId: string, index: number, date: string) => {
         const rect = event.currentTarget.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
+        // Use viewport coordinates (rect.top/rect.bottom are viewport-relative).
+        // Place the editor directly below the clicked cell by using rect.bottom
+        // (avoid adding scroll offset which would push it off-screen when using `position: fixed`).
         setEditorPosition({
-            top: rect.top + scrollTop + rect.height,
+            top: rect.bottom,
             left: rect.left
         });
 
@@ -238,21 +240,48 @@ export default function Page() {
         setWorkHourEditor(true);
     };
 
-    // Pagination and filtering
+    // Keep the work hour editor inside the viewport after it mounts.
+    useEffect(() => {
+        if (!WorkHourEditor || !editorRef.current) return;
+
+        const adjustPosition = () => {
+            const popupRect = editorRef.current!.getBoundingClientRect();
+            const margin = 8;
+            let newLeft = editorPosition.left;
+            let newTop = editorPosition.top;
+
+            if (popupRect.right > window.innerWidth - margin) {
+                newLeft = Math.max(margin, editorPosition.left - (popupRect.right - (window.innerWidth - margin)));
+            }
+
+            if (popupRect.left < margin) {
+                newLeft = margin;
+            }
+            if (popupRect.bottom > window.innerHeight - margin) {
+                const popupHeight = popupRect.height;
+                const candidateTop = (editorPosition.top - popupHeight) - margin;
+                newTop = Math.max(margin, candidateTop);
+            }
+            if (popupRect.top < margin) {
+                newTop = margin;
+            }
+
+            if (newLeft !== editorPosition.left || newTop !== editorPosition.top) {
+                setEditorPosition({ top: newTop, left: newLeft });
+            }
+        };
+
+        const id = requestAnimationFrame(adjustPosition);
+        return () => cancelAnimationFrame(id);
+    }, [WorkHourEditor, editorRef, editorPosition]);
+
+
     const filteredAttendanceData = useMemo(() => {
         if (!searchTerm) return attendanceData;
         return attendanceData?.filter(emp =>
             emp.user.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [attendanceData, searchTerm]);
-
-    // const totalItems = filteredAttendanceData.length;
-    // const totalPages = Math.ceil(totalItems / itemsPerPage);
-    // const currentEntries = useMemo(() => {
-    //     const lastIndex = currentPage * itemsPerPage;
-    //     const firstIndex = lastIndex - itemsPerPage;
-    //     return filteredAttendanceData.slice(firstIndex, lastIndex);
-    // }, [filteredAttendanceData, currentPage, itemsPerPage]);
 
     const handleMonthChange = (month: number) => {
         setSelectedMonth(month);

@@ -42,7 +42,7 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
         try {
             setLoading(true)
             const res = await UserService?.createEmployee(empData);
-            console.log("Response : ",res);
+            console.log("Response : ", res);
             if (res?.data?.success) {
                 toast.success("Registration successful");
             }
@@ -60,9 +60,9 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
     return (
         <div className="p-6 fixed inset-0 bg-[#0000001e] backdrop-blur-sm z-[99] flex items-center justify-center" onClick={handleDialogToggle}>
             <Toaster position='top-right' />
-            <div className=' rounded-lg overflow-hidden' onClick={(e)=> e.stopPropagation()}>
+            <div className=' rounded-lg overflow-hidden' onClick={(e) => e.stopPropagation()}>
                 <div className="max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg h-full max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-xl font-semibold">Add New Employee</h3>
+                    <h3 className="text-xl font-semibold">Add New Employee</h3>
 
                     {/* Upload Photo Section */}
                     <div className="flex justify-center items-center space-x-4 border-dashed border-2 border-gray-400 rounded-lg p-4 mb-6">
@@ -169,17 +169,25 @@ export default function AddEmployeeDialog({ isOpen, handleDialogToggle }) {
                                 <label className="text-sm font-medium">Hourly Rate ($)</label>
                                 <input
                                     type="text"
-                                    inputMode='numeric'
+                                    inputMode='decimal'
+                                    step="0.01"
                                     className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter Hourly Rate"
                                     {...register('hourlyRate', {
-                                        required: true,
+                                        required: "Hourly rate is required",
                                         pattern: {
-                                            value: /^[0-9]*$/,
-                                            message: "Hourly rate is required"
+                                            value: /^[0-9]+(\.[0-9]{0,2})?$/,
+                                            message: "Invalid hourly rate"
                                         },
                                         onChange: (e) => {
-                                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                            let val = e.target.value;
+                                            val = val.replace(/[^0-9.]/g, '');
+                                            val = val.replace(/\.(?=.*\.)/g, '');
+                                            const idx = val.indexOf('.');
+                                            if (idx >= 0) {
+                                                val = val.substring(0, idx + 1 + Math.min(2, val.length - idx - 1));
+                                            }
+                                            e.target.value = val;
                                         }
                                     })}
                                 />

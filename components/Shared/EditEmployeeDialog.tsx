@@ -260,17 +260,25 @@ export default function EditEmployeeDialog({ isOpen, handleDialogToggle, empId }
                                     <label className="text-sm font-medium">Hourly Rate ($)</label>
                                     <input
                                         type="text"
-                                        inputMode='numeric'
+                                        inputMode='decimal'
+                                        step="0.01"
                                         className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg"
                                         placeholder="Enter Hourly Rate"
                                         {...register('hourlyRate', {
-                                            required: true,
+                                            required: "Hourly rate is required",
                                             pattern: {
-                                                value: /^[0-9]*$/,
-                                                message: "Hourly rate is required"
+                                                value: /^[0-9]+(\.[0-9]{0,2})?$/,
+                                                message: "Invalid hourly rate"
                                             },
                                             onChange: (e) => {
-                                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                                let val = e.target.value;
+                                                val = val.replace(/[^0-9.]/g, '');
+                                                val = val.replace(/\.(?=.*\.)/g, '');
+                                                const idx = val.indexOf('.');
+                                                if (idx >= 0) {
+                                                    val = val.substring(0, idx + 1 + Math.min(2, val.length - idx - 1));
+                                                }
+                                                e.target.value = val;
                                             }
                                         })}
                                     />
